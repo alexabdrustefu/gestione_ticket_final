@@ -25,11 +25,26 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Ticket" asp-action="Index">Gestione Ticket</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Prodotto" asp-action="Index">Gestione Prodotto</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="TipologiaProdotto" asp-action="Index">Tipologia Prodotto</a>
+                        </li>
+
+                    </ul>
+                    <ul class="navbar-nav">
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Ticket" asp-action="Index">Miei Ticket</a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="" asp-action="">Ciao @User.Identity.Name</a>
                         </li>
-                    </ul>
-                    <ul class="navbar-nav">
                         <li class="nav-item">
                             <form  asp-area="" asp-controller="Auth" asp-action="Logout" method="post">
                                 <button type="submit" class="btn btn-danger">Logout</button>

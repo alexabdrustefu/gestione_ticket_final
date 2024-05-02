@@ -10,7 +10,7 @@ namespace gestione_ticket_final.Models
         public string Descrizione { get; set; }
 
        
-        public ICollection<Prodotto> Prodotti { get; set; }
+        public ICollection<Prodotto>? Prodotti { get; set; }
 
     }
 }

@@ -12,13 +12,13 @@ namespace gestione_ticket_final.Models
 
         [ForeignKey("TipoProdottoId")]
         [Column("TipoProdottoId")]
-        public int TipologiaProdottoId { get; set; }
+        public int? TipologiaProdottoId { get; set; }
 
 
-        public TipologiaProdotto TipologiaProdotto { get; set; }
+        public TipologiaProdotto? TipologiaProdotto { get; set; }
 
 
-        public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
+        public ICollection<Ticket>? Tickets { get; set; } = new List<Ticket>();
 
     }
 }

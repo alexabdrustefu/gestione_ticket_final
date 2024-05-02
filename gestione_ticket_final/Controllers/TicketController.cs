@@ -28,7 +28,7 @@ namespace gestione_ticket_final.Controllers
         // GET: Ticket
         public async Task<IActionResult> Index()
         {
-            var tickets = _context.Ticket.Include(t => t.User);
+            var tickets = _context.Ticket.Include(t => t.User).Include(p => p.Prodotto);
             return View(await tickets.ToListAsync());
         }
 
