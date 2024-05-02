@@ -1,0 +1,53 @@
+﻿@model LoginModel
+@{
+    ViewData["Title"] = "Login";
+}
+@{
+    Layout = "_Layout_login";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card mt-5" <div class="card mt-5" style="border-radius: 15px; border: 1px solid #000;">
+
+                <div class="card-header">
+                    <h4>Login</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Login" method="post">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" class="form-control" required placeholder="Inserisci E-mail" />
+                        </div>
+                        <div class="form-group">
+                            <label for="PasswordBase64">Password</label>
+                            <input type="password" id="PasswordBase64" name="PasswordBase64" class="form-control" required placeholder="Inserisci Password"/>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <button type="submit" class="btn btn-primary">Accedi</button>
+                            </div>
+                            <div class="col-sm-2">
+                                <a  asp-controller="Auth" asp-action="Register" class="btn btn-danger">Registrazione</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    @section Scripts {
+        <script>
+            function encryptPassword() {
+                var passwordInput = document.getElementById("PasswordBase64").value;
+                var hashedPassword = btoa(passwordInput); // Converte la password in Base64
+                document.getElementById("PasswordBase64").value = hashedPassword; // Imposta il campo password criptato nel form
+            }
+        </script>
+    }
+

@@ -2,7 +2,35 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="card text-white bg-dark mb-5" style="border-radius: 10px;">
+    <div class="card-body">
+        <h1 class="card-title">Benvenuti nella gestione dei ticket</h1>
+        <h5 class="card-text">Questo programma si occupa con la gestione dei ticket</h5>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card border-0 shadow" style="margin-bottom: 20px; height: 200px;">
+                    <div class="card-body d-flex flex-column justify-content-between" style="border-radius: 15px;">
+                        <div>
+                            <h5 class="card-title" style="color:black">Naviga alla Gestione utenti</h5>
+                            <p class="card-text" style="color:black">In questa sezione è possibile gestire gli utenti</p>
+                        </div>
+                        <a class="btn btn-primary" asp-area="" asp-controller="Utente" asp-action="Index">Vai</a>
+                    </div>
+                </div>
+            </div>
+            @* <div class="col-md-3">
+            <div class="card border-0 shadow" style="margin-bottom: 20px; height: 200px;">
+            <div class="card-body d-flex flex-column justify-content-between" style="border-radius: 15px;">
+            <div>
+            <h5 class="card-title" style="color:black">Naaviga alla gestione ticket</h5>
+            <p class="card-text" style="color:black">In questa sezione è possibile gestire i ticket</p>
+            </div>
+            <a class="btn btn-primary" asp-area="" asp-controller="Tickets" asp-action="Index">Vai</a>
+            </div>
+            </div>
+            </div> *@
+        </div>
+
+    </div>
 </div>
+
