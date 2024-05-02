@@ -25,9 +25,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
            options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
            options.Cookie.Name = "Cookie"; // Specifica il nome del cookie
-           options.Cookie.HttpOnly = true;
-           options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Imposta la politica di sicurezza del cookie
-           options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Strict; // Imposta SameSite su Strict per proteggere da attacchi CSRF
+           //options.Cookie.HttpOnly = true;
+           //options.Cookie.SecurePolicy = CookieSecurePolicy.None; // Imposta la politica di sicurezza del cookie
+           //options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None; // Imposta SameSite su Strict per proteggere da attacchi CSRF
            options.Cookie.IsEssential = true; // Imposta il cookie come essenziale per le richieste
            options.AccessDeniedPath = "/Auth/Login"; // Imposta il percorso di accesso negato per il reindirizzamento
            options.LoginPath = "/Auth/Login";

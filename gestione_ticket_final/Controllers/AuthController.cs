@@ -2,6 +2,7 @@
 using gestione_ticket_final.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -103,7 +104,8 @@ namespace gestione_ticket_final.Controllers
                 {
                     new Claim(ClaimTypes.Email, user.Email),
                     new Claim(ClaimTypes.Name, existingUser.Nome),
-                    new Claim(ClaimTypes.Surname, existingUser.Cognome)
+                    new Claim(ClaimTypes.Surname, existingUser.Cognome),
+                    
                 };
 
                 var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -126,13 +128,17 @@ namespace gestione_ticket_final.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
+            // Esegui il logout dell'utente
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Auth", "Login");
-        }
 
+            // Elimina il cookie manualmente
+            Response.Cookies.Delete("Cookie");
+
+            // Reindirizza l'utente alla pagina di login
+            return RedirectToAction("Login", "Auth");
+        }
 
 
     }
