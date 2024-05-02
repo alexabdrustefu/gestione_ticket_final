@@ -19,9 +19,9 @@
                 <span asp-validation-for="Descrizione" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="TipoProdottoId" class="control-label"></label>
-                <input asp-for="TipoProdottoId" class="form-control" />
-                <span asp-validation-for="TipoProdottoId" class="text-danger"></span>
+                <label asp-for="TipologiaProdottoId" class="control-label"></label>
+                <select asp-for="TipologiaProdottoId" class="form-control" asp-items="ViewBag.TipologiaProdottoId"></select>
+                <span asp-validation-for="TipologiaProdottoId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

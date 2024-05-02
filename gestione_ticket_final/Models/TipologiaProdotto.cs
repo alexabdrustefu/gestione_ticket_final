@@ -9,7 +9,7 @@ namespace gestione_ticket_final.Models
         public int Id_tipologia_prodotto { get; set; }
         public string Descrizione { get; set; }
 
-        [NotMapped]
+       
         public ICollection<Prodotto> Prodotti { get; set; }
 
     }

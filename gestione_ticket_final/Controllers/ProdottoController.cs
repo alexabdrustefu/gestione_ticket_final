@@ -19,13 +19,14 @@ namespace gestione_ticket_final.Controllers
             _context = context;
         }
 
-        // GET: Prodotto
+        // GET: Prodottoes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Prodotto.ToListAsync());
+            var gestione_ticket_finalContext = _context.Prodotto.Include(p => p.TipologiaProdotto);
+            return View(await gestione_ticket_finalContext.ToListAsync());
         }
 
-        // GET: Prodotto/Details/5
+        // GET: Prodottoes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,6 +35,7 @@ namespace gestione_ticket_final.Controllers
             }
 
             var prodotto = await _context.Prodotto
+                .Include(p => p.TipologiaProdotto)
                 .FirstOrDefaultAsync(m => m.ProdottoId == id);
             if (prodotto == null)
             {
@@ -43,18 +45,19 @@ namespace gestione_ticket_final.Controllers
             return View(prodotto);
         }
 
-        // GET: Prodotto/Create
+        // GET: Prodottoes/Create
         public IActionResult Create()
         {
+            ViewData["TipologiaProdottoId"] = new SelectList(_context.TipologiaProdotto, "Id_tipologia_prodotto", "Id_tipologia_prodotto");
             return View();
         }
 
-        // POST: Prodotto/Create
+        // POST: Prodottoes/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProdottoId,Descrizione,TipoProdottoId")] Prodotto prodotto)
+        public async Task<IActionResult> Create([Bind("ProdottoId,Descrizione,TipologiaProdottoId")] Prodotto prodotto)
         {
             if (ModelState.IsValid)
             {
@@ -62,10 +65,11 @@ namespace gestione_ticket_final.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["TipologiaProdottoId"] = new SelectList(_context.TipologiaProdotto, "Id_tipologia_prodotto", "Id_tipologia_prodotto", prodotto.TipologiaProdottoId);
             return View(prodotto);
         }
 
-        // GET: Prodotto/Edit/5
+        // GET: Prodottoes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -78,15 +82,16 @@ namespace gestione_ticket_final.Controllers
             {
                 return NotFound();
             }
+            ViewData["TipologiaProdottoId"] = new SelectList(_context.TipologiaProdotto, "Id_tipologia_prodotto", "Id_tipologia_prodotto", prodotto.TipologiaProdottoId);
             return View(prodotto);
         }
 
-        // POST: Prodotto/Edit/5
+        // POST: Prodottoes/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ProdottoId,Descrizione,TipoProdottoId")] Prodotto prodotto)
+        public async Task<IActionResult> Edit(int id, [Bind("ProdottoId,Descrizione,TipologiaProdottoId")] Prodotto prodotto)
         {
             if (id != prodotto.ProdottoId)
             {
@@ -113,10 +118,11 @@ namespace gestione_ticket_final.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["TipologiaProdottoId"] = new SelectList(_context.TipologiaProdotto, "Id_tipologia_prodotto", "Id_tipologia_prodotto", prodotto.TipologiaProdottoId);
             return View(prodotto);
         }
 
-        // GET: Prodotto/Delete/5
+        // GET: Prodottoes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -125,6 +131,7 @@ namespace gestione_ticket_final.Controllers
             }
 
             var prodotto = await _context.Prodotto
+                .Include(p => p.TipologiaProdotto)
                 .FirstOrDefaultAsync(m => m.ProdottoId == id);
             if (prodotto == null)
             {
@@ -134,7 +141,7 @@ namespace gestione_ticket_final.Controllers
             return View(prodotto);
         }
 
-        // POST: Prodotto/Delete/5
+        // POST: Prodottoes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

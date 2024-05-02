@@ -77,25 +77,17 @@ namespace gestione_ticket_final.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login([Bind("Email,PasswordBase64,IsLoggedIn")] LoginModel user)
+        public async Task<IActionResult> Login([Bind("Email,PasswordBase64,IsLoggedIn")]User user)
         {
-            
             if (ModelState.IsValid)
             {
                 var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
-                // Trova l'utente nel database
-                user.PasswordBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(user.PasswordBase64));
+                var passwordCode = Convert.ToBase64String(Encoding.UTF8.GetBytes(user.PasswordBase64));
+                // Verifica se l'utente esiste e la password corrisponde
 
-                // Se l'utente non esiste o la password non corrisponde, mostra un errore
-                if (existingUser == null || existingUser.PasswordBase64 != user.PasswordBase64)
+                if (existingUser == null || existingUser.PasswordBase64 != passwordCode)
                 {
-                    ModelState.AddModelError("", "Password non corretta.");
-                    return View();
-                }
-                //se l'email non corrisponde mostra errore
-                else if (existingUser.Email != user.Email)
-                {
-                    ModelState.AddModelError("", "Email non corretta.");
+                    ModelState.AddModelError("", "Credenziali non valide.");
                     return View();
                 }
 
@@ -105,7 +97,7 @@ namespace gestione_ticket_final.Controllers
                     new Claim(ClaimTypes.Email, user.Email),
                     new Claim(ClaimTypes.Name, existingUser.Nome),
                     new Claim(ClaimTypes.Surname, existingUser.Cognome),
-                    
+                    new Claim("UserId", existingUser.Id_utente.ToString())
                 };
 
                 var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -113,8 +105,7 @@ namespace gestione_ticket_final.Controllers
                 // Crea le informazioni di autenticazione e autentica l'utente
                 var authProperties = new AuthenticationProperties
                 {
-                    IsPersistent = user.RememberMe
-
+                    IsPersistent = user.IsLoggedIn
                 };
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
@@ -126,6 +117,7 @@ namespace gestione_ticket_final.Controllers
 
             return View(user);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> Logout()

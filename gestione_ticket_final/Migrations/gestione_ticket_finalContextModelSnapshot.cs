@@ -44,7 +44,7 @@ namespace gestione_ticket_final.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id_ticket");
 
-                    b.Property<int>("UtenteId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int")
                         .HasColumnName("id_utente");
 
@@ -55,67 +55,11 @@ namespace gestione_ticket_final.Migrations
 
                     b.HasKey("LavorazioneTicketId");
 
+                    b.HasIndex("TicketId");
+
+                    b.HasIndex("UserId");
+
                     b.ToTable("LavorazioneTicket");
-                });
-
-            modelBuilder.Entity("gestione_ticket_final.Models.LoginModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PasswordBase64")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("LoginModel");
                 });
 
             modelBuilder.Entity("gestione_ticket_final.Models.Prodotto", b =>
@@ -130,11 +74,13 @@ namespace gestione_ticket_final.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TipoProdottoId")
+                    b.Property<int>("TipologiaProdottoId")
                         .HasColumnType("int")
-                        .HasColumnName("tipoProdottoId");
+                        .HasColumnName("TipoProdottoId");
 
                     b.HasKey("ProdottoId");
+
+                    b.HasIndex("TipologiaProdottoId");
 
                     b.ToTable("Prodotto");
                 });
@@ -179,11 +125,17 @@ namespace gestione_ticket_final.Migrations
                         .HasColumnType("int")
                         .HasColumnName("status");
 
-                    b.Property<int?>("UtenteId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int")
-                        .HasColumnName("utente_id");
+                        .HasColumnName("UsereId");
 
                     b.HasKey("Id_ticket");
+
+                    b.HasIndex("ProdottoId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique()
+                        .HasFilter("[UsereId] IS NOT NULL");
 
                     b.ToTable("Ticket");
                 });
@@ -217,14 +169,12 @@ namespace gestione_ticket_final.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Cognome")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("EmailConfirmed")
@@ -243,7 +193,6 @@ namespace gestione_ticket_final.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Nome")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NormalizedEmail")
@@ -253,7 +202,6 @@ namespace gestione_ticket_final.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PasswordBase64")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PasswordHash")
@@ -265,7 +213,7 @@ namespace gestione_ticket_final.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<int>("Ruolo")
+                    b.Property<int?>("Ruolo")
                         .HasColumnType("int");
 
                     b.Property<string>("SecurityStamp")
@@ -280,6 +228,68 @@ namespace gestione_ticket_final.Migrations
                     b.HasKey("Id_utente");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("gestione_ticket_final.Models.LavorazioneTicket", b =>
+                {
+                    b.HasOne("gestione_ticket_final.Models.Ticket", "Ticket")
+                        .WithMany()
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("gestione_ticket_final.Models.User", "User")
+                        .WithMany("Lavorazioni_ticket")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ticket");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("gestione_ticket_final.Models.Prodotto", b =>
+                {
+                    b.HasOne("gestione_ticket_final.Models.TipologiaProdotto", "TipologiaProdotto")
+                        .WithMany("Prodotti")
+                        .HasForeignKey("TipologiaProdottoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TipologiaProdotto");
+                });
+
+            modelBuilder.Entity("gestione_ticket_final.Models.Ticket", b =>
+                {
+                    b.HasOne("gestione_ticket_final.Models.Prodotto", "Prodotto")
+                        .WithMany("Tickets")
+                        .HasForeignKey("ProdottoId");
+
+                    b.HasOne("gestione_ticket_final.Models.User", "User")
+                        .WithOne("Tickets")
+                        .HasForeignKey("gestione_ticket_final.Models.Ticket", "UserId");
+
+                    b.Navigation("Prodotto");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("gestione_ticket_final.Models.Prodotto", b =>
+                {
+                    b.Navigation("Tickets");
+                });
+
+            modelBuilder.Entity("gestione_ticket_final.Models.TipologiaProdotto", b =>
+                {
+                    b.Navigation("Prodotti");
+                });
+
+            modelBuilder.Entity("gestione_ticket_final.Models.User", b =>
+                {
+                    b.Navigation("Lavorazioni_ticket");
+
+                    b.Navigation("Tickets");
                 });
 #pragma warning restore 612, 618
         }

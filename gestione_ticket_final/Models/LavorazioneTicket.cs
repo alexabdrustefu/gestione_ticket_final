@@ -11,7 +11,7 @@ namespace gestione_ticket_final.Models
         public int LavorazioneTicketId { get; set; }
         [ForeignKey("id_utente")]
         [Column("id_utente")]
-        public int UtenteId { get; set; }
+        public int UserId { get; set; }
         [ForeignKey("id_ticket")]
         [Column("id_ticket")]
         public int TicketId { get; set; }
@@ -23,11 +23,11 @@ namespace gestione_ticket_final.Models
         public string motivazione { get; set; }
 
 
-        [NotMapped]
+       
         public User? User { get; set; }
 
 
-        [NotMapped]
+        
         public Ticket? Ticket { get; set; }
     }
 }
