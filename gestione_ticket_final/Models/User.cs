@@ -8,7 +8,7 @@ namespace gestione_ticket_final.Models
     {
         Utente, Tecnico
     }
-    public class User: IdentityUser
+    public class User:IdentityUser
     {
         [Key]
         public int Id_utente { get; set; }
