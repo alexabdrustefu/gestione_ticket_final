@@ -7,9 +7,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using gestione_ticket.Data;
 using gestione_ticket_final.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace gestione_ticket_final.Controllers
 {
+    [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme)]
+
     public class ProdottoController : Controller
     {
         private readonly gestione_ticket_finalContext _context;
