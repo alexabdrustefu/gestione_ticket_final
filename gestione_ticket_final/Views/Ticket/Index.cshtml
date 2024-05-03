@@ -9,75 +9,49 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Data_apertura)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Ora_apertura)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Data_chiusura)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Ora_chiusura)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Descrizione)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Stato)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UtenteId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProdottoId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Soluzione)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Data_apertura)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Ora_apertura)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Data_chiusura)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Ora_chiusura)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Descrizione)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Stato)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UtenteId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProdottoId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Soluzione)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id_ticket">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id_ticket">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id_ticket">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-3 mb-4">
+            <button type="button" onclick="openModal('@item.Id_ticket')">
+                <div class="card">
+                    <div class="card-body Scrolbar" style="max-height: 200px; overflow-y: auto;">
+                        <h5 class="card-title">Ticket ID: @item.Id_ticket</h5>
+                        <p class="card-text">Data Apertura: @item.Data_apertura</p>
+                        <p class="card-text">Ora Apertura: @item.Ora_apertura</p>
+                        <p class="card-text">Data Chiusura: @item.Data_chiusura</p>
+                        <p class="card-text">Ora Chiusura: @item.Ora_chiusura</p>
+                        <p class="card-text">Descrizione: @item.Descrizione</p>
+                        <p class="card-text">Soluzione: @item.Soluzione</p>
+                    </div>
+                    <div class="card-footer">
+                        <a asp-action="Edit" asp-route-id="@item.Id_ticket" class="btn btn-primary">Edit</a>
+                        <a asp-action="Details" asp-route-id="@item.Id_ticket" class="btn btn-info">Details</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id_ticket" class="btn btn-danger">Delete</a>
+                    </div>
+                </div>
+            </button>
+        </div>
+    }
+</div>
+
+<div id="modalContainer"></div>
+
+<script>
+
+    function openModal(ticketId) {
+        $.ajax({
+            url: '/Tickets/LavorazioniPerTicket',
+            type: 'GET',
+            data: { ticketId: ticketId },
+            success: function (data) {
+                $('#modalContainer').html(data);
+                $('#_LavorazioniPerTicket').modal('show');
+            },
+            error: function () {
+                alert('Errore durante il caricamento dei dati del modal.');
+            }
+        });
+    }
+</script>

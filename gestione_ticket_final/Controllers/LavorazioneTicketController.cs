@@ -152,7 +152,7 @@ namespace gestione_ticket_final.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool LavorazioneTicketExists(int id)
+        private bool LavorazioneTicketExists(int? id)
         {
             return _context.LavorazioneTicket.Any(e => e.LavorazioneTicketId == id);
         }

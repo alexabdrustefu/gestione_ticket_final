@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using gestione_ticket.Data;
 using gestione_ticket_final.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace gestione_ticket_final.Controllers
 {
@@ -57,10 +59,38 @@ namespace gestione_ticket_final.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id_ticket,Data_apertura,Ora_apertura,Data_chiusura,Ora_chiusura,Descrizione,Stato,UtenteId,ProdottoId,Soluzione")] Ticket ticket)
+        public async Task<IActionResult> Create([Bind("Id_ticket,Data_apertura,Ora_apertura,Data_chiusura,Ora_chiusura,Descrizione,Stato,UtenteId,ProdottoId,Soluzione, assegna_utente_loggato")] Ticket ticket, [Bind("id_utente")] LavorazioneTicket lavorazione)
         {
             if (ModelState.IsValid)
             {
+                //Il ticket viene creato aperto
+                ticket.Data_apertura = DateTime.Now;
+                ticket.Ora_apertura = DateTime.Now.ToString("HH:mm");
+                ticket.Stato = Status.APERTO;
+                //Assegno user loggato al ticket
+
+                var currentUser = User.Identity as ClaimsIdentity;
+                if (currentUser != null && currentUser.IsAuthenticated)
+                {
+                    var userIdClaim = currentUser.FindFirst("UserId");
+
+                    string userId = userIdClaim.Value;
+                    int IdUtenteInt = Int32.Parse(userId);
+                    ticket.UtenteId= IdUtenteInt;
+                }
+
+                if (ticket.AssegnaAllUtenteLoggato) {
+                    if (currentUser != null && currentUser.IsAuthenticated)
+                    {
+                        var userIdClaim = currentUser.FindFirst("UserId");
+
+                    string userId = userIdClaim.Value;
+                    int IdUtenteInt = Int32.Parse(userId);
+                    ticket.UtenteId= IdUtenteInt;
+                        lavorazione.UtenteId = IdUtenteInt;
+                    }
+                }
+
                 _context.Add(ticket);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

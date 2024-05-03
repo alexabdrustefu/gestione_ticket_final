@@ -37,7 +37,6 @@ namespace gestione_ticket_final.Models
         public string? Descrizione { get; set; }
         [Column("status")]
         public Status? Stato { get; set; }
-        [ForeignKey("utente_id")]
         [Column("utente_id")]
         public int? UtenteId { get; set; }
         [ForeignKey("prodottoId")]
@@ -59,6 +58,11 @@ namespace gestione_ticket_final.Models
         public Prodotto? Prodotto { get; set; }
         //proprieta booleana per dare la possibilita di aprire o di chiudere un ticket con un pulsante
         //public bool open { get; set; }
+
+        [Column("assegna_utente_loggato")]
+        [Display(Name = "Assegna a utente loggato")]
+        public bool AssegnaAllUtenteLoggato { get; set; } = false;
+
     }
 
 }
