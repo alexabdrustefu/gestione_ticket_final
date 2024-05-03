@@ -28,7 +28,7 @@ namespace gestione_ticket_final.Models
 
 
         //Booleano per eliminazione logica
-        public bool Deleted { get; set; }
+        public bool Deleted { get; set; } 
         public Ticket? Ticket { get; set; }
     }
 }

@@ -42,7 +42,8 @@ namespace gestione_ticket_final.Controllers
             }
 
             var ticket = await _context.Ticket
-                .FirstOrDefaultAsync(m => m.Id_ticket == id);
+                .Include(m => m.User).Include(m => m.Prodotto)
+                             .FirstOrDefaultAsync(m => m.Id_ticket == id);
             if (ticket == null)
             {
                 return NotFound();
@@ -54,7 +55,7 @@ namespace gestione_ticket_final.Controllers
         // GET: Ticket/Create
         public IActionResult Create()
         {
-            ViewBag.Prodotto = new SelectList(_context.Prodotto.ToList(), "Id_prodotto", "Descrizione");
+            //ViewBag.Prodotto = new SelectList(_context.Prodotto.ToList(), "Id_prodotto", "Descrizione");
             return View();
         }
 
@@ -72,17 +73,17 @@ namespace gestione_ticket_final.Controllers
                 ticket.Ora_apertura = DateTime.Now.ToString("HH:mm");
                 ticket.Stato = Status.APERTO;
                 //Assegno user loggato al ticket
-
+                 
                 var currentUser = User.Identity as ClaimsIdentity;
                 if (currentUser != null && currentUser.IsAuthenticated)
                 {
                     var userIdClaim = currentUser.FindFirst("UserId");
 
-                        string userId = userIdClaim.Value;
-                        int IdUtenteInt = Int32.Parse(userId);
-                        ticket.UserId = IdUtenteInt;
+                    string userId = userIdClaim.Value;
+                    int IdUtenteInt = Int32.Parse(userId);
+                    ticket.UserId = IdUtenteInt;
                 }
-               
+
 
                 _context.Add(ticket);
                 await _context.SaveChangesAsync();
@@ -94,17 +95,26 @@ namespace gestione_ticket_final.Controllers
         // GET: Ticket/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            var currentUser = User.Identity as ClaimsIdentity;
+            var userRuolo = currentUser.FindFirst("Ruolo");
+            if (userRuolo.Value != "Tecnico")
             {
-                return NotFound();
+                return RedirectToAction("ErrorPage", "Unauthorized");
             }
+            else
+            {
+                if (id == null)
+                {
+                    return NotFound();
+                }
 
-            var ticket = await _context.Ticket.FindAsync(id);
-            if (ticket == null)
-            {
-                return NotFound();
+                var ticket = await _context.Ticket.FindAsync(id);
+                if (ticket == null)
+                {
+                    return NotFound();
+                }
+                return View(ticket);
             }
-            return View(ticket);
         }
 
         // POST: Ticket/Edit/5
@@ -123,8 +133,16 @@ namespace gestione_ticket_final.Controllers
             {
                 try
                 {
-                    _context.Update(ticket);
-                    await _context.SaveChangesAsync();
+                    var currentUser = User.Identity as ClaimsIdentity;
+                    var userRuolo = currentUser.FindFirst("Ruolo");
+                    if (userRuolo.Value != "Tecnico")
+                    {
+                        _context.Update(ticket);
+                        await _context.SaveChangesAsync();
+                    }
+                    else {
+                        return RedirectToAction("ErrorPage", "Unauthorized");
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -143,21 +161,32 @@ namespace gestione_ticket_final.Controllers
         }
 
         // GET: Ticket/Delete/5
+        
         public async Task<IActionResult> Delete(int? id)
         {
+            var currentUser = User.Identity as ClaimsIdentity;
+            var userRuolo = currentUser.FindFirst("Ruolo");
+            if (userRuolo.Value != "Tecnico")
+            {
+                return RedirectToAction("ErrorPage", "Unauthorized");
+            }else{
             if (id == null)
             {
                 return NotFound();
             }
 
-            var ticket = await _context.Ticket
-                .FirstOrDefaultAsync(m => m.Id_ticket == id);
-            if (ticket == null)
+                var ticket = await _context.Ticket
+                             .Include(m => m.User).Include(m => m.Prodotto)
+                             .FirstOrDefaultAsync(m => m.Id_ticket == id);
+
+
+                if (ticket == null)
             {
                 return NotFound();
             }
 
-            return View(ticket);
+                return View(ticket);
+            }
         }
 
         // POST: Ticket/Delete/5
@@ -165,19 +194,41 @@ namespace gestione_ticket_final.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
+            // Trova il ticket da cancellare
             var ticket = await _context.Ticket.FindAsync(id);
-            if (ticket != null)
+            if (ticket == null)
             {
-                _context.Ticket.Remove(ticket);
+                return NotFound();
             }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            // Ottenere il ruolo corrente dell'utente
+            var currentUser = User.Identity as ClaimsIdentity;
+            if (currentUser != null && currentUser.IsAuthenticated)
+            {
+                var userRuolo = currentUser.FindFirst("Ruolo");
+                if (userRuolo != null)
+                {
+                    if (userRuolo.Value == "TECNICO")
+                    {
+                        ticket.Deleted = true;
+                        _context.Ticket.Update(ticket);
+                        await _context.SaveChangesAsync();
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        return RedirectToAction("ErrorPage", "Unauthorized"); // Esempio di reindirizzamento ad una pagina di errore
+                    }
+                }
+            }
+
+            return RedirectToAction("ErrorPage", "Unauthorized"); // Esempio di reindirizzamento ad una pagina di errore
         }
 
-        private bool TicketExists(int? id)
+        private bool TicketExists(int ? id)
         {
             return _context.Ticket.Any(e => e.Id_ticket == id);
         }
+
     }
 }

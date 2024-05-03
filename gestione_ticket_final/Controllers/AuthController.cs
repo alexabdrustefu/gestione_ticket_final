@@ -95,9 +95,11 @@ namespace gestione_ticket_final.Controllers
                 var claims = new[]
                 {
                     new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.Role, existingUser.Ruolo.ToString()),
                     new Claim(ClaimTypes.Name, existingUser.Nome),
                     new Claim(ClaimTypes.Surname, existingUser.Cognome),
-                    new Claim("UserId", existingUser.Id_utente.ToString())
+                    new Claim("UserId", existingUser.Id_utente.ToString()),
+                    new Claim("Ruolo", existingUser.Ruolo.ToString())
                 };
 
                 var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

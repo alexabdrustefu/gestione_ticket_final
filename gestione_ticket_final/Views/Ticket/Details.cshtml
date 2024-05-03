@@ -7,66 +7,142 @@
 <h1>Details</h1>
 
 <div>
-    <h4>Ticket</h4>
+    <h4>Elimina Ticket</h4>
     <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Data_apertura)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Data_apertura)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Ora_apertura)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Ora_apertura)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Data_chiusura)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Data_chiusura)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Ora_chiusura)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Ora_chiusura)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Descrizione)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Descrizione)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Stato)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Stato)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UserId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UserId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ProdottoId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ProdottoId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Soluzione)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Soluzione)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id_ticket">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card text-white border-secondary" style="border-radius: 20px;">
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-5" style="color:black;">
+                            @Html.DisplayNameFor(model => model.Data_apertura)
+                        </dt>
+                        <dd class="col-sm-5" style="color:black;">
+                            @if (Model.Data_apertura != null)
+                            {
+                                @Html.DisplayFor(model => model.Data_apertura)
+                            }
+                            else
+                            {
+                                <span style="font-weight: bold;">Non disponibile</span>
+                            }
+                        </dd>
+                        <dt class="col-sm-5" style="color:black;">
+                            @Html.DisplayNameFor(model => model.Ora_apertura)
+                        </dt>
+                        <dd class="col-sm-5" style="color:black;">
+                            @if (Model.Ora_apertura != null)
+                            {
+                                @Html.DisplayFor(model => model.Ora_apertura)
+                            }
+                            else
+                            {
+                                <span style="font-weight: bold;">Non disponibile</span>
+                            }
+                        </dd>
+                        <dt class="col-sm-5" style="color:black;">
+                            @Html.DisplayNameFor(model => model.Data_chiusura)
+                        </dt>
+                        <dd class="col-sm-5" style="color:black;">
+                            @if (Model.Data_chiusura != null)
+                            {
+                                @Html.DisplayFor(model => model.Data_chiusura)
+                            }
+                            else
+                            {
+                                <span style="font-weight: bold;">Non disponibile</span>
+                            }
+                        </dd>
+                        <dt class="col-sm-5" style="color:black;">
+                            @Html.DisplayNameFor(model => model.Ora_chiusura)
+                        </dt>
+                        <dd class="col-sm-5" style="color:black;">
+                            @if (Model.Ora_chiusura != null)
+                            {
+                                @Html.DisplayFor(model => model.Ora_chiusura)
+                            }
+                            else
+                            {
+                                <span style="font-weight: bold;">Non disponibile</span>
+                            }
+                        </dd>
+                        <dt class="col-sm-5" style="color:black;">
+                            @Html.DisplayNameFor(model => model.Descrizione)
+                        </dt>
+                        <dd class="col-sm-5" style="color:black;">
+                            @if (Model.Descrizione != null)
+                            {
+                                @Html.DisplayFor(model => model.Descrizione)
+                            }
+                            else
+                            {
+                                <span style="font-weight: bold;">Non disponibile</span>
+                            }
+                        </dd>
+                        <dt class="col-sm-5" style="color:black;">
+                            @Html.DisplayNameFor(model => model.Stato)
+                        </dt>
+                        <dd class="col-sm-5" style="color:black;">
+                            @if (Model.Stato != null)
+                            {
+                                @Html.DisplayFor(model => model.Stato)
+                            }
+                            else
+                            {
+                                <span style="font-weight: bold;">Non disponibile</span>
+                            }
+                        </dd>
+                        <dt class="col-sm-5" style="color:black;">
+                            @Html.DisplayNameFor(model => model.User)
+                        </dt>
+                        <dd class="col-sm-4" style="color:black;">
+                            @if (Model.User != null)
+                            {
+                                @Html.DisplayFor(model => model.User.Nome)
+                            }
+                            else
+                            {
+                                <span style="font-weight: bold;">Non disponibile</span>
+                            }
+                        </dd>
+                        <dd class="col-sm-3" style="color:black;">
+                                @Html.DisplayFor(model => model.User.Cognome)
+                        </dd>
+                        <dt class="col-sm-5" style="color:black;">
+                            @Html.DisplayNameFor(model => model.Prodotto)
+                        </dt>
+                        <dd class="col-sm-5" style="color:black;">
+                            @if (Model.Prodotto != null)
+                            {
+                                @Html.DisplayFor(model => model.Prodotto.Descrizione)
+                            }
+                            else
+                            {
+                                <span style="font-weight: bold;">Non disponibile</span>
+                            }
+                        </dd>
+                        <dt class="col-sm-5" style="color:black;">
+                            @Html.DisplayNameFor(model => model.Soluzione)
+                        </dt>
+                        <dd class="col-sm-5" style="color:black;">
+                            @if (Model.Soluzione != null)
+                            {
+                                @Html.DisplayFor(model => model.Soluzione)
+                            }
+                            else
+                            {
+                                <span style="font-weight: bold;">Non disponibile</span>
+                            }
+                        </dd>
+                    </dl>
+                    <div style="text-align: -webkit-right;display: ruby-text;">
+                        <form id="deleteForm" asp-action="Delete">
+                            <a class="btn btn-secondary" asp-action="Index">Back</a>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 </div>

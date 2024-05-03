@@ -58,12 +58,12 @@
                         <label asp-for="UserId" class="control-label"></label>
                         <input asp-for="UserId" class="form-control" />
                         <span asp-validation-for="UserId" class="text-danger"></span>
-                    </div>
-                     <div class="form-group">
-                    <label asp-for="ProdottoId" class="control-label"></label>
-                    <select asp-for="ProdottoId" class="form-control" asp-items="@ViewBag.Prodotto"></select>
+                    @* </div> *@
+@*                      <div class="form-group">
+                        <label asp-for="ProdottoId" class="control-label"></label>
+                        <select asp-for="ProdottoId" class="form-control" asp-items="@ViewBag.Prodotto"></select>
                     </div> 
-
+ *@
                     <br />
                     <div class="d-flex justify-content-end">
                         <a class="btn btn-danger" asp-action="Index">Back</a>

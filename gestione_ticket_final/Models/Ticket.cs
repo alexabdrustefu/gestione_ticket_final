@@ -40,7 +40,7 @@ namespace gestione_ticket_final.Models
         [ForeignKey("UsereId")]
         [Column("UsereId")]
         public int? UserId { get; set; }
-        [ForeignKey("prodottoId")]
+        //[ForeignKey("prodottoId")]
         [Column("prodottoId")]
         public int? ProdottoId { get; set; }
 

@@ -1,55 +1,88 @@
 ﻿@model User
-
-
 @{
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = "Register";
 }
 @{
     Layout = "_Layout_login";
 }
-<div class="container">
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card mt-5" <div class="card mt-5" style="border-radius: 15px; border: 1px solid #000;">
 
-                <div class="card-header">
-                    <h4>Registrazione</h4>
-                </div>
-                <div class="card-body">
-                    <form asp-action="Register" method="post">
-                        <div asp-validation-summary="All" class="text-danger"></div>
+<section class="vh-100 d-flex justify-content-center align-items-center">
+    <div class="container-fluid h-custom">
+        <div class="row justify-content-center">
+            <div class="col-md-9 col-lg-6 col-xl-5">
+                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
+                     class="img-fluid" alt="Sample image">
+            </div>
+            <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+                <h3>Register</h3>
+                <form asp-action="Register" method="post" class="d-flex flex-column justify-content-center">
+
+                    <div data-mdb-input-init class="form-outline mb-4">
                         <div class="form-group">
-                            <label asp-for="Nome"></label>
-                            <input asp-for="Nome" class="form-control" placeholder="Inserisci Nome"/>
+                            <input asp-for="Nome" class="form-control" placeholder="Enter your name" />
                             <span asp-validation-for="Nome" class="text-danger"></span>
                         </div>
+                    </div>
+
+                    <div data-mdb-input-init class="form-outline mb-4">
                         <div class="form-group">
-                            <label asp-for="Cognome"></label>
-                            <input asp-for="Cognome" class="form-control"placeholder="Inserisci Cogome" />
+                            <input asp-for="Cognome" class="form-control" placeholder="Enter your surname" />
                             <span asp-validation-for="Cognome" class="text-danger"></span>
                         </div>
-                        <div class="form-group">
-                            <label asp-for="Email">E-mail</label>
-                            <input asp-for="Email" class="form-control" placeholder="Inserisci E-mail" />
+                    </div>
+
+                    <div data-mdb-input-init class="form-outline mb-4">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" style="height: 100%;">
+                                    <i class="bi bi-envelope" style="line-height: inherit;"></i>
+                                </span>
+                            </div>
+                            <input type="email" asp-for="Email" class="form-control form-control-lg"
+                                   placeholder="Enter a valid email address" />
                             <span asp-validation-for="Email" class="text-danger"></span>
                         </div>
-                        <div class="form-group">
-                            <label asp-for="PasswordBase64">Password</label>
-                            <input asp-for="PasswordBase64" type="password" class="form-control"placeholder="Inserisci Pasword" />
+                    </div>
+
+                    <div data-mdb-input-init class="form-outline mb-3">
+                        <div class="form-group d-flex align-items-center">
+                            <div class="input-group">
+                                <div class="input-group-prepend" id="togglePassword">
+                                    <span class="input-group-text" style="height: 100%;"><i class="bi bi-eye-slash"></i></span>
+                                </div>
+                                <input asp-for="PasswordBase64" type="password" class="form-control form-control-lg" required placeholder="Enter password" />
+                            </div>
                             <span asp-validation-for="PasswordBase64" class="text-danger"></span>
                         </div>
-                        <br />
-                         <div class="row">
-                             <div class="col-sm-2">
-                                <button type="submit" class="btn btn-primary">Registrati</button>
-                            </div>
-                            <div class="col-sm-2">
-                                <a  asp-controller="Auth" asp-action="Login" class="btn btn-danger">Back</a>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button type="submit" data-mdb-button-init data-mdb-ripple-init
+                                class="btn btn-primary btn-lg">
+                            Register
+                        </button>
+                        <p class="small fw-bold mt-2 mb-0">
+                            Already have an account? <a asp-controller="Auth" asp-action="Login">Login</a>
+                        </p>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-</div>
+</section>
+
+@section Scripts {
+    <script>
+        const togglePassword = document.querySelector('#togglePassword');
+        const passwordInput = document.querySelector('#PasswordBase64');
+
+        togglePassword.addEventListener('click', function (e) {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.querySelector('i').classList.toggle('bi-eye');
+            this.querySelector('i').classList.toggle('bi-eye-slash');
+        });
+    </script>
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">

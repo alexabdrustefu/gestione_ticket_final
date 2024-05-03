@@ -1,5 +1,6 @@
 ﻿@model IEnumerable<Ticket>
-
+@using Microsoft.AspNetCore.Authorization
+@using System.Security.Claims
 @{
     ViewData["Title"] = "Index";
 }
@@ -36,9 +37,24 @@
                     <p class="card-text">Creato da: @item.User.Nome  @item.User.Cognome</p>
                 </div>
                 <div class="card-footer">
-                    <a asp-action="Edit" asp-route-id="@item.Id_ticket" class="btn btn-primary">Edit</a>
+                    
                     <a asp-action="Details" asp-route-id="@item.Id_ticket" class="btn btn-info">Details</a>
-                    <a asp-action="Delete" asp-route-id="@item.Id_ticket" class="btn btn-danger">Delete</a>
+                    @{
+                       var currentUser = User.Identity as ClaimsIdentity;
+                        @if (currentUser != null && currentUser.IsAuthenticated)
+                        {
+                            var userRuolo = currentUser.FindFirst("Ruolo");
+                            if (userRuolo != null)
+                            {
+                                if (userRuolo.Value == "Tecnico")
+                                {
+                                    <a asp-action="Edit" asp-route-id="@item.Id_ticket" class="btn btn-primary">Edit</a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id_ticket" class="btn btn-danger">Delete</a>
+                                }
+                            }
+                        }
+                     }
+                    
                 </div>
             </div>
         </div>

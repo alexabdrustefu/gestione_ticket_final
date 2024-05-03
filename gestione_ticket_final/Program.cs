@@ -28,7 +28,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
            //options.Cookie.SecurePolicy = CookieSecurePolicy.None; // Imposta la politica di sicurezza del cookie
            //options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None; // Imposta SameSite su Strict per proteggere da attacchi CSRF
            options.Cookie.IsEssential = true; // Imposta il cookie come essenziale per le richieste
-           options.AccessDeniedPath = "/Auth/Login"; // Imposta il percorso di accesso negato per il reindirizzamento
+           options.AccessDeniedPath = "/Unauthorized/ErrorPage"; // Imposta il percorso di accesso negato per il reindirizzamento
            options.LoginPath = "/Auth/Login";
        });
 var app = builder.Build();
@@ -52,7 +52,8 @@ app.UseAuthentication();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action}/{id?}",
-    defaults: new { controller = "Home", action = "Index" } // Imposta la pagina predefinita su Home/Index
+    defaults: new { controller = "Home", action = "Index" } 
+
 );
 
  
