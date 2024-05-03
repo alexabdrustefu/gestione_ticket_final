@@ -55,8 +55,8 @@ namespace gestione_ticket_final.Models
 
         
         public Prodotto? Prodotto { get; set; }
-        //proprieta booleana per dare la possibilita di aprire o di chiudere un ticket con un pulsante
-        //public bool open { get; set; }
+        //Booleano per eliminazione logica
+        public bool Deleted { get; set; }
     }
 
 }

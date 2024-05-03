@@ -25,7 +25,7 @@ namespace gestione_ticket_final.Controllers
         // GET: Prodottoes
         public async Task<IActionResult> Index()
         {
-            var gestione_ticket_finalContext = _context.Prodotto.Include(p => p.TipologiaProdotto);
+            var gestione_ticket_finalContext = _context.Prodotto.Where(p=> p.Deleted == false).Include(p => p.TipologiaProdotto);
             return View(await gestione_ticket_finalContext.ToListAsync());
         }
 
@@ -39,7 +39,7 @@ namespace gestione_ticket_final.Controllers
 
             var prodotto = await _context.Prodotto
                 .Include(p => p.TipologiaProdotto)
-                .FirstOrDefaultAsync(m => m.ProdottoId == id);
+                .FirstOrDefaultAsync(m => m.ProdottoId == id && m.Deleted == false);
             if (prodotto == null)
             {
                 return NotFound();
@@ -56,7 +56,7 @@ namespace gestione_ticket_final.Controllers
         }
 
         // POST: Prodottoes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // To protect from overposting attacks, enable the specific properties you want to bind to.  b 
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -64,6 +64,7 @@ namespace gestione_ticket_final.Controllers
         {
             if (ModelState.IsValid)
             {
+                prodotto.Deleted = false;
                 _context.Add(prodotto);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -105,6 +106,7 @@ namespace gestione_ticket_final.Controllers
             {
                 try
                 {
+                    prodotto.Deleted = false;
                     _context.Update(prodotto);
                     await _context.SaveChangesAsync();
                 }
@@ -135,7 +137,7 @@ namespace gestione_ticket_final.Controllers
 
             var prodotto = await _context.Prodotto
                 .Include(p => p.TipologiaProdotto)
-                .FirstOrDefaultAsync(m => m.ProdottoId == id);
+                .FirstOrDefaultAsync(m => m.ProdottoId == id && m.Deleted == false);
             if (prodotto == null)
             {
                 return NotFound();
@@ -150,11 +152,12 @@ namespace gestione_ticket_final.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var prodotto = await _context.Prodotto.FindAsync(id);
-            if (prodotto != null)
+            if (prodotto == null)
             {
-                _context.Prodotto.Remove(prodotto);
+                return NotFound();
             }
-
+            prodotto.Deleted = true;
+            _context.Prodotto.Update(prodotto);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

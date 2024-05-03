@@ -18,7 +18,8 @@ namespace gestione_ticket_final.Models
         public TipologiaProdotto? TipologiaProdotto { get; set; }
 
 
-        public ICollection<Ticket>? Tickets { get; set; } = new List<Ticket>();
-
+        public ICollection<Ticket>? Tickets { get; set; }
+        //Booleano per eliminazione logica
+        public bool Deleted { get; set; }
     }
 }

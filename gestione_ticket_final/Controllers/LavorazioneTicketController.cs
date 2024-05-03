@@ -25,7 +25,8 @@ namespace gestione_ticket_final.Controllers
         // GET: LavorazioneTicket
         public async Task<IActionResult> Index()
         {
-            return View(await _context.LavorazioneTicket.ToListAsync());
+            var lavorazioniTicket = await _context.LavorazioneTicket.Where(lt => lt.Deleted == false).ToListAsync();
+            return View(lavorazioniTicket);
         }
 
         // GET: LavorazioneTicket/Details/5
@@ -37,7 +38,7 @@ namespace gestione_ticket_final.Controllers
             }
 
             var lavorazioneTicket = await _context.LavorazioneTicket
-                .FirstOrDefaultAsync(m => m.LavorazioneTicketId == id);
+                .FirstOrDefaultAsync(m => m.LavorazioneTicketId == id && m.Deleted == false);
             if (lavorazioneTicket == null)
             {
                 return NotFound();
@@ -61,6 +62,7 @@ namespace gestione_ticket_final.Controllers
         {
             if (ModelState.IsValid)
             {
+                lavorazioneTicket.Deleted = false;
                 _context.Add(lavorazioneTicket);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -100,6 +102,7 @@ namespace gestione_ticket_final.Controllers
             {
                 try
                 {
+                    lavorazioneTicket.Deleted = false;
                     _context.Update(lavorazioneTicket);
                     await _context.SaveChangesAsync();
                 }
@@ -128,7 +131,8 @@ namespace gestione_ticket_final.Controllers
             }
 
             var lavorazioneTicket = await _context.LavorazioneTicket
-                .FirstOrDefaultAsync(m => m.LavorazioneTicketId == id);
+                .FirstOrDefaultAsync(m => m.LavorazioneTicketId == id && m.Deleted == false);
+
             if (lavorazioneTicket == null)
             {
                 return NotFound();
@@ -137,22 +141,30 @@ namespace gestione_ticket_final.Controllers
             return View(lavorazioneTicket);
         }
 
+
         // POST: LavorazioneTicket/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var lavorazioneTicket = await _context.LavorazioneTicket.FindAsync(id);
-            if (lavorazioneTicket != null)
+            if (lavorazioneTicket == null)
             {
-                _context.LavorazioneTicket.Remove(lavorazioneTicket);
+                return NotFound();
             }
+
+            // Per eliminazione logica metto a true il booleano
+            lavorazioneTicket.Deleted = true;
+
+            // Aggiorno il dato
+            _context.LavorazioneTicket.Update(lavorazioneTicket);
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool LavorazioneTicketExists(int id)
+
+        private bool LavorazioneTicketExists(int? id)
         {
             return _context.LavorazioneTicket.Any(e => e.LavorazioneTicketId == id);
         }
