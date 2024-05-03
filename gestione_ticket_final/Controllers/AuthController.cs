@@ -90,6 +90,12 @@ namespace gestione_ticket_final.Controllers
                     ModelState.AddModelError("", "Credenziali non valide.");
                     return View();
                 }
+                //se l'email non corrisponde mostra errore
+                else if (existingUser.Email != user.Email)
+                {
+                    ModelState.AddModelError("", "Email non corretta.");
+                    return View();
+                }
 
                 // Crea l'identità dell'utente
                 var claims = new[]
@@ -100,6 +106,7 @@ namespace gestione_ticket_final.Controllers
                     new Claim(ClaimTypes.Surname, existingUser.Cognome),
                     new Claim("UserId", existingUser.Id_utente.ToString()),
                     new Claim("Ruolo", existingUser.Ruolo.ToString())
+
                 };
 
                 var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

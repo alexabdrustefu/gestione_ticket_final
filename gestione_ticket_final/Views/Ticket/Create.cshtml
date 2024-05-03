@@ -39,11 +39,25 @@
                         <input asp-for="Descrizione" class="form-control" placeholder="Inserisci una descrizione" />
                         <span asp-validation-for="Descrizione" class="text-danger"></span>
                     </div>
-                    <div class="form-group" hidden>
+                    <div class="form-group">
                         <label asp-for="Soluzione" class="control-label"></label>
                         <input asp-for="Soluzione" class="form-control" placeholder="Inserisci una soluzione" />
                         <span asp-validation-for="Soluzione" class="text-danger"></span>
                     </div>
+                    <br />
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input type="checkbox" asp-for="AssegnaAllUtenteLoggato" class="form-check-input" />
+                            <label class="form-check-label" style="color: darkslategrey;" for="AssegnaAllUtenteLoggato">Assegna a me</label>
+                        </div>
+                    </div>
+                    <br />
+                     <div class="form-group">
+                         <div class="form-check">
+                             <input type="checkbox" asp-for="AssegnaAllUtenteLoggato" class="form-check-input" />
+                             <label class="form-check-label" style="color: darkslategrey;" for="AssegnaAllUtenteLoggato">Assegna a me</label>
+                         </div>
+                     </div>
                     <div class="form-group" hidden>
                         <label asp-for="Stato" class="control-label">Stato</label>
                         <select asp-for="Stato" class="form-control">
@@ -62,7 +76,7 @@
 @*                      <div class="form-group">
                         <label asp-for="ProdottoId" class="control-label"></label>
                         <select asp-for="ProdottoId" class="form-control" asp-items="@ViewBag.Prodotto"></select>
-                    </div> 
+                    </div>
  *@
                     <br />
                     <div class="d-flex justify-content-end">

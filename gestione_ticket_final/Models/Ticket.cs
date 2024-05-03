@@ -53,10 +53,17 @@ namespace gestione_ticket_final.Models
 
         public User? User { get; set; }
 
-        
+
         public Prodotto? Prodotto { get; set; }
         //Booleano per eliminazione logica
         public bool Deleted { get; set; }
+        //proprieta booleana per dare la possibilita di aprire o di chiudere un ticket con un pulsante
+        //public bool open { get; set; }
+
+        [Column("assegna_utente_loggato")]
+        [Display(Name = "Assegna a utente loggato")]
+        public bool AssegnaAllUtenteLoggato { get; set; } = false;
+
     }
 
 }

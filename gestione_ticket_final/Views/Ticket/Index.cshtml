@@ -37,7 +37,7 @@
                     <p class="card-text">Creato da: @item.User.Nome  @item.User.Cognome</p>
                 </div>
                 <div class="card-footer">
-                    
+
                     <a asp-action="Details" asp-route-id="@item.Id_ticket" class="btn btn-info">Details</a>
                     @{
                        var currentUser = User.Identity as ClaimsIdentity;
@@ -54,7 +54,7 @@
                             }
                         }
                      }
-                    
+
                 </div>
             </div>
         </div>

@@ -7,13 +7,14 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using gestione_ticket.Data;
 using gestione_ticket_final.Models;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace gestione_ticket_final.Controllers
 {
     [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme)]
+
     public class TicketController : Controller
     {
         private readonly UserManager<User> _userManager;
@@ -64,7 +65,7 @@ namespace gestione_ticket_final.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id_ticket,Data_apertura,Ora_apertura,Data_chiusura,Ora_chiusura,Descrizione,Stato,UtenteId,ProdottoId,Soluzione")] Ticket ticket)
+        public async Task<IActionResult> Create([Bind("Id_ticket,Data_apertura,Ora_apertura,Data_chiusura,Ora_chiusura,Descrizione,Stato,UtenteId,ProdottoId,Soluzione, assegna_utente_loggato")] Ticket ticket, [Bind("id_utente")] LavorazioneTicket lavorazione)
         {
             if (ModelState.IsValid)
             {
@@ -73,7 +74,7 @@ namespace gestione_ticket_final.Controllers
                 ticket.Ora_apertura = DateTime.Now.ToString("HH:mm");
                 ticket.Stato = Status.APERTO;
                 //Assegno user loggato al ticket
-                 
+
                 var currentUser = User.Identity as ClaimsIdentity;
                 if (currentUser != null && currentUser.IsAuthenticated)
                 {
@@ -83,6 +84,20 @@ namespace gestione_ticket_final.Controllers
                     int IdUtenteInt = Int32.Parse(userId);
                     ticket.UserId = IdUtenteInt;
                 }
+                 if (ticket.AssegnaAllUtenteLoggato) {
+                                    if (currentUser != null && currentUser.IsAuthenticated)
+                                    {
+                                        var userIdClaim = currentUser.FindFirst("UserId");
+
+                                    string userId = userIdClaim.Value;
+                                    int IdUtenteInt = Int32.Parse(userId);
+                                    ticket.UtenteId= IdUtenteInt;
+                                        lavorazione.UtenteId = IdUtenteInt;
+                                    }
+                                }
+
+                                //imposto deleted a false
+                                ticket.Deleted = false;
 
 
                 _context.Add(ticket);
@@ -161,7 +176,7 @@ namespace gestione_ticket_final.Controllers
         }
 
         // GET: Ticket/Delete/5
-        
+
         public async Task<IActionResult> Delete(int? id)
         {
             var currentUser = User.Identity as ClaimsIdentity;
