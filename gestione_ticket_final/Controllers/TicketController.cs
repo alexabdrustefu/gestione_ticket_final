@@ -84,20 +84,21 @@ namespace gestione_ticket_final.Controllers
                     int IdUtenteInt = Int32.Parse(userId);
                     ticket.UserId = IdUtenteInt;
                 }
-                 if (ticket.AssegnaAllUtenteLoggato) {
-                                    if (currentUser != null && currentUser.IsAuthenticated)
-                                    {
-                                        var userIdClaim = currentUser.FindFirst("UserId");
+                if (ticket.AssegnaAllUtenteLoggato)
+                {
+                    if (currentUser != null && currentUser.IsAuthenticated)
+                    {
+                        var userIdClaim = currentUser.FindFirst("UserId");
 
-                                    string userId = userIdClaim.Value;
-                                    int IdUtenteInt = Int32.Parse(userId);
-                                    ticket.UserId= IdUtenteInt;
-                                        lavorazione.UserId = IdUtenteInt;
-                                    }
-                                }
+                        string userId = userIdClaim.Value;
+                        int IdUtenteInt = Int32.Parse(userId);
+                        ticket.UserId = IdUtenteInt;
+                        lavorazione.UserId = IdUtenteInt;
+                    }
+                }
 
-                                //imposto deleted a false
-                                ticket.Deleted = false;
+                //imposto deleted a false
+                ticket.Deleted = false;
 
 
                 _context.Add(ticket);
@@ -155,7 +156,8 @@ namespace gestione_ticket_final.Controllers
                         _context.Update(ticket);
                         await _context.SaveChangesAsync();
                     }
-                    else {
+                    else
+                    {
                         return RedirectToAction("ErrorPage", "Unauthorized");
                     }
                 }
@@ -184,11 +186,13 @@ namespace gestione_ticket_final.Controllers
             if (userRuolo.Value != "Tecnico")
             {
                 return RedirectToAction("ErrorPage", "Unauthorized");
-            }else{
-            if (id == null)
-            {
-                return NotFound();
             }
+            else
+            {
+                if (id == null)
+                {
+                    return NotFound();
+                }
 
                 var ticket = await _context.Ticket
                              .Include(m => m.User).Include(m => m.Prodotto)
@@ -196,9 +200,9 @@ namespace gestione_ticket_final.Controllers
 
 
                 if (ticket == null)
-            {
-                return NotFound();
-            }
+                {
+                    return NotFound();
+                }
 
                 return View(ticket);
             }
@@ -240,7 +244,7 @@ namespace gestione_ticket_final.Controllers
             return RedirectToAction("ErrorPage", "Unauthorized"); // Esempio di reindirizzamento ad una pagina di errore
         }
 
-        private bool TicketExists(int ? id)
+        private bool TicketExists(int? id)
         {
             return _context.Ticket.Any(e => e.Id_ticket == id);
         }

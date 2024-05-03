@@ -1,5 +1,6 @@
 ﻿@model gestione_ticket_final.Models.Ticket
-
+@using Microsoft.AspNetCore.Authorization
+@using System.Security.Claims
 @{
     ViewData["Title"] = "Create";
 }
@@ -46,12 +47,26 @@
                         <span asp-validation-for="Soluzione" class="text-danger"></span>
                     </div>
                     <br />
-                    <div class="form-group">
-                        <div class="form-check">
-                            <input type="checkbox" asp-for="AssegnaAllUtenteLoggato" class="form-check-input" />
-                            <label class="form-check-label" style="color: darkslategrey;" for="AssegnaAllUtenteLoggato">Assegna a me</label>
-                        </div>
-                    </div>
+                    @{
+                        var currentUser = User.Identity as ClaimsIdentity;
+                        @if (currentUser != null && currentUser.IsAuthenticated)
+                        {
+                            var userRuolo = currentUser.FindFirst("Ruolo");
+                            if (userRuolo != null)
+                            {
+                                if (userRuolo.Value == "Tecnico")
+                                {
+                                    <div class="form-group">
+                                        <div class="form-check">
+                                            <input type="checkbox" asp-for="AssegnaAllUtenteLoggato" class="form-check-input" />
+                                            <label class="form-check-label" style="color: darkslategrey;" for="AssegnaAllUtenteLoggato">Assegna a me</label>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        }
+                    }
+
                     <br />
 
                     <div class="d-flex justify-content-end">

@@ -1,8 +1,10 @@
 using gestione_ticket.Data;
 using gestione_ticket_final.Models;
+using gestione_ticket_final.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Configuration;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<gestione_ticket_finalContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("gestione_ticket_finalContext") ?? throw new InvalidOperationException("Connection string 'gestione_ticket_finalContext' not found.")));
@@ -31,6 +33,14 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
            options.AccessDeniedPath = "/Unauthorized/ErrorPage"; // Imposta il percorso di accesso negato per il reindirizzamento
            options.LoginPath = "/Auth/Login";
        });
+
+
+//Confiugrazioni relative alla mail
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+
+// Registrazione dei servizi
+builder.Services.AddTransient<IEmailService, EmailService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -55,7 +65,5 @@ app.MapControllerRoute(
     defaults: new { controller = "Home", action = "Index" } 
 
 );
-
- 
 
 app.Run();
