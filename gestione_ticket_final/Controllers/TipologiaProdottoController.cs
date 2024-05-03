@@ -25,7 +25,7 @@ namespace gestione_ticket_final.Controllers
         // GET: TipologiaProdotto
         public async Task<IActionResult> Index()
         {
-            return View(await _context.TipologiaProdotto.ToListAsync());
+            return View(await _context.TipologiaProdotto.Where(t => t.Deleted == false).ToListAsync());
         }
 
         // GET: TipologiaProdotto/Details/5
@@ -37,7 +37,7 @@ namespace gestione_ticket_final.Controllers
             }
 
             var tipologiaProdotto = await _context.TipologiaProdotto
-                .FirstOrDefaultAsync(m => m.Id_tipologia_prodotto == id);
+                .FirstOrDefaultAsync(m => m.Id_tipologia_prodotto == id && m.Deleted == false);
             if (tipologiaProdotto == null)
             {
                 return NotFound();
@@ -61,6 +61,7 @@ namespace gestione_ticket_final.Controllers
         {
             if (ModelState.IsValid)
             {
+                tipologiaProdotto.Deleted = false;
                 _context.Add(tipologiaProdotto);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -100,6 +101,7 @@ namespace gestione_ticket_final.Controllers
             {
                 try
                 {
+                    tipologiaProdotto.Deleted = false;
                     _context.Update(tipologiaProdotto);
                     await _context.SaveChangesAsync();
                 }
@@ -128,7 +130,7 @@ namespace gestione_ticket_final.Controllers
             }
 
             var tipologiaProdotto = await _context.TipologiaProdotto
-                .FirstOrDefaultAsync(m => m.Id_tipologia_prodotto == id);
+                .FirstOrDefaultAsync(m => m.Id_tipologia_prodotto == id && m.Deleted == false);
             if (tipologiaProdotto == null)
             {
                 return NotFound();
@@ -143,11 +145,12 @@ namespace gestione_ticket_final.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var tipologiaProdotto = await _context.TipologiaProdotto.FindAsync(id);
-            if (tipologiaProdotto != null)
+            if (tipologiaProdotto == null)
             {
-                _context.TipologiaProdotto.Remove(tipologiaProdotto);
+                return NotFound();
             }
-
+            tipologiaProdotto.Deleted = true;
+            _context.TipologiaProdotto.Update(tipologiaProdotto);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

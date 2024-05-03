@@ -3,7 +3,6 @@ using gestione_ticket_final.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<gestione_ticket_finalContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("gestione_ticket_finalContext") ?? throw new InvalidOperationException("Connection string 'gestione_ticket_finalContext' not found.")));
@@ -49,9 +48,13 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
-
+app.UseAuthentication();
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Auth}/{action=Login}/{id?}");
+    pattern: "{controller}/{action}/{id?}",
+    defaults: new { controller = "Home", action = "Index" } // Imposta la pagina predefinita su Home/Index
+);
+
+ 
 
 app.Run();

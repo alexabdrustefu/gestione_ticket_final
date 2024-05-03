@@ -37,8 +37,9 @@ namespace gestione_ticket_final.Models
         public string? Descrizione { get; set; }
         [Column("status")]
         public Status? Stato { get; set; }
-        [Column("utente_id")]
-        public int? UtenteId { get; set; }
+        [ForeignKey("UsereId")]
+        [Column("UsereId")]
+        public int? UserId { get; set; }
         [ForeignKey("prodottoId")]
         [Column("prodottoId")]
         public int? ProdottoId { get; set; }
@@ -50,12 +51,12 @@ namespace gestione_ticket_final.Models
         public string? Soluzione { get; set; }
 
 
-        [NotMapped]
-
         public User? User { get; set; }
 
-        [NotMapped]
+
         public Prodotto? Prodotto { get; set; }
+        //Booleano per eliminazione logica
+        public bool Deleted { get; set; }
         //proprieta booleana per dare la possibilita di aprire o di chiudere un ticket con un pulsante
         //public bool open { get; set; }
 

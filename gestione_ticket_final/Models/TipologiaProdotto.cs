@@ -9,8 +9,9 @@ namespace gestione_ticket_final.Models
         public int Id_tipologia_prodotto { get; set; }
         public string Descrizione { get; set; }
 
-        [NotMapped]
-        public ICollection<Prodotto> Prodotti { get; set; }
+        //Booleano per eliminazione logica
+        public bool Deleted { get; set; }
+        public ICollection<Prodotto>? Prodotti { get; set; }
 
     }
 }

@@ -35,23 +35,3 @@
         </div>
     }
 </div>
-
-<div id="modalContainer"></div>
-
-<script>
-
-    function openModal(ticketId) {
-        $.ajax({
-            url: '/Tickets/LavorazioniPerTicket',
-            type: 'GET',
-            data: { ticketId: ticketId },
-            success: function (data) {
-                $('#modalContainer').html(data);
-                $('#_LavorazioniPerTicket').modal('show');
-            },
-            error: function () {
-                alert('Errore durante il caricamento dei dati del modal.');
-            }
-        });
-    }
-</script>

@@ -15,7 +15,6 @@ namespace gestione_ticket.Data
         }
 
         public DbSet<gestione_ticket_final.Models.User> Users { get; set; } = default!;
-        public DbSet<gestione_ticket_final.Models.LoginModel> LoginModel { get; set; } = default!;
         public DbSet<gestione_ticket_final.Models.Prodotto> Prodotto { get; set; } = default!;
         public DbSet<gestione_ticket_final.Models.Ticket> Ticket { get; set; } = default!;
         public DbSet<gestione_ticket_final.Models.LavorazioneTicket> LavorazioneTicket { get; set; } = default!;

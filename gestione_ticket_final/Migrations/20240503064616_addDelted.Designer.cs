@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using gestione_ticket.Data;
 
@@ -11,9 +12,11 @@ using gestione_ticket.Data;
 namespace gestione_ticket_final.Migrations
 {
     [DbContext(typeof(gestione_ticket_finalContext))]
-    partial class gestione_ticket_finalContextModelSnapshot : ModelSnapshot
+    [Migration("20240503064616_addDelted")]
+    partial class addDelted
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -98,10 +101,6 @@ namespace gestione_ticket_final.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("Id_ticket"));
-
-                    b.Property<bool>("AssegnaAllUtenteLoggato")
-                        .HasColumnType("bit")
-                        .HasColumnName("assegna_utente_loggato");
 
                     b.Property<DateTime?>("Data_apertura")
                         .HasColumnType("datetime2")

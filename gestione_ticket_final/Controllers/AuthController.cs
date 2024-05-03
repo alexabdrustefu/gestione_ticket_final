@@ -77,7 +77,7 @@ namespace gestione_ticket_final.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login([Bind("Email,PasswordBase64,IsLoggedIn")] User user)
+        public async Task<IActionResult> Login([Bind("Email,PasswordBase64,IsLoggedIn")]User user)
         {
             if (ModelState.IsValid)
             {
@@ -90,16 +90,21 @@ namespace gestione_ticket_final.Controllers
                     ModelState.AddModelError("", "Credenziali non valide.");
                     return View();
                 }
+                //se l'email non corrisponde mostra errore
+                else if (existingUser.Email != user.Email)
+                {
+                    ModelState.AddModelError("", "Email non corretta.");
+                    return View();
+                }
 
                 // Crea l'identità dell'utente
-                var claims = new[]
+                    new Claim("UserId", existingUser.Id_utente.ToString())
                 {
                     new Claim(ClaimTypes.Email, user.Email),
                     new Claim(ClaimTypes.Role, existingUser.Ruolo.ToString()),
                     new Claim(ClaimTypes.Name, existingUser.Nome),
                     new Claim(ClaimTypes.Surname, existingUser.Cognome),
-                    new Claim("UserId", existingUser.Id_utente.ToString()),
-                    new Claim("Ruolo", existingUser.Ruolo.ToString())
+                    
                 };
 
                 var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
