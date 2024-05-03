@@ -62,7 +62,7 @@ namespace gestione_ticket_final.Models
 
         [Column("assegna_utente_loggato")]
         [Display(Name = "Assegna a utente loggato")]
-        public bool AssegnaAllUtenteLoggato { get; set; } = false;
+        public bool AssegnaAllUtenteLoggato { get; set; }
 
     }
 

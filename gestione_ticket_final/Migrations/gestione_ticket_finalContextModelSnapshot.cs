@@ -24,12 +24,12 @@ namespace gestione_ticket_final.Migrations
 
             modelBuilder.Entity("gestione_ticket_final.Models.LavorazioneTicket", b =>
                 {
-                    b.Property<int>("LavorazioneTicketId")
+                    b.Property<int?>("LavorazioneTicketId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("id_ticket_lavorazione");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LavorazioneTicketId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("LavorazioneTicketId"));
 
                     b.Property<DateTime>("Data_presa_incarico")
                         .HasColumnType("datetime2")
@@ -39,20 +39,18 @@ namespace gestione_ticket_final.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Ora_presa_incarico")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("ora_presa_incarico");
 
-                    b.Property<int>("TicketId")
+                    b.Property<int?>("TicketId")
                         .HasColumnType("int")
                         .HasColumnName("id_ticket");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int")
                         .HasColumnName("id_utente");
 
                     b.Property<string>("motivazione")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("motivazione");
 
@@ -251,15 +249,11 @@ namespace gestione_ticket_final.Migrations
                 {
                     b.HasOne("gestione_ticket_final.Models.Ticket", "Ticket")
                         .WithMany()
-                        .HasForeignKey("TicketId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TicketId");
 
                     b.HasOne("gestione_ticket_final.Models.User", "User")
                         .WithMany("Lavorazioni_ticket")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Ticket");
 

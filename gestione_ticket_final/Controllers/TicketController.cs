@@ -91,8 +91,8 @@ namespace gestione_ticket_final.Controllers
 
                                     string userId = userIdClaim.Value;
                                     int IdUtenteInt = Int32.Parse(userId);
-                                    ticket.UtenteId= IdUtenteInt;
-                                        lavorazione.UtenteId = IdUtenteInt;
+                                    ticket.UserId= IdUtenteInt;
+                                        lavorazione.UserId = IdUtenteInt;
                                     }
                                 }
 
