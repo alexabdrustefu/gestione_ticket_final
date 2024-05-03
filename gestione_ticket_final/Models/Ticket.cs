@@ -37,10 +37,8 @@ namespace gestione_ticket_final.Models
         public string? Descrizione { get; set; }
         [Column("status")]
         public Status? Stato { get; set; }
-        [ForeignKey("UsereId")]
         [Column("UsereId")]
         public int? UserId { get; set; }
-        [ForeignKey("prodottoId")]
         [Column("prodottoId")]
         public int? ProdottoId { get; set; }
 
@@ -62,7 +60,7 @@ namespace gestione_ticket_final.Models
 
         [Column("assegna_utente_loggato")]
         [Display(Name = "Assegna a utente loggato")]
-        public bool AssegnaAllUtenteLoggato { get; set; } = false;
+        public bool AssegnaAllUtenteLoggato { get; set; }
 
     }
 

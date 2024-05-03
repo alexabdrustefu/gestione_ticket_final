@@ -77,7 +77,7 @@ namespace gestione_ticket_final.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login([Bind("Email,PasswordBase64,IsLoggedIn")]User user)
+        public async Task<IActionResult> Login([Bind("Email,PasswordBase64,IsLoggedIn")] User user)
         {
             if (ModelState.IsValid)
             {
@@ -98,13 +98,15 @@ namespace gestione_ticket_final.Controllers
                 }
 
                 // Crea l'identità dell'utente
-                    new Claim("UserId", existingUser.Id_utente.ToString())
+                var claims = new[]
                 {
                     new Claim(ClaimTypes.Email, user.Email),
                     new Claim(ClaimTypes.Role, existingUser.Ruolo.ToString()),
                     new Claim(ClaimTypes.Name, existingUser.Nome),
                     new Claim(ClaimTypes.Surname, existingUser.Cognome),
-                    
+                    new Claim("UserId", existingUser.Id_utente.ToString()),
+                    new Claim("Ruolo", existingUser.Ruolo.ToString())
+
                 };
 
                 var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
