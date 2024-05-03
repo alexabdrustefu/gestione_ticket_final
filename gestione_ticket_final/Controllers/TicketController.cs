@@ -28,7 +28,7 @@ namespace gestione_ticket_final.Controllers
         // GET: Ticket
         public async Task<IActionResult> Index()
         {
-            var tickets = _context.Ticket.Where(t => t.Deleted == false).Include(t => t.User);
+            var tickets = _context.Ticket.Include(t => t.User);
             return View(await tickets.ToListAsync());
         }
 
@@ -42,7 +42,7 @@ namespace gestione_ticket_final.Controllers
             }
 
             var ticket = await _context.Ticket
-                .FirstOrDefaultAsync(m => m.Id_ticket == id && m.Deleted==false);
+                .FirstOrDefaultAsync(m => m.Id_ticket == id);
             if (ticket == null)
             {
                 return NotFound();
@@ -54,23 +54,19 @@ namespace gestione_ticket_final.Controllers
         // GET: Ticket/Create
         public IActionResult Create()
         {
-
-            var prodotti = _context.Prodotto.ToList();
-
-            // Passa la lista dei prodotti alla vista utilizzando ViewBag
-            ViewBag.Prodotto = new SelectList(_context.Prodotto.ToList(), "ProdottoId", "Descrizione");
-             return View();
+            ViewBag.Prodotto = new SelectList(_context.Prodotto.ToList(), "Id_prodotto", "Descrizione");
+            return View();
         }
 
         // POST: Ticket/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id_ticket,Data_apertura,Ora_apertura,Data_chiusura,Ora_chiusura,Descrizione,Stato,UtenteId,ProdottoId,Soluzione")] Ticket ticket)
         {
             if (ModelState.IsValid)
             {
-                //imposto deleted a false
-                ticket.Deleted = false;
                 //Il ticket viene creato aperto
                 ticket.Data_apertura = DateTime.Now;
                 ticket.Ora_apertura = DateTime.Now.ToString("HH:mm");
@@ -127,7 +123,6 @@ namespace gestione_ticket_final.Controllers
             {
                 try
                 {
-                    ticket.Deleted = false;
                     _context.Update(ticket);
                     await _context.SaveChangesAsync();
                 }
@@ -156,7 +151,7 @@ namespace gestione_ticket_final.Controllers
             }
 
             var ticket = await _context.Ticket
-                .FirstOrDefaultAsync(m => m.Id_ticket == id && m.Deleted == false);
+                .FirstOrDefaultAsync(m => m.Id_ticket == id);
             if (ticket == null)
             {
                 return NotFound();
@@ -171,12 +166,11 @@ namespace gestione_ticket_final.Controllers
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
             var ticket = await _context.Ticket.FindAsync(id);
-            if (ticket == null)
+            if (ticket != null)
             {
-                return NotFound();
+                _context.Ticket.Remove(ticket);
             }
-            ticket.Deleted = true;
-            _context.Ticket.Update(ticket);
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
