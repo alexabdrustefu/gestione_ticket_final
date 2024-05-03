@@ -9,8 +9,10 @@ namespace gestione_ticket_final.Models
         [Key]
         [Column("id_ticket_lavorazione")]
         public int? LavorazioneTicketId { get; set; }
+        [ForeignKey("id_utente")]
         [Column("id_utente")]
-        public int? UtenteId { get; set; }
+        public int? UserId { get; set; }
+        [ForeignKey("id_ticket")]
         [Column("id_ticket")]
         public int? TicketId { get; set; }
         [Column("data_presa_incarico")]
@@ -26,7 +28,7 @@ namespace gestione_ticket_final.Models
 
 
         //Booleano per eliminazione logica
-        public bool Deleted { get; set; }
+        public bool Deleted { get; set; } 
         public Ticket? Ticket { get; set; }
     }
 }

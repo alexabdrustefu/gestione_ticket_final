@@ -21,7 +21,7 @@ namespace gestione_ticket_final.Models
         public bool IsLoggedIn { get; set; }
 
 
-        public Ticket? Tickets { get; set; }
+        public ICollection<Ticket>? Tickets { get; set; }
         public ICollection<LavorazioneTicket>? Lavorazioni_ticket { get; set; }
         //Booleano per eliminazione logica
         public bool Deleted { get; set; }

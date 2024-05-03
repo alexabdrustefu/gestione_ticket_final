@@ -1,37 +1,110 @@
-﻿@model IEnumerable<gestione_ticket_final.Models.Ticket>
-
+﻿@model IEnumerable<Ticket>
+@using Microsoft.AspNetCore.Authorization
+@using System.Security.Claims
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<div class="card text-white bg-dark mb-3">
+
+    <div class="card-body">
+        <h5 class="card-title">Gestione dei ticket</h5>
+        <p class="card-text">In questa sezione del programma é possibile gerstire gli utenti</p>
+    </div>
+</div>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
 </p>
 
 <div class="row">
     @foreach (var item in Model)
     {
         <div class="col-md-3 mb-4">
-            <button type="button" onclick="openModal('@item.Id_ticket')">
-                <div class="card">
-                    <div class="card-body Scrolbar" style="max-height: 200px; overflow-y: auto;">
-                        <h5 class="card-title">Ticket ID: @item.Id_ticket</h5>
-                        <p class="card-text">Data Apertura: @item.Data_apertura</p>
-                        <p class="card-text">Ora Apertura: @item.Ora_apertura</p>
-                        <p class="card-text">Data Chiusura: @item.Data_chiusura</p>
-                        <p class="card-text">Ora Chiusura: @item.Ora_chiusura</p>
-                        <p class="card-text">Descrizione: @item.Descrizione</p>
-                        <p class="card-text">Soluzione: @item.Soluzione</p>
-                    </div>
-                    <div class="card-footer">
-                        <a asp-action="Edit" asp-route-id="@item.Id_ticket" class="btn btn-primary">Edit</a>
-                        <a asp-action="Details" asp-route-id="@item.Id_ticket" class="btn btn-info">Details</a>
-                        <a asp-action="Delete" asp-route-id="@item.Id_ticket" class="btn btn-danger">Delete</a>
-                    </div>
+           @*  <button type="button" class="btn btn-success" onclick="openModal('@item.Id_ticket')" style="width: 100%">Lavorazione Ticket</button>
+            <button type="button" class="btn btn-warning" onclick="openModalTicket(@item.UtenteId)" style="width: 100%">Mostra utente associato al ticket</button> *@
+
+            <div class="card ">
+                <div class="card-body Scrolbar" style="max-height: 200px; overflow-y: auto;">
+                    <h5 class="card-title">Ticket ID: @item.Id_ticket</h5>
+                   
+                    <p class="card-text">Data Apertura: @(item.Data_apertura.HasValue ? item.Data_apertura.Value.ToString("dd/MM/yyyy") : "")</p>
+                    <p class="card-text">Ora Apertura: @item.Ora_apertura</p>
+                    <p class="card-text">Data Chiusura: @(item.Data_chiusura.HasValue ? item.Data_chiusura.Value.ToString("dd/MM/yyyy") : "")</p>
+                    <p class="card-text">Ora Chiusura: @item.Ora_chiusura</p>
+                    <p class="card-text">Descrizione: @item.Descrizione</p>
+                    <p class="card-text">Soluzione: @item.Soluzione</p>
+                    <p class="card-text">Creato da: @item.User.Nome  @item.User.Cognome</p>
                 </div>
-            </button>
+                <div class="card-footer">
+
+                    <a asp-action="Details" asp-route-id="@item.Id_ticket" class="btn btn-info">Details</a>
+                    @{
+                       var currentUser = User.Identity as ClaimsIdentity;
+                        @if (currentUser != null && currentUser.IsAuthenticated)
+                        {
+                            var userRuolo = currentUser.FindFirst("Ruolo");
+                            if (userRuolo != null)
+                            {
+                                if (userRuolo.Value == "Tecnico")
+                                {
+                                    <a asp-action="Edit" asp-route-id="@item.Id_ticket" class="btn btn-primary">Edit</a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id_ticket" class="btn btn-danger">Delete</a>
+                                }
+                            }
+                        }
+                     }
+
+                </div>
+            </div>
         </div>
     }
 </div>
+
+
+@* <div id="modalContainer"></div>
+<div id="utenteContainer"></div>
+ *@
+@* <script>
+
+    function openModal(ticketId) {
+        $.ajax({
+            url: '/Tickets/LavorazioniPerTicket',
+            type: 'GET',
+            data: { ticketId: ticketId },
+            success: function (data) {
+                $('#modalContainer').html(data);
+
+                // Ottieni le coordinate della tabella
+                var table = document.getElementById("_LavorazioniPerTicket");
+                var tableCoordinates = table.getBoundingClientRect();
+
+                // Sposta il browser verso la tabella
+                window.scrollTo({
+                    top: tableCoordinates.top,
+                    behavior: 'smooth'
+                });
+            },
+            error: function () {
+                alert('Errore durante il caricamento dei dati del modal.');
+            }
+        });
+    }
+</script>
+<script>
+
+    function openModalTicket(utenteId) {
+        $.ajax({
+            url: '/Tickets/utenteTicket',
+            type: 'GET',
+            data: { utenteId: utenteId },
+            success: function (data) {
+                $('#utenteContainer').html(data);
+                $('#_UtenteTicket');
+            },
+            error: function () {
+                alert('Errore durante il caricamento dei dati del modal.');
+            }
+        });
+    }
+</script> *@

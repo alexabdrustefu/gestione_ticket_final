@@ -5,49 +5,76 @@
 @{
     Layout = "_Layout_login";
 }
+<section class="vh-100 d-flex justify-content-center align-items-center">
+    <div class="container-fluid h-custom">
+        <div class="row justify-content-center">
+            <div class="col-md-9 col-lg-6 col-xl-5">
+                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
+                     class="img-fluid" alt="Sample image">
+            </div>
+            <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+                <h3>Login</h3>
+                <form asp-action="Login" method="post" class="d-flex flex-column justify-content-center">
 
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card mt-5" <div class="card mt-5" style="border-radius: 15px; border: 1px solid #000;">
+                    <div data-mdb-input-init class="form-outline mb-4">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" style="height: 100%;">
+                                    <i class="bi bi-envelope" style="line-height: inherit;"></i>
+                                </span>
+                            </div>
+                            <input type="email" id="email" name="email" class="form-control form-control-lg"
+                                   placeholder="Enter a valid email address" />
+                        </div>
+                        @* <label class="form-label" for="email">Email address</label> *@
+                    </div>
 
-                <div class="card-header">
-                    <h4>Login</h4>
-                </div>
-                <div class="card-body">
-                    <form asp-action="Login" method="post">
-                        <div asp-validation-summary="All" class="text-danger"></div>
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" name="email" class="form-control" required placeholder="Inserisci E-mail" />
-                        </div>
-                        <div class="form-group">
-                            <label for="PasswordBase64">Password</label>
-                            <input type="password" id="PasswordBase64" name="PasswordBase64" class="form-control" required placeholder="Inserisci Password"/>
-                        </div>
-                        <br />
-                        <div class="row">
-                            <div class="col-sm-2">
-                                <button type="submit" class="btn btn-primary">Accedi</button>
-                            </div>
-                            <div class="col-sm-2">
-                                <a  asp-controller="Auth" asp-action="Register" class="btn btn-danger">Registrazione</a>
+
+
+                    <div data-mdb-input-init class="form-outline mb-3">
+                        <div class="form-group d-flex align-items-center">
+                            @* <label for="PasswordBase64"></label> *@
+                            <div class="input-group">
+                                <div class="input-group-prepend" id="togglePassword">
+                                    <span class="input-group-text" style="height: 100%;"><i class="bi bi-eye-slash"></i></span>
+                                </div>
+                                <input type="password" id="PasswordBase64" name="PasswordBase64"
+                                       class="form-control form-control-lg" required placeholder="Enter password" />
                             </div>
                         </div>
-                    </form>
-                </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <a href="#!" class="text-body">Forgot password?</a>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button type="submit" data-mdb-button-init data-mdb-ripple-init
+                                class="btn btn-primary btn-lg">
+                            Login
+                        </button>
+                        <p class="small fw-bold mt-2 mb-0">
+                            Don't have an account? <a asp-controller="Auth" asp-action="Register">Register</a>
+                        </p>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-</div>
+</section>
 
-    @section Scripts {
-        <script>
-            function encryptPassword() {
-                var passwordInput = document.getElementById("PasswordBase64").value;
-                var hashedPassword = btoa(passwordInput); // Converte la password in Base64
-                document.getElementById("PasswordBase64").value = hashedPassword; // Imposta il campo password criptato nel form
-            }
-        </script>
-    }
 
+@section Scripts {
+    <script>
+        const togglePassword = document.querySelector('#togglePassword');
+        const passwordInput = document.querySelector('#PasswordBase64');
+
+        togglePassword.addEventListener('click', function (e) {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.querySelector('i').classList.toggle('bi-eye');
+            this.querySelector('i').classList.toggle('bi-eye-slash');
+        });
+    </script>
+}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">

@@ -1,0 +1,56 @@
+﻿@{
+    ViewData["Title"] = "ErrorPage";
+    Layout = "_layout_error";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Accesso non autorizzato</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #e74c3c;
+        }
+
+        p {
+            color: #333;
+        }
+
+        .button {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+            .button:hover {
+                background-color: #2980b9;
+            }
+    </style>
+</head>
+<body>
+        <h1>Accesso non autorizzato</h1>
+        <p>Non hai i permessi necessari per eseguire questa operazione.</p>
+        <p>Torna alla <a href="/">pagina principale</a>.</p>
+</body>
+</html>

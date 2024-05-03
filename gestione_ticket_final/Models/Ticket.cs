@@ -37,8 +37,10 @@ namespace gestione_ticket_final.Models
         public string? Descrizione { get; set; }
         [Column("status")]
         public Status? Stato { get; set; }
+        [ForeignKey("UsereId")]
         [Column("UsereId")]
         public int? UserId { get; set; }
+        //[ForeignKey("prodottoId")]
         [Column("prodottoId")]
         public int? ProdottoId { get; set; }
 
