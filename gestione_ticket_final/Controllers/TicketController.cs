@@ -10,6 +10,7 @@ using gestione_ticket_final.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using NuGet.Versioning;
 
 namespace gestione_ticket_final.Controllers
 {
@@ -32,7 +33,12 @@ namespace gestione_ticket_final.Controllers
             var tickets = _context.Ticket.Include(t => t.User);
             return View(await tickets.ToListAsync());
         }
-
+        //GET LAVORAZIONE PER TICKET
+        public async Task<IActionResult> LavorazioniPerTicket(int ticketId)
+        {
+            var lavorazioni = await _context.LavorazioneTicket.Where(l => l.TicketId == ticketId).ToListAsync();
+            return PartialView("_LavorazioniPerTicket", lavorazioni);
+        }
 
         // GET: Ticket/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -109,7 +115,7 @@ namespace gestione_ticket_final.Controllers
         }
 
         // GET: Ticket/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
             var currentUser = User.Identity as ClaimsIdentity;
             var userRuolo = currentUser.FindFirst("Ruolo");
@@ -124,7 +130,7 @@ namespace gestione_ticket_final.Controllers
                     return NotFound();
                 }
 
-                var ticket = await _context.Ticket.FindAsync(id);
+                var ticket = await _context.Ticket.Include(u =>u.User).FirstOrDefaultAsync(t => t.Id_ticket == id);
                 if (ticket == null)
                 {
                     return NotFound();
@@ -138,7 +144,7 @@ namespace gestione_ticket_final.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, [Bind("Id_ticket,Data_apertura,Ora_apertura,Data_chiusura,Ora_chiusura,Descrizione,Stato,UtenteId,ProdottoId,Soluzione")] Ticket ticket)
+        public async Task<IActionResult> Edit(int? id, [Bind("Id_ticket,Data_apertura,Ora_apertura,Data_chiusura,Ora_chiusura,Descrizione,Stato,UserId,ProdottoId,Soluzione")] Ticket ticket)
         {
             if (id != ticket.Id_ticket)
             {
@@ -151,7 +157,7 @@ namespace gestione_ticket_final.Controllers
                 {
                     var currentUser = User.Identity as ClaimsIdentity;
                     var userRuolo = currentUser.FindFirst("Ruolo");
-                    if (userRuolo.Value != "Tecnico")
+                    if (userRuolo.Value == "Tecnico")
                     {
                         _context.Update(ticket);
                         await _context.SaveChangesAsync();
@@ -247,6 +253,18 @@ namespace gestione_ticket_final.Controllers
         private bool TicketExists(int? id)
         {
             return _context.Ticket.Any(e => e.Id_ticket == id);
+        }
+        [HttpPost]
+        public IActionResult GetSuggestions(string input)
+        {
+            // Esegui la query per ottenere suggerimenti basati sull'input dal database
+            var suggestions = _context.Users
+                .Where(u => u.Nome.StartsWith(input))
+                .Select(u => new { Id = u.Id_utente, Nome = u.Nome, Cognome = u.Cognome })
+                .Take(5) // Limita il numero di suggerimenti a 5 per semplicità
+                .ToList();
+
+            return Json(suggestions);
         }
 
     }

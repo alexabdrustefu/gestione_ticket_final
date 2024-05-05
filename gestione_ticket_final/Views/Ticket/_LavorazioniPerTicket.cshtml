@@ -1,0 +1,45 @@
+﻿
+<div class="container" id="_LavorazioniPerTicket">
+    <div class="row">
+        <div class="col">
+            <button type="button" class="btn btn-secondary mb-3" onclick="closeTable()">Chiudi Tabella</button>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Data Presa Incarico</th>
+                        <th>Ora Presa Incarico</th>
+                        <th>Motivazione</th>
+                        <th>Utente ID</th>
+                        <th>Ticket ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var lavorazione in Model)
+                    {
+                        <tr>
+                            <td>@lavorazione.Data_presa_incarico</td>
+                            <td>@lavorazione.Ora_presa_incarico</td>
+                            <td>@lavorazione.motivazione</td>
+                            <td>@lavorazione.UtenteId</td>
+                            <td>@lavorazione.TicketId</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    function closeTable() {
+        $('#_LavorazioniPerTicket').remove();
+        $('#modalContainer').html('');
+
+        // Sposta la pagina in alto
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+</script>
+
+
