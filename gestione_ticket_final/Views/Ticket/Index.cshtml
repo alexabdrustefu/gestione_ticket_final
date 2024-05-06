@@ -20,56 +20,77 @@
 <div class="row">
     @foreach (var item in Model)
     {
-        <div class="col-md-3 mb-4">
-           @*  <button type="button" class="btn btn-success" onclick="openModal('@item.Id_ticket')" style="width: 100%">Lavorazione Ticket</button>
-            <button type="button" class="btn btn-warning" onclick="openModalTicket(@item.UtenteId)" style="width: 100%">Mostra utente associato al ticket</button> *@
-
-            <div class="card ">
+        <div class="col-md-2 mb-2">
+            <button type="button" class="btn btn-success" onclick="openModal('@item.Id_ticket')" style="padding: 0px; width: 100%;border-top-left-radius: 80px 80px;">
+                Lavorazione Ticket
+            </button>
+            <div class="card" style="border-bottom-left-right-radius: 6px;">
                 <div class="card-body Scrolbar" style="max-height: 200px; overflow-y: auto;">
-                    <h5 class="card-title">Ticket ID: @item.Id_ticket</h5>
-                   
-                    <p class="card-text">Data Apertura: @(item.Data_apertura.HasValue ? item.Data_apertura.Value.ToString("dd/MM/yyyy") : "")</p>
-                    <p class="card-text">Ora Apertura: @item.Ora_apertura</p>
-                    <p class="card-text">Data Chiusura: @(item.Data_chiusura.HasValue ? item.Data_chiusura.Value.ToString("dd/MM/yyyy") : "")</p>
-                    <p class="card-text">Ora Chiusura: @item.Ora_chiusura</p>
-                    <p class="card-text">Descrizione: @item.Descrizione</p>
-                    <p class="card-text">Soluzione: @item.Soluzione</p>
-                    <p class="card-text">Creato da: @item.User.Nome  @item.User.Cognome</p>
+                    <p class="card-text" style="font-size: 14px;">Ticket ID: @item.Id_ticket</p>
+                    <p class="card-text" style="font-size: 14px;">Data Apertura: @(item.Data_apertura.HasValue ? item.Data_apertura.Value.ToString("dd/MM/yyyy") : "")</p>
+                    <p class="card-text" style="font-size: 14px;">Ora Apertura: @item.Ora_apertura</p>
+                    <p class="card-text" style="font-size: 14px;">Data Chiusura: @(item.Data_chiusura.HasValue ? item.Data_chiusura.Value.ToString("dd/MM/yyyy") : "")</p>
+                    <p class="card-text" style="font-size: 14px;">Ora Chiusura: @item.Ora_chiusura</p>
+                    <p class="card-text" style="font-size: 14px;">Descrizione: @item.Descrizione</p>
+                    <p class="card-text" style="font-size: 14px;">Soluzione: @item.Soluzione</p>
+                    <p class="card-text" style="font-size: 14px;">Creato da: @item.User.Nome  @item.User.Cognome</p>
                 </div>
                 <div class="card-footer">
-
-                    <a asp-action="Details" asp-route-id="@item.Id_ticket" class="btn btn-info">Details</a>
-                    @{
-                       var currentUser = User.Identity as ClaimsIdentity;
-                        @if (currentUser != null && currentUser.IsAuthenticated)
-                        {
-                            var userRuolo = currentUser.FindFirst("Ruolo");
-                            if (userRuolo != null)
+                    <div class="row">
+                        @{
+                            var currentUser = User.Identity as ClaimsIdentity;
+                            if (currentUser != null && currentUser.IsAuthenticated)
                             {
-                                if (userRuolo.Value == "Tecnico")
+                                var userRuolo = currentUser.FindFirst("Ruolo");
+                                if (userRuolo != null && userRuolo.Value == "Tecnico")
                                 {
-                                    <a asp-action="Edit" asp-route-id="@item.Id_ticket" class="btn btn-primary">Edit</a>
-                                    <a asp-action="Delete" asp-route-id="@item.Id_ticket" class="btn btn-danger">Delete</a>
+                                    <div class="col-md-4">
+                                        <a asp-action="Details" asp-route-id="@item.Id_ticket" class="btn btn-info btn-sm">Details</a>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <a asp-action="Edit" asp-route-id="@item.Id_ticket" class="btn btn-primary btn-sm">Edit</a>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <a asp-action="Delete" asp-route-id="@item.Id_ticket" class="btn btn-danger btn-sm">Delete</a>
+                                    </div>
                                 }
                             }
                         }
-                     }
-
+                    </div>
                 </div>
+
             </div>
         </div>
     }
 </div>
+<div id="modalContainer"></div>
 
 
-@* <div id="modalContainer"></div>
-<div id="utenteContainer"></div>
- *@
-@* <script>
 
+<div class="col-md-10" id="right-column">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-container">
+                <div id="modalContainer"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* <div id="utenteContainer"></div> *@
+
+<script>
     function openModal(ticketId) {
+        var rightColumn = document.getElementById("right-column");
+        if (rightColumn.classList.contains("col-md-10")) {
+            rightColumn.classList.remove("col-md-10");
+            rightColumn.classList.add("col-md-6");
+        } else {
+            rightColumn.classList.remove("col-md-6");
+            rightColumn.classList.add("col-md-10");
+        }
         $.ajax({
-            url: '/Tickets/LavorazioniPerTicket',
+            url: '/Ticket/LavorazioniPerTicket',
             type: 'GET',
             data: { ticketId: ticketId },
             success: function (data) {
@@ -91,20 +112,21 @@
         });
     }
 </script>
-<script>
+
+@* <script>
 
     function openModalTicket(utenteId) {
-        $.ajax({
-            url: '/Tickets/utenteTicket',
-            type: 'GET',
-            data: { utenteId: utenteId },
-            success: function (data) {
-                $('#utenteContainer').html(data);
-                $('#_UtenteTicket');
-            },
-            error: function () {
-                alert('Errore durante il caricamento dei dati del modal.');
-            }
-        });
+    $.ajax({
+    url: '/Tickets/utenteTicket',
+    type: 'GET',
+    data: { utenteId: utenteId },
+    success: function (data) {
+    $('#utenteContainer').html(data);
+    $('#_UtenteTicket');
+    },
+    error: function () {
+    alert('Errore durante il caricamento dei dati del modal.');
     }
-</script> *@
+    });
+    }
+    </script>  *@

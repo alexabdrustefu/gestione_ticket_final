@@ -3,72 +3,164 @@
 @{
     ViewData["Title"] = "Edit";
 }
-
-<h1>Edit</h1>
+<h1>Edit di un ticket</h1>
 
 <h4>Ticket</h4>
 <hr />
+<style>
+    .autocomplete-dropdown {
+        border: groove;
+        border-radius: 3px;
+        width: 95%;
+        display: none;
+        position: absolute;
+        z-index: 1;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        overflow-y: auto;
+        max-height: 200px; /* Limitiamo l'altezza per evitare che la lista diventi troppo lunga */
+    }
+
+        .autocomplete-dropdown li {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+            .autocomplete-dropdown li:hover {
+                background-color: #f0f0f0;
+            }
+
+        .autocomplete-dropdown li {
+            color: black;
+        }
+</style>
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id_ticket" />
-            <div class="form-group">
-                <label asp-for="Data_apertura" class="control-label"></label>
-                <input asp-for="Data_apertura" class="form-control" />
-                <span asp-validation-for="Data_apertura" class="text-danger"></span>
+    <div class="col-md-6 offset-md-3">
+        <div class="card text-white border-secondary" style="border-radius: 20px;">
+            <div class="card-body">
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id_ticket" />
+                    <div class="form-group" hidden>
+                        <label asp-for="Data_apertura" class="control-label"></label>
+                        <input asp-for="Data_apertura" class="form-control" />
+                        <span asp-validation-for="Data_apertura" class="text-danger"></span>
+                    </div>
+                    <div class="form-group" hidden>
+                        <label asp-for="Ora_apertura" class="control-label"></label>
+                        <input asp-for="Ora_apertura" class="form-control" />
+                        <span asp-validation-for="Ora_apertura" class="text-danger"></span>
+                    </div>
+                    <div class="form-group" hidden>
+                        <label asp-for="Data_chiusura" class="control-label"></label>
+                        <input asp-for="Data_chiusura" class="form-control" />
+                        <span asp-validation-for="Data_chiusura" class="text-danger"></span>
+                    </div>
+                    <div class="form-group" hidden>
+                        <label asp-for="Ora_chiusura" class="control-label"></label>
+                        <input asp-for="Ora_chiusura" class="form-control" />
+                        <span asp-validation-for="Ora_chiusura" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Descrizione" class="control-label"></label>
+                        <input asp-for="Descrizione" class="form-control" placeholder="Inserisci una descrizione" />
+                        <span asp-validation-for="Descrizione" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Soluzione" class="control-label"></label>
+                        <input asp-for="Soluzione" class="form-control" placeholder="Inserisci una soluzione" />
+                        <span asp-validation-for="Soluzione" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Stato" class="control-label"></label>
+                        <input asp-for="Stato" class="form-control" />
+                        <span asp-validation-for="Stato" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="UserId" class="control-label">Utente</label>
+                        <div class="autocomplete-container">
+                            <input value="@($"{Model.User?.Nome} {Model.User?.Cognome}")" type="text" id="autocompleteInput" class="form-control" placeholder="Cerca utente" />
+                            <ul id="suggestionsList" class="autocomplete-dropdown"></ul>
+                        </div>
+                       
+                        <input asp-for="UserId" type="hidden" id="user-id" name="UserId" />
+
+                        
+                        <span id="selectedUserName"></span>
+                        @* <span asp-validation-for="User.Nome" class="text-danger"></span> *@
+                    </div>
+
+
+
+
+
+                    <div class="form-group">
+                        <label asp-for="ProdottoId" class="control-label"></label>
+                        <input asp-for="ProdottoId" class="form-control" />
+                        <span asp-validation-for="ProdottoId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Create" class="btn btn-primary" />
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="Ora_apertura" class="control-label"></label>
-                <input asp-for="Ora_apertura" class="form-control" />
-                <span asp-validation-for="Ora_apertura" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Data_chiusura" class="control-label"></label>
-                <input asp-for="Data_chiusura" class="form-control" />
-                <span asp-validation-for="Data_chiusura" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Ora_chiusura" class="control-label"></label>
-                <input asp-for="Ora_chiusura" class="form-control" />
-                <span asp-validation-for="Ora_chiusura" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Descrizione" class="control-label"></label>
-                <input asp-for="Descrizione" class="form-control" />
-                <span asp-validation-for="Descrizione" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Stato" class="control-label"></label>
-                <input asp-for="Stato" class="form-control" />
-                <span asp-validation-for="Stato" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
-                <input asp-for="UserId" class="form-control" />
-                <span asp-validation-for="UserId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ProdottoId" class="control-label"></label>
-                <input asp-for="ProdottoId" class="form-control" />
-                <span asp-validation-for="ProdottoId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Soluzione" class="control-label"></label>
-                <input asp-for="Soluzione" class="form-control" />
-                <span asp-validation-for="Soluzione" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
+
+        <div>
+            <a asp-action="Index">Back to List</a>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+@section scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#autocompleteInput').on('input', function () {
+                var inputText = $(this).val();
+                $.ajax({
+                    url: '@Url.Action("GetSuggestions", "Ticket")',
+                    type: 'POST',
+                    data: { input: inputText },
+                    success: function (data) {
+                        var suggestionsList = $('#suggestionsList');
+                        suggestionsList.empty();
+                        if (data.length > 0) {
+                            suggestionsList.show();
+                            data.forEach(function (suggestion) {
+                                var fullName = suggestion.nome + ' ' + suggestion.cognome;
+                                $('#suggestionsList').append('<li data-userid="' + suggestion.id + '">' + fullName + '</li>');
+                            });
+                        } else {
+                            suggestionsList.hide();
+                        }
+                    }
+                });
+            });
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+            $(document).click(function (event) {
+                if (!$(event.target).closest('.autocomplete-container').length) {
+                    $('#suggestionsList').hide();
+                }
+            });
+
+            $('#suggestionsList').on('click', 'li', function () {
+                var selectedUser = $(this).text(); // Ottieni il nome dell'utente selezionato
+                var selectedUserId = $(this).data('userid'); // Ottieni l'ID dell'utente selezionato
+                $('#autocompleteInput').val(selectedUser); // Imposto il nome dell'utente nel campo di input
+                $('#user-id').val(selectedUserId); // Imposto l'ID dell'utente nel campo nascosto per l'ID
+                $('#selectedUserName').text(selectedUser); // Visualizzo il nome dell'utente
+                $('#suggestionsList').hide();
+            });
+        });
+
+    </script>
 }

@@ -25,6 +25,8 @@ namespace gestione_ticket_final.Models
         public ICollection<LavorazioneTicket>? Lavorazioni_ticket { get; set; }
         //Booleano per eliminazione logica
         public bool Deleted { get; set; }
+        //booleano che serve per controllare se la password e stata cambiata 
+        public bool HasChangedPassword { get; set; }
     }
 
 }
