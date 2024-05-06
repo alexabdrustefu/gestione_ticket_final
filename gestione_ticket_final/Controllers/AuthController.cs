@@ -112,7 +112,7 @@ namespace gestione_ticket_final.Controllers
                     new Claim(ClaimTypes.Role, existingUser.Ruolo.ToString()),
                     new Claim(ClaimTypes.Name, existingUser.Nome),
                     new Claim(ClaimTypes.Surname, existingUser.Cognome),
-                    new Claim("UserId", existingUser.Id_utente.ToString()),
+                    new Claim("UserId", existingUser.UserId.ToString()),
                     new Claim("Ruolo", existingUser.Ruolo.ToString())
 
                 };

@@ -66,6 +66,57 @@ namespace gestione_ticket_final.Controllers
             return View();
         }
 
+        //// POST: Ticket/Create
+        //// To protect from overposting attacks, enable the specific properties you want to bind to.
+        //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Create([Bind("Id_ticket,Data_apertura,Ora_apertura,Data_chiusura,Ora_chiusura,Descrizione,Stato,UtenteId,ProdottoId,Soluzione, assegna_utente_loggato")] Ticket ticket, [Bind("id_utente")] LavorazioneTicket lavorazione)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        //Il ticket viene creato aperto
+        //        ticket.Data_apertura = DateTime.Now;
+        //        ticket.Ora_apertura = DateTime.Now.ToString("HH:mm");
+        //        ticket.Stato = Status.APERTO;
+        //        //Assegno user loggato al ticket
+
+        //        var currentUser = User.Identity as ClaimsIdentity;
+        //        if (currentUser != null && currentUser.IsAuthenticated)
+        //        {
+        //            var userIdClaim = currentUser.FindFirst("UserId");
+
+        //            string userId = userIdClaim.Value;
+        //            int IdUtenteInt = Int32.Parse(userId);
+        //            ticket.UserId = IdUtenteInt;
+        //        }
+        //        if (ticket.AssegnaAllUtenteLoggato)
+        //        {
+        //            if (currentUser != null && currentUser.IsAuthenticated)
+        //            {
+        //                var userIdClaim = currentUser.FindFirst("UserId");
+
+        //                string userId = userIdClaim.Value;
+        //                int IdUtenteInt = Int32.Parse(userId);
+        //                ticket.UserId = IdUtenteInt;
+        //                lavorazione.UserId = IdUtenteInt;
+        //            }
+        //        }
+
+        //        //imposto deleted a false
+        //        ticket.Deleted = false;
+
+
+        //        _context.Add(ticket);
+        //        await _context.SaveChangesAsync();
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    return View(ticket);
+        //}
+
+
+
+
         // POST: Ticket/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -80,7 +131,6 @@ namespace gestione_ticket_final.Controllers
                 ticket.Ora_apertura = DateTime.Now.ToString("HH:mm");
                 ticket.Stato = Status.APERTO;
                 //Assegno user loggato al ticket
-
                 var currentUser = User.Identity as ClaimsIdentity;
                 if (currentUser != null && currentUser.IsAuthenticated)
                 {
@@ -90,6 +140,7 @@ namespace gestione_ticket_final.Controllers
                     int IdUtenteInt = Int32.Parse(userId);
                     ticket.UserId = IdUtenteInt;
                 }
+
                 if (ticket.AssegnaAllUtenteLoggato)
                 {
                     if (currentUser != null && currentUser.IsAuthenticated)
@@ -105,8 +156,7 @@ namespace gestione_ticket_final.Controllers
 
                 //imposto deleted a false
                 ticket.Deleted = false;
-
-
+              
                 _context.Add(ticket);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -260,11 +310,21 @@ namespace gestione_ticket_final.Controllers
             // Esegui la query per ottenere suggerimenti basati sull'input dal database
             var suggestions = _context.Users
                 .Where(u => u.Nome.StartsWith(input))
-                .Select(u => new { Id = u.Id_utente, Nome = u.Nome, Cognome = u.Cognome })
+                .Select(u => new { Id = u.UserId, Nome = u.Nome, Cognome = u.Cognome })
                 .Take(5) // Limita il numero di suggerimenti a 5 per semplicità
                 .ToList();
 
             return Json(suggestions);
+        }
+
+        public IActionResult CercaPerTipologiaProdotto(int tipologiaProdottoId)
+        {
+            var tickets = (from ticket in _context.Ticket
+                           join prodotto in _context.Prodotto on ticket.ProdottoId equals prodotto.ProdottoId
+                           where prodotto.TipologiaProdottoId == tipologiaProdottoId
+                           select ticket).ToList();
+
+            return View(tickets);
         }
 
     }

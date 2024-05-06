@@ -13,9 +13,20 @@
     </div>
 </div>
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Create New</a>
-</p>
+<div class="row mb-3">
+    <div class="col-md-6">
+        <a asp-action="Create" class="btn btn-primary">Create New</a>
+    </div>
+    <div class="col-md-3">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Inserisci la tipologia del prodotto" name="productType" style="width: 70%;">
+            <div class="input-group-append" style="width: 30%;">
+                <button class="btn btn-primary" type="submit">Cerca</button>
+            </div>
+        </div>
+    </div>
+   
+</div>
 
 <div class="row">
     @foreach (var item in Model)

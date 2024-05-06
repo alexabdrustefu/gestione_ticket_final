@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace gestione_ticket_final.Migrations
 {
     /// <inheritdoc />
-    public partial class initdatabase : Migration
+    public partial class migration13 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,7 +17,8 @@ namespace gestione_ticket_final.Migrations
                 {
                     Id_tipologia_prodotto = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Descrizione = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Descrizione = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -28,7 +29,7 @@ namespace gestione_ticket_final.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id_utente = table.Column<int>(type: "int", nullable: false)
+                    UserId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nome = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Cognome = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -36,6 +37,8 @@ namespace gestione_ticket_final.Migrations
                     PasswordBase64 = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Ruolo = table.Column<int>(type: "int", nullable: true),
                     IsLoggedIn = table.Column<bool>(type: "bit", nullable: false),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false),
+                    HasChangedPassword = table.Column<bool>(type: "bit", nullable: false),
                     Id = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -53,7 +56,7 @@ namespace gestione_ticket_final.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id_utente);
+                    table.PrimaryKey("PK_Users", x => x.UserId);
                 });
 
             migrationBuilder.CreateTable(
@@ -63,7 +66,8 @@ namespace gestione_ticket_final.Migrations
                     ProdottoId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Descrizione = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TipoProdottoId = table.Column<int>(type: "int", nullable: false)
+                    TipoProdottoId = table.Column<int>(type: "int", nullable: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -72,8 +76,7 @@ namespace gestione_ticket_final.Migrations
                         name: "FK_Prodotto_TipologiaProdotto_TipoProdottoId",
                         column: x => x.TipoProdottoId,
                         principalTable: "TipologiaProdotto",
-                        principalColumn: "Id_tipologia_prodotto",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id_tipologia_prodotto");
                 });
 
             migrationBuilder.CreateTable(
@@ -88,9 +91,11 @@ namespace gestione_ticket_final.Migrations
                     ora_chiusura = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     descrizione = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     status = table.Column<int>(type: "int", nullable: true),
-                    UsereId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: true),
                     prodottoId = table.Column<int>(type: "int", nullable: true),
-                    soluzione = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    soluzione = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false),
+                    assegna_utente_loggato = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -101,10 +106,10 @@ namespace gestione_ticket_final.Migrations
                         principalTable: "Prodotto",
                         principalColumn: "ProdottoId");
                     table.ForeignKey(
-                        name: "FK_Ticket_Users_UsereId",
-                        column: x => x.UsereId,
+                        name: "FK_Ticket_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id_utente");
+                        principalColumn: "UserId");
                 });
 
             migrationBuilder.CreateTable(
@@ -113,11 +118,12 @@ namespace gestione_ticket_final.Migrations
                 {
                     id_ticket_lavorazione = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    id_utente = table.Column<int>(type: "int", nullable: false),
-                    id_ticket = table.Column<int>(type: "int", nullable: false),
+                    id_utente = table.Column<int>(type: "int", nullable: true),
+                    id_ticket = table.Column<int>(type: "int", nullable: true),
                     data_presa_incarico = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ora_presa_incarico = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    motivazione = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    ora_presa_incarico = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    motivazione = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -126,14 +132,12 @@ namespace gestione_ticket_final.Migrations
                         name: "FK_LavorazioneTicket_Ticket_id_ticket",
                         column: x => x.id_ticket,
                         principalTable: "Ticket",
-                        principalColumn: "Id_ticket",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id_ticket");
                     table.ForeignKey(
                         name: "FK_LavorazioneTicket_Users_id_utente",
                         column: x => x.id_utente,
                         principalTable: "Users",
-                        principalColumn: "Id_utente",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "UserId");
                 });
 
             migrationBuilder.CreateIndex(
@@ -157,11 +161,9 @@ namespace gestione_ticket_final.Migrations
                 column: "prodottoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Ticket_UsereId",
+                name: "IX_Ticket_UserId",
                 table: "Ticket",
-                column: "UsereId",
-                unique: true,
-                filter: "[UsereId] IS NOT NULL");
+                column: "UserId");
         }
 
         /// <inheritdoc />
