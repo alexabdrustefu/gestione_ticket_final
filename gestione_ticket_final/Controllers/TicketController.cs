@@ -28,9 +28,24 @@ namespace gestione_ticket_final.Controllers
         }
 
         // GET: Ticket
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string status)
         {
-            var tickets = _context.Ticket.Include(t => t.User);
+            IQueryable<Ticket> tickets = _context.Ticket.Include(t => t.User);
+
+            if (!string.IsNullOrEmpty(status))
+            {
+                Status statusEnum;
+                if (Enum.TryParse(status, out statusEnum))
+                {
+                    tickets = tickets.Where(t => t.Stato == statusEnum);
+                }
+                else
+                {   
+                    // Gestisci lo stato non valido qui, ad esempio reindirizza a una pagina di errore
+                    return RedirectToAction("Error", "Home");
+                }
+            }
+
             return View(await tickets.ToListAsync());
         }
         //GET LAVORAZIONE PER TICKET
