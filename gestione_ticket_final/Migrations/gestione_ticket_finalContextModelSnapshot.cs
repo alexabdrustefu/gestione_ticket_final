@@ -138,7 +138,7 @@ namespace gestione_ticket_final.Migrations
 
                     b.Property<int?>("UserId")
                         .HasColumnType("int")
-                        .HasColumnName("UsereId");
+                        .HasColumnName("UserId");
 
                     b.HasKey("Id_ticket");
 
@@ -171,11 +171,11 @@ namespace gestione_ticket_final.Migrations
 
             modelBuilder.Entity("gestione_ticket_final.Models.User", b =>
                 {
-                    b.Property<int>("Id_utente")
+                    b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id_utente"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
@@ -243,7 +243,7 @@ namespace gestione_ticket_final.Migrations
                     b.Property<string>("UserName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id_utente");
+                    b.HasKey("UserId");
 
                     b.ToTable("Users");
                 });

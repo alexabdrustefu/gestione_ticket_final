@@ -11,7 +11,7 @@ namespace gestione_ticket_final.Models
     public class User:IdentityUser
     {
         [Key]
-        public int Id_utente { get; set; }
+        public int UserId { get; set; }
 
         public string ? Nome { get; set; }
         public string ? Cognome { get; set; }

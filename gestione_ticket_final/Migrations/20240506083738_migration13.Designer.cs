@@ -12,8 +12,8 @@ using gestione_ticket.Data;
 namespace gestione_ticket_final.Migrations
 {
     [DbContext(typeof(gestione_ticket_finalContext))]
-    [Migration("20240503073148_removeFK")]
-    partial class removeFK
+    [Migration("20240506083738_migration13")]
+    partial class migration13
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,12 +27,12 @@ namespace gestione_ticket_final.Migrations
 
             modelBuilder.Entity("gestione_ticket_final.Models.LavorazioneTicket", b =>
                 {
-                    b.Property<int>("LavorazioneTicketId")
+                    b.Property<int?>("LavorazioneTicketId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("id_ticket_lavorazione");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LavorazioneTicketId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("LavorazioneTicketId"));
 
                     b.Property<DateTime>("Data_presa_incarico")
                         .HasColumnType("datetime2")
@@ -42,20 +42,18 @@ namespace gestione_ticket_final.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Ora_presa_incarico")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("ora_presa_incarico");
 
-                    b.Property<int>("TicketId")
+                    b.Property<int?>("TicketId")
                         .HasColumnType("int")
                         .HasColumnName("id_ticket");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int")
                         .HasColumnName("id_utente");
 
                     b.Property<string>("motivazione")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("motivazione");
 
@@ -102,6 +100,10 @@ namespace gestione_ticket_final.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("Id_ticket"));
 
+                    b.Property<bool>("AssegnaAllUtenteLoggato")
+                        .HasColumnType("bit")
+                        .HasColumnName("assegna_utente_loggato");
+
                     b.Property<DateTime?>("Data_apertura")
                         .HasColumnType("datetime2")
                         .HasColumnName("data_apertura");
@@ -139,7 +141,7 @@ namespace gestione_ticket_final.Migrations
 
                     b.Property<int?>("UserId")
                         .HasColumnType("int")
-                        .HasColumnName("UsereId");
+                        .HasColumnName("UserId");
 
                     b.HasKey("Id_ticket");
 
@@ -172,11 +174,11 @@ namespace gestione_ticket_final.Migrations
 
             modelBuilder.Entity("gestione_ticket_final.Models.User", b =>
                 {
-                    b.Property<int>("Id_utente")
+                    b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id_utente"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
@@ -194,6 +196,9 @@ namespace gestione_ticket_final.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HasChangedPassword")
                         .HasColumnType("bit");
 
                     b.Property<string>("Id")
@@ -241,7 +246,7 @@ namespace gestione_ticket_final.Migrations
                     b.Property<string>("UserName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id_utente");
+                    b.HasKey("UserId");
 
                     b.ToTable("Users");
                 });
@@ -250,15 +255,11 @@ namespace gestione_ticket_final.Migrations
                 {
                     b.HasOne("gestione_ticket_final.Models.Ticket", "Ticket")
                         .WithMany()
-                        .HasForeignKey("TicketId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TicketId");
 
                     b.HasOne("gestione_ticket_final.Models.User", "User")
                         .WithMany("Lavorazioni_ticket")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Ticket");
 

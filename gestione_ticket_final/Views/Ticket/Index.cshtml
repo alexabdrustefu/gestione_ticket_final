@@ -13,9 +13,32 @@
     </div>
 </div>
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Create New</a>
-</p>
+<div class="row mb-3">
+    <div class="col-md-6">
+        <a asp-action="Create" class="btn btn-primary">Create New</a>
+    </div>
+    <div class="col-md-3">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Inserisci la tipologia del prodotto" name="productType" style="width: 70%;">
+            <div class="input-group-append" style="width: 30%;">
+                <button class="btn btn-primary" type="submit">Cerca</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="input-group">
+            <select class="form-control" id="statusFilter">
+                <option value="">Tutti gli stati</option>
+                <option value="APERTO">Aperto</option>
+                <option value="LAVORAZIONE">In lavorazione</option>
+                <option value="CHIUSO">Chiuso</option>
+            </select>
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="button" onclick="filterTickets()">Cerca</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="row">
     @foreach (var item in Model)
@@ -110,6 +133,12 @@
                 alert('Errore durante il caricamento dei dati del modal.');
             }
         });
+    }
+</script>
+<script>
+    function filterTickets() {
+        var status = document.getElementById("statusFilter").value;
+        window.location.href = "/Ticket/Index?status=" + status;
     }
 </script>
 

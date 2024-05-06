@@ -7,8 +7,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace gestione_ticket_final.Controllers
 {
@@ -89,7 +91,7 @@ namespace gestione_ticket_final.Controllers
                 var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
                 var passwordCode = Convert.ToBase64String(Encoding.UTF8.GetBytes(user.PasswordBase64));
                 // Verifica se l'utente esiste e la password corrisponde
-               
+
                 if (existingUser == null || existingUser.PasswordBase64 != passwordCode)
                 {
                     ModelState.AddModelError("PasswordBase64", "Credenziali non valide.");
@@ -110,7 +112,7 @@ namespace gestione_ticket_final.Controllers
                     new Claim(ClaimTypes.Role, existingUser.Ruolo.ToString()),
                     new Claim(ClaimTypes.Name, existingUser.Nome),
                     new Claim(ClaimTypes.Surname, existingUser.Cognome),
-                    new Claim("UserId", existingUser.Id_utente.ToString()),
+                    new Claim("UserId", existingUser.UserId.ToString()),
                     new Claim("Ruolo", existingUser.Ruolo.ToString())
 
                 };
@@ -231,6 +233,7 @@ namespace gestione_ticket_final.Controllers
             // Reindirizza l'utente alla pagina di login
             return RedirectToAction("Login", "Auth");
         }
+
 
     }
 }
