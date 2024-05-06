@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using gestione_ticket.Data;
 
@@ -11,9 +12,11 @@ using gestione_ticket.Data;
 namespace gestione_ticket_final.Migrations
 {
     [DbContext(typeof(gestione_ticket_finalContext))]
-    partial class gestione_ticket_finalContextModelSnapshot : ModelSnapshot
+    [Migration("20240503143814_migrazione6")]
+    partial class migrazione6
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -138,7 +141,7 @@ namespace gestione_ticket_final.Migrations
 
                     b.Property<int?>("UserId")
                         .HasColumnType("int")
-                        .HasColumnName("UserId");
+                        .HasColumnName("UsereId");
 
                     b.HasKey("Id_ticket");
 
@@ -171,11 +174,11 @@ namespace gestione_ticket_final.Migrations
 
             modelBuilder.Entity("gestione_ticket_final.Models.User", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int>("Id_utente")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id_utente"));
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
@@ -240,7 +243,7 @@ namespace gestione_ticket_final.Migrations
                     b.Property<string>("UserName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("UserId");
+                    b.HasKey("Id_utente");
 
                     b.ToTable("Users");
                 });
