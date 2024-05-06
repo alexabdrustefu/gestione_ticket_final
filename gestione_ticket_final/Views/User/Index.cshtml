@@ -1,0 +1,58 @@
+﻿@model IEnumerable<gestione_ticket_final.Models.User>
+@{
+    ViewData["Title"] = "Index";
+}
+<div class="card text-white bg-dark mb-3">
+
+    <div class="card-body">
+        <h5 class="card-title">Gestione degli utenti</h5>
+        <p class="card-text">In questa sezione del programma é possibile gestire gli utenti</p>
+    </div>
+</div>
+@* <a class="btn btn-info" asp-action="Create">Create</a> *@
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Nome)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Cognome)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ruolo)
+            </th>
+            <th>
+                Azioni Disponibili
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelitem => item.Nome)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelitem => item.Cognome)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelitem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelitem => item.Ruolo)
+                </td>
+                <td>
+                    <a class="btn btn-primary" asp-action="Details" asp-route-id="@item.UserId">Details</a>
+                    <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.UserId">Edit</a>
+                    <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.UserId">Delete</a>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>

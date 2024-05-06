@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Authorization;
+@using System.Security.Claims;
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -15,8 +18,7 @@
 <body>
 
     @* autocom *@
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
@@ -30,8 +32,8 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home <i class="bi bi-house"></i></a>
                         </li>
-                       @*  <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        @*  <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li> *@
 
                         <li class="nav-item dropdown">
@@ -48,7 +50,19 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="TipologiaProdotto" asp-action="Index">Tipologia Prodotto <i class="bi bi-tags"></i></a>
                         </li>
-
+                        @{
+                            var currentUser = User.Identity as ClaimsIdentity;
+                            if (currentUser != null && currentUser.IsAuthenticated)
+                            {
+                                var userRuolo = currentUser.FindFirst("Ruolo");
+                                if (userRuolo != null && userRuolo.Value == "Amministratore")
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Index">Users <i class="bi bi-people"></i></a>
+                                    </li>
+                                }
+                            }
+                        }
                     </ul>
                     <ul class="navbar-nav">
                         </li>
@@ -57,7 +71,7 @@
                             <a class="nav-link text-dark" style="font-weight: 100;">Bentornato @User.Identity.Name <i class="bi bi-person"></i></a>
                         </li>
                         <li class="nav-item">
-                            <form  asp-area="" asp-controller="Auth" asp-action="Logout" method="post">
+                            <form asp-area="" asp-controller="Auth" asp-action="Logout" method="post">
                                 <button type="submit" class="btn btn-danger"> <i class="bi bi-box-arrow-left"></i> Logout</button>
                             </form>
                         </li>

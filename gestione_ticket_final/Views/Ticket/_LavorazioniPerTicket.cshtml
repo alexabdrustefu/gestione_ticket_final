@@ -1,4 +1,4 @@
-﻿
+﻿@model List<LavorazioneTicket>;
 <div class="container" id="_LavorazioniPerTicket">
     <div class="row">
         <div class="col">
@@ -20,7 +20,7 @@
                             <td>@lavorazione.Data_presa_incarico</td>
                             <td>@lavorazione.Ora_presa_incarico</td>
                             <td>@lavorazione.motivazione</td>
-                            <td>@lavorazione.UtenteId</td>
+                            <td>@lavorazione.UserId</td>
                             <td>@lavorazione.TicketId</td>
                         </tr>
                     }

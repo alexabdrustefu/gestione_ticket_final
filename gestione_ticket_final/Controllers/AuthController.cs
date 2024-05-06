@@ -63,6 +63,8 @@ namespace gestione_ticket_final.Controllers
                     Email = user.Email,
                     PasswordBase64 = passwordBase64, // Salva la password come stringa base64
                     Ruolo = Ruolo.Utente,
+                    HasChangedPassword = user.HasChangedPassword = true,
+                    Deleted = user.Deleted = false
                 };
 
                 // Aggiungo l'utente al database

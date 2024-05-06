@@ -135,13 +135,13 @@
                             }
                         </dd>
                     </dl>
-                    <div style="text-align: -webkit-right;display: ruby-text;">
+                    <div class="d-flex justify-content-end">
                         <form id="deleteForm" asp-action="Delete">
-                            <a class="btn btn-secondary" asp-action="Index">Back</a>
+                            <a class="btn btn-secondary mr-2" asp-action="Index">Back</a>
                             <input type="hidden" asp-for="Id_ticket" />
-                            @* in un modo asincrono richiama questo file *@
+                            @* Includi il tuo file di modal delete *@
                             @await Html.PartialAsync("ModalDelete")
-                            <button type="button" class="btn btn-danger" onclick="openConfirmDeleteModal()">Delete</button>
+                            <a type="button" class="btn btn-danger" onclick="openConfirmDeleteModal()">Delete</a>
                         </form>
                     </div>
                 </div>

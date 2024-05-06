@@ -68,6 +68,9 @@ namespace gestione_ticket_final.Controllers
         public async Task<IActionResult> LavorazioniPerTicket(int ticketId)
         {
             var lavorazioni = await _context.LavorazioneTicket.Where(l => l.TicketId == ticketId).ToListAsync();
+            if (lavorazioni == null) {
+                return NotFound();
+                    }
             return PartialView("_LavorazioniPerTicket", lavorazioni);
         }
 
@@ -200,7 +203,7 @@ namespace gestione_ticket_final.Controllers
         {
             var currentUser = User.Identity as ClaimsIdentity;
             var userRuolo = currentUser.FindFirst("Ruolo");
-            if (userRuolo.Value != "Tecnico")
+            if (userRuolo.Value != "Tecnico" && userRuolo.Value != "Amministratore")
             {
                 return RedirectToAction("ErrorPage", "Unauthorized");
             }
@@ -238,7 +241,7 @@ namespace gestione_ticket_final.Controllers
                 {
                     var currentUser = User.Identity as ClaimsIdentity;
                     var userRuolo = currentUser.FindFirst("Ruolo");
-                    if (userRuolo.Value == "Tecnico")
+                    if (userRuolo.Value != "Tecnico" && userRuolo.Value != "Amministratore")
                     {
                         _context.Update(ticket);
                         await _context.SaveChangesAsync();
@@ -270,7 +273,7 @@ namespace gestione_ticket_final.Controllers
         {
             var currentUser = User.Identity as ClaimsIdentity;
             var userRuolo = currentUser.FindFirst("Ruolo");
-            if (userRuolo.Value != "Tecnico")
+            if (userRuolo.Value != "Tecnico" && userRuolo.Value != "Amministratore")
             {
                 return RedirectToAction("ErrorPage", "Unauthorized");
             }
@@ -314,7 +317,7 @@ namespace gestione_ticket_final.Controllers
                 var userRuolo = currentUser.FindFirst("Ruolo");
                 if (userRuolo != null)
                 {
-                    if (userRuolo.Value == "TECNICO")
+                    if (userRuolo.Value != "Tecnico" || userRuolo.Value != "Amministratore")
                     {
                         ticket.Deleted = true;
                         _context.Ticket.Update(ticket);

@@ -1,0 +1,60 @@
+﻿@model gestione_ticket_final.Models.User
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<div>
+    <h4>Elimina Utente</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card text-white border-secondary" style="border-radius: 20px;">
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-5" style="color:black;">
+                            @Html.DisplayNameFor(model => model.Nome)
+                        </dt>
+                        <dd class="col-sm-5" style="color:black;">
+                            @Html.DisplayFor(model => model.Nome)
+                        </dd>
+                        <dt class="col-sm-5" style="color:black;">
+                            @Html.DisplayNameFor(model => model.Cognome)
+                        </dt>
+                        <dd class="col-sm-5" style="color:black;">
+                            @Html.DisplayFor(model => model.Cognome)
+                        </dd>
+                        <dt class="col-sm-5" style="color:black;">
+                            @Html.DisplayNameFor(model => model.Email)
+                        </dt>
+                        <dd class="col-sm-5" style="color:black;">
+                            @Html.DisplayFor(model => model.Email)
+                        </dd>
+                        <dt class="col-sm-5" style="color:black;">
+                            @Html.DisplayNameFor(model => model.Ruolo)
+                        </dt>
+                        <dd class="col-sm-5" style="color:black;">
+                            @Html.DisplayFor(model => model.Ruolo)
+                        </dd>
+                    </dl>
+                    <div style="text-align: -webkit-right;display: ruby-text;">
+                    <form id="deleteForm" asp-action="Delete">
+                            <a class="btn btn-secondary" asp-action="Index">Back</a>
+                        <input type="hidden" asp-for="UserId" />
+                        @* in un modo asincrono richiama questo file *@
+                            @await Html.PartialAsync("ModalDelete")
+                            <button type="button" class="btn btn-danger" onclick="openConfirmDeleteModal()">Delete</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+@* con questo script riesco a mostrare il modal *@
+<script>
+     function openConfirmDeleteModal() {
+         $('#confirmDeleteModal').modal('show');
+     }
+
+</script>

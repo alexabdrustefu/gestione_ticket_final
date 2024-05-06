@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using gestione_ticket.Data;
 
@@ -11,9 +12,11 @@ using gestione_ticket.Data;
 namespace gestione_ticket_final.Migrations
 {
     [DbContext(typeof(gestione_ticket_finalContext))]
-    partial class gestione_ticket_finalContextModelSnapshot : ModelSnapshot
+    [Migration("20240506150710_changeProperties")]
+    partial class changeProperties
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
