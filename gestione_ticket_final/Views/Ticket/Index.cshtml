@@ -40,6 +40,19 @@
     </div>
 </div>
 
+<div class="row mb-3">
+    <div class="col-md-3">
+        <div class="input-group">
+            <input type="text" class="form-control" id="descriptionFilter" placeholder="Cerca per descrizione">
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="button" onclick="findByDescription()">Cerca</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 <div class="row">
     @foreach (var item in Model)
     {
@@ -139,6 +152,12 @@
     function filterTickets() {
         var status = document.getElementById("statusFilter").value;
         window.location.href = "/Ticket/Index?status=" + status;
+    }
+</script>
+<script>
+    function findByDescription() {
+        var description = document.getElementById("descriptionFilter").value;
+        window.location.href = "/Ticket/FindByDescription?description=" + description;
     }
 </script>
 

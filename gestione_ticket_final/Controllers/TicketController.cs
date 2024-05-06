@@ -48,6 +48,22 @@ namespace gestione_ticket_final.Controllers
 
             return View(await tickets.ToListAsync());
         }
+
+        public async Task<IActionResult> FindByDescription(string description)
+        {
+            if (string.IsNullOrEmpty(description))
+            {
+                // Se la descrizione è vuota, reindirizza alla vista Index senza eseguire la ricerca
+                return RedirectToAction("Index");
+            }
+
+            var tickets = await _context.Ticket
+                .Include(t => t.User)
+                .Where(t => t.Descrizione.Contains(description))
+                .ToListAsync();
+
+            return View("Index", tickets);
+        }
         //GET LAVORAZIONE PER TICKET
         public async Task<IActionResult> LavorazioniPerTicket(int ticketId)
         {
