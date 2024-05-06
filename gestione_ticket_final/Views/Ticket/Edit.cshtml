@@ -3,9 +3,9 @@
 @{
     ViewData["Title"] = "Edit";
 }
-<h1>Edit di un ticket</h1>
+<h1>Edit  ticket</h1>
 
-<h4>Ticket</h4>
+
 <hr />
 <style>
     .autocomplete-dropdown {
@@ -67,32 +67,32 @@
                         <span asp-validation-for="Ora_chiusura" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="Descrizione" class="control-label"></label>
+                        <label asp-for="Descrizione" class="control-label" style="color:black">Descrizione</label>
                         <input asp-for="Descrizione" class="form-control" placeholder="Inserisci una descrizione" />
                         <span asp-validation-for="Descrizione" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="Soluzione" class="control-label"></label>
+                        <label asp-for="Soluzione" class="control-label" style="color:black">Soluzione</label>
                         <input asp-for="Soluzione" class="form-control" placeholder="Inserisci una soluzione" />
                         <span asp-validation-for="Soluzione" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="Stato" class="control-label"></label>
+                        <label asp-for="Stato" class="control-label" style="color:black">Stato</label>
                         <input asp-for="Stato" class="form-control" />
                         <span asp-validation-for="Stato" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="UserId" class="control-label">Utente</label>
+                        <label asp-for="UserId" class="control-label" style="color:black">Utente</label>
                         <div class="autocomplete-container">
                             <input value="@($"{Model.User?.Nome} {Model.User?.Cognome}")" type="text" id="autocompleteInput" class="form-control" placeholder="Cerca utente" />
                             <ul id="suggestionsList" class="autocomplete-dropdown"></ul>
                         </div>
-                       
+
                         <input asp-for="UserId" type="hidden" id="user-id" name="UserId" />
 
-                        
+
                         <span id="selectedUserName"></span>
-                        @* <span asp-validation-for="User.Nome" class="text-danger"></span> *@
+                        <span asp-validation-for="User.Nome" class="text-danger"></span>
                     </div>
 
 
@@ -100,20 +100,21 @@
 
 
                     <div class="form-group">
-                        <label asp-for="ProdottoId" class="control-label"></label>
+                        <label asp-for="ProdottoId" class="control-label" style="color:black">Prodotto</label>
                         <input asp-for="ProdottoId" class="form-control" />
                         <span asp-validation-for="ProdottoId" class="text-danger"></span>
                     </div>
-                    <div class="form-group">
-                        <input type="submit" value="Create" class="btn btn-primary" />
+                    <div class="d-flex justify-content-end">
+                            <a class="btn btn-danger" asp-action="Index">Back</a>
+                       
+                        <div class="form-group">
+                            <input type="submit" value="Create" class="btn btn-primary" />
+                        </div>
                     </div>
                 </form>
             </div>
         </div>
 
-        <div>
-            <a asp-action="Index">Back to List</a>
-        </div>
     </div>
 </div>
 
