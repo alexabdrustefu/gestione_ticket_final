@@ -28,10 +28,13 @@ namespace gestione_ticket_final.Controllers
         }
 
         // GET: Ticket
-        public async Task<IActionResult> Index(string status)
+        // Modifica il metodo Index per ricevere tutti i filtri
+        public async Task<IActionResult> Index(string status, string productType, string description, int tipologiaProdottoId)
         {
             IQueryable<Ticket> tickets = _context.Ticket.Include(t => t.User);
+            IQueryable<TipologiaProdotto> tipo = _context.TipologiaProdotto;
 
+            // Applica i filtri
             if (!string.IsNullOrEmpty(status))
             {
                 Status statusEnum;
@@ -40,10 +43,24 @@ namespace gestione_ticket_final.Controllers
                     tickets = tickets.Where(t => t.Stato == statusEnum);
                 }
                 else
-                {   
+                {
                     // Gestisci lo stato non valido qui, ad esempio reindirizza a una pagina di errore
                     return RedirectToAction("Error", "Home");
                 }
+            }
+
+            //if (!string.IsNullOrEmpty(productType))
+            //{
+            //    // Applica il filtro sulla tipologia del prodotto
+            //    {
+            //        tipo = tipo.Where(t => t.Id_tipologia_prodotto == tipologiaProdottoId);
+            //    }
+            //}
+
+            if (!string.IsNullOrEmpty(description))
+            {
+                // Applica il filtro sulla descrizione
+                tickets = tickets.Where(t => t.Descrizione.Contains(description));
             }
 
             return View(await tickets.ToListAsync());
@@ -203,7 +220,7 @@ namespace gestione_ticket_final.Controllers
         {
             var currentUser = User.Identity as ClaimsIdentity;
             var userRuolo = currentUser.FindFirst("Ruolo");
-            if (userRuolo.Value != "Tecnico" && userRuolo.Value != "Amministratore")
+            if (userRuolo.Value != "Tecnico" &&  userRuolo.Value != "Amministratore")
             {
                 return RedirectToAction("ErrorPage", "Unauthorized");
             }
