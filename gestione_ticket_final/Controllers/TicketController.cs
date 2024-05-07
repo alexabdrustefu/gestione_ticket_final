@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using NuGet.Versioning;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.AspNetCore.Routing.Constraints;
 
 namespace gestione_ticket_final.Controllers
@@ -50,13 +51,13 @@ namespace gestione_ticket_final.Controllers
                 }
             }
 
-            //if (!string.IsNullOrEmpty(productType))
-            //{
-            //    // Applica il filtro sulla tipologia del prodotto
-            //    {
-            //        tipo = tipo.Where(t => t.Id_tipologia_prodotto == tipologiaProdottoId);
-            //    }
-            //}
+            if (!string.IsNullOrEmpty(productType))
+            {
+                // applica il filtro sulla tipologia del prodotto
+                {
+                    tipo = tipo.Where(t => t.Id_tipologia_prodotto == tipologiaProdottoId);
+                }
+            }
 
             if (!string.IsNullOrEmpty(description))
             {
@@ -174,7 +175,7 @@ namespace gestione_ticket_final.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id_ticket,Data_apertura,Ora_apertura,Data_chiusura,Ora_chiusura,Descrizione,Stato,UtenteId,ProdottoId,Soluzione, AssegnaAllUtenteLoggato")] Ticket ticket, [Bind("UserId,TicketId")] LavorazioneTicket lavorazione)
+        public async Task<IActionResult> Create([Bind("Id_ticket,Data_apertura,Ora_apertura,Data_chiusura,Ora_chiusura,Descrizione,Stato,UtenteId,ProdottoId,Soluzione, assegna_utente_loggato")] Ticket ticket, [Bind("id_utente")] LavorazioneTicket lavorazione)
         {
             if (ModelState.IsValid)
             {
@@ -385,15 +386,27 @@ namespace gestione_ticket_final.Controllers
             return Json(suggestions);
         }
 
-        public IActionResult CercaPerTipologiaProdotto(int tipologiaProdottoId)
-        {
-            var tickets = (from ticket in _context.Ticket
-                           join prodotto in _context.Prodotto on ticket.ProdottoId equals prodotto.ProdottoId
-                           where prodotto.TipologiaProdottoId == tipologiaProdottoId
-                           select ticket).ToList();
 
-            return View(tickets);
+        public IActionResult GetTipologiaProdotto(string input)
+        {
+            var tipologie = _context.TipologiaProdotto
+                .Where(t => t.Descrizione.StartsWith(input))
+                .Select(t => new {  Descrizione = t.Descrizione })
+                .Take(5)
+                .ToList();
+            return Json(tipologie);
         }
+
+
+        //public IActionResult CercaPerTipologiaProdotto(int tipologiaProdottoId)
+        //{
+        //    var tickets = (from ticket in _context.Ticket
+        //                   join prodotto in _context.Prodotto on ticket.ProdottoId equals prodotto.ProdottoId
+        //                   where prodotto.TipologiaProdottoId == tipologiaProdottoId
+        //                   select ticket).ToList();
+
+        //    return View(tickets);
+        //}
 
     }
 }

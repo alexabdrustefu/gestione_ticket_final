@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<Ticket>
+
 @using Microsoft.AspNetCore.Authorization
 @using System.Security.Claims
 @{
@@ -19,14 +20,29 @@
 <div class="row mb-3">
     <div class="col-md-18">
         <div class="row">
-            <div class="col-md-3">
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Inserisci la tipologia del prodotto" name="productType" style="width: 70%;">
-                    <div class="input-group-append" style="width: 30%;">
-                        <!-- Rimuovi il pulsante "Cerca" da qui -->
+            @{
+                var index = 0;
+                foreach (var ticket in Model)
+                {
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label asp-for="@ticket.Prodotto.TipologiaProdotto.Descrizione" class="control-label" style="color:black">Tipologia</label>
+                            <div class="autocomplete-container">
+                                <input value="@($"{ticket.Prodotto?.TipologiaProdotto.Descrizione}")" type="text" id="autocompleteInput-@index" class="form-control autocomplete-input" data-ticket-id="@index" placeholder="Cerca tipologia prodotto" />
+                                <ul id="suggestionsList-@index" class="autocomplete-dropdown"></ul>
+                            </div>
+
+                            <input asp-for="@ticket.Prodotto.TipologiaProdotto.Id_tipologia_prodotto" type="hidden" id="tipologia-prodotto-id-@index" name="TipologiaProdottoId" />
+                            <span id="selectedTipologiaProdottoDescrizione-@index"></span>
+                            <span asp-validation-for="@ticket.Prodotto.TipologiaProdotto.Descrizione" class="text-danger"></span>
+                        </div>
                     </div>
-                </div>
-            </div>
+                    index++;
+                }
+            }
+        </div>
+
+           
             <div class="col-md-3">
                 <div class="input-group">
                     <select class="form-control" id="statusFilter">
@@ -171,6 +187,25 @@
         window.location.href = "/Ticket/FindByDescription?description=" + description;
     }
 </script>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.autocomplete-input').keyup(function () {
+                var input = $(this);
+                var ticketId = input.data('ticket-id');
+                var suggestionsList = $('#suggestionsList-' + ticketId);
+                suggestionsList.empty();
+                $.get('/Ticket/GetTipologiaProdotto', { input: input.val() }, function (data) {
+                    $.each(data, function (index, value) {
+                        suggestionsList.append('<li>' + value + '</li>');
+                    });
+                });
+            });
+        });
+    </script>
+}
+
+
 
 @* <script>
 
