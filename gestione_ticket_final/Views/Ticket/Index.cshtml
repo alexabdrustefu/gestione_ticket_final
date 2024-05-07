@@ -42,7 +42,7 @@
             }
         </div>
 
-           
+
             <div class="col-md-3">
                 <div class="input-group">
                     <select class="form-control" id="statusFilter">
@@ -69,17 +69,49 @@
                 <div class="input-group">
                     
                     <button class="btn btn-primary" type="button" onclick="filterTickets()">Cerca</button>
+<div class="card text-white bg-success mb-3" style="border-radius: 20px;">
+    <div class="card-body">
+        <h5 class="card-title">Gestione dei propri ticket</h5>
+        <p class="card-text">In questa sezione del programma é possibile visualizzare i propri Ticket</p>
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <label class="control-label" style="color:white">Inserisci Tipologia</label>
+                            <input type="text" class="form-control" placeholder="Inserisci la tipologia del prodotto" name="productType" style="width: 70%; border-radius: 9px;">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="control-label" style="color:white; ">Seleziona Stato</label>
+                        <div class="input-group">
+                            <select class="form-control" id="statusFilter" style="border-radius: 9px;">
+                                <option value="">Tutti gli stati</option>
+                                <option value="APERTO">Aperto</option>
+                                <option value="LAVORAZIONE">In lavorazione</option>
+                                <option value="CHIUSO">Chiuso</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="control-label" style="color:white">Inserisci Descrizione</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="descriptionFilter" placeholder="Cerca per descrizione" style="border-radius: 9px;">
+                        </div>
+                    </div>
+                    <div class="col-md-3" style="text-align: end; align-content: end;">
+                        <button class="btn btn-primary" type="button" onclick="filterTickets()">Cerca</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<br />
 
 
 
-
-
-<div class="row">
+<div class="row" style="display: flex;">
     @foreach (var item in Model)
     {
         <div class="col-md-2 mb-2">
@@ -109,7 +141,7 @@
                                 var userRuolo = currentUser.FindFirst("Ruolo");
                                 if (userRuolo != null && userRuolo.Value == "Tecnico" || userRuolo.Value == "Amministratore")
                                 {
-                                    
+
                                     <div class="col-md-3">
                                         <a asp-action="Edit" asp-route-id="@item.Id_ticket" class="btn btn-primary btn-sm">Edit</a>
                                     </div>
@@ -187,25 +219,6 @@
         window.location.href = "/Ticket/FindByDescription?description=" + description;
     }
 </script>
-@section Scripts {
-    <script>
-        $(document).ready(function () {
-            $('.autocomplete-input').keyup(function () {
-                var input = $(this);
-                var ticketId = input.data('ticket-id');
-                var suggestionsList = $('#suggestionsList-' + ticketId);
-                suggestionsList.empty();
-                $.get('/Ticket/GetTipologiaProdotto', { input: input.val() }, function (data) {
-                    $.each(data, function (index, value) {
-                        suggestionsList.append('<li>' + value + '</li>');
-                    });
-                });
-            });
-        });
-    </script>
-}
-
-
 
 @* <script>
 
