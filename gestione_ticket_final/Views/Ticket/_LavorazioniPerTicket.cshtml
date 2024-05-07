@@ -9,7 +9,7 @@
                         <th>Data Presa Incarico</th>
                         <th>Ora Presa Incarico</th>
                         <th>Motivazione</th>
-                        <th>Utente ID</th>
+                        <th>Utente</th>
                         <th>Ticket ID</th>
                     </tr>
                 </thead>
@@ -17,11 +17,11 @@
                     @foreach (var lavorazione in Model)
                     {
                         <tr>
-                            <td>@lavorazione.Data_presa_incarico</td>
+                            <td>@lavorazione.Data_presa_incarico.ToString("dd/MM/yyyy")</td>
                             <td>@lavorazione.Ora_presa_incarico</td>
                             <td>@lavorazione.motivazione</td>
-                            <td>@lavorazione.UserId</td>
-                            <td>@lavorazione.TicketId</td>
+                            <td>@lavorazione.User.Nome @lavorazione.User.Cognome  </td>
+                            <td>@lavorazione.Ticket</td>
                         </tr>
                     }
                 </tbody>

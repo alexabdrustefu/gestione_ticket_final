@@ -16,6 +16,9 @@ namespace gestione_ticket_final.Models
         [Column("id_ticket")]
         public int? TicketId { get; set; }
         [Column("data_presa_incarico")]
+        [Display(Name = "Data Presa incarico")]
+        [DataType(DataType.DateTime)]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime Data_presa_incarico { get; set; }
         [Column("ora_presa_incarico")]
         public string? Ora_presa_incarico { get; set; }

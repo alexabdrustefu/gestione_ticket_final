@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using NuGet.Versioning;
+using Microsoft.AspNetCore.Routing.Constraints;
 
 namespace gestione_ticket_final.Controllers
 {
@@ -84,7 +85,7 @@ namespace gestione_ticket_final.Controllers
         //GET LAVORAZIONE PER TICKET
         public async Task<IActionResult> LavorazioniPerTicket(int ticketId)
         {
-            var lavorazioni = await _context.LavorazioneTicket.Where(l => l.TicketId == ticketId).ToListAsync();
+            var lavorazioni = await _context.LavorazioneTicket.Where(l => l.TicketId == ticketId).Include(l => l.User).ToListAsync();
             if (lavorazioni == null) {
                 return NotFound();
                     }
@@ -173,7 +174,7 @@ namespace gestione_ticket_final.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id_ticket,Data_apertura,Ora_apertura,Data_chiusura,Ora_chiusura,Descrizione,Stato,UtenteId,ProdottoId,Soluzione, assegna_utente_loggato")] Ticket ticket, [Bind("id_utente")] LavorazioneTicket lavorazione)
+        public async Task<IActionResult> Create([Bind("Id_ticket,Data_apertura,Ora_apertura,Data_chiusura,Ora_chiusura,Descrizione,Stato,UtenteId,ProdottoId,Soluzione, AssegnaAllUtenteLoggato")] Ticket ticket, [Bind("UserId,TicketId")] LavorazioneTicket lavorazione)
         {
             if (ModelState.IsValid)
             {
@@ -191,25 +192,29 @@ namespace gestione_ticket_final.Controllers
                     int IdUtenteInt = Int32.Parse(userId);
                     ticket.UserId = IdUtenteInt;
                 }
+                ticket.Deleted = false;
 
+                _context.Add(ticket);
+                await _context.SaveChangesAsync();
                 if (ticket.AssegnaAllUtenteLoggato)
                 {
                     if (currentUser != null && currentUser.IsAuthenticated)
                     {
-                        var userIdClaim = currentUser.FindFirst("UserId");
+                        var userIdClaim = currentUser.FindFirst("UserId")?.Value;
 
-                        string userId = userIdClaim.Value;
-                        int IdUtenteInt = Int32.Parse(userId);
+                        int IdUtenteInt = Int32.Parse(userIdClaim);
                         ticket.UserId = IdUtenteInt;
+                        ticket.Stato = Status.LAVORAZIONE;
                         lavorazione.UserId = IdUtenteInt;
+                        lavorazione.TicketId = ticket.Id_ticket;
+                        lavorazione.Data_presa_incarico = DateTime.Now;
+                        lavorazione.Ora_presa_incarico= DateTime.Now.ToString("HH:mm");
+                        _context.Add(lavorazione);
+                        await _context.SaveChangesAsync();
+                        return RedirectToAction(nameof(Index));
                     }
                 }
 
-                //imposto deleted a false
-                ticket.Deleted = false;
-              
-                _context.Add(ticket);
-                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(ticket);

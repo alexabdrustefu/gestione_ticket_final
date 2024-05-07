@@ -1,0 +1,191 @@
+﻿@model IEnumerable<Ticket>
+@using Microsoft.AspNetCore.Authorization
+@using System.Security.Claims
+@{
+    ViewData["Title"] = "Index";
+}
+<div class="card text-white bg-dark mb-3">
+
+    <div class="card-body">
+        <h5 class="card-title">Gestione dei ticket</h5>
+        <p class="card-text">In questa sezione del programma é possibile visualizzare i tidcket creati da te</p>
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="col-md-12">
+        <a asp-action="Create" class="btn btn-primary">Create New</a>
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="col-md-18">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Inserisci la tipologia del prodotto" name="productType" style="width: 70%;">
+                    <div class="input-group-append" style="width: 30%;">
+                        <!-- Rimuovi il pulsante "Cerca" da qui -->
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="input-group">
+                    <select class="form-control" id="statusFilter">
+                        <option value="">Tutti gli stati</option>
+                        <option value="APERTO">Aperto</option>
+                        <option value="LAVORAZIONE">In lavorazione</option>
+                        <option value="CHIUSO">Chiuso</option>
+                    </select>
+                    <div class="input-group-append">
+                        <!-- Rimuovi il pulsante "Cerca" da qui -->
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="descriptionFilter" placeholder="Cerca per descrizione">
+                    <div class="input-group-append">
+                        <!-- Rimuovi il pulsante "Cerca" da qui -->
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="col-md-3">
+                <div class="input-group">
+
+                    <button class="btn btn-primary" type="button" onclick="filterTickets()">Cerca</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-2 mb-2">
+            <button type="button" class="btn btn-success" onclick="openModal('@item.Id_ticket')" style="padding: 0px; width: 100%;border-top-left-radius: 80px 80px;">
+                Lavorazione Ticket
+            </button>
+            <div class="card" style="border-bottom-left-right-radius: 6px;">
+                <div class="card-body Scrolbar" style="max-height: 200px; overflow-y: auto;">
+                    <p class="card-text" style="font-size: 14px;">Ticket ID: @item.Id_ticket</p>
+                    <p class="card-text" style="font-size: 14px;">Data Apertura: @(item.Data_apertura.HasValue ? item.Data_apertura.Value.ToString("dd/MM/yyyy") : "")</p>
+                    <p class="card-text" style="font-size: 14px;">Ora Apertura: @item.Ora_apertura</p>
+                    <p class="card-text" style="font-size: 14px;">Data Chiusura: @(item.Data_chiusura.HasValue ? item.Data_chiusura.Value.ToString("dd/MM/yyyy") : "")</p>
+                    <p class="card-text" style="font-size: 14px;">Ora Chiusura: @item.Ora_chiusura</p>
+                    <p class="card-text" style="font-size: 14px;">Descrizione: @item.Descrizione</p>
+                    <p class="card-text" style="font-size: 14px;">Soluzione: @item.Soluzione</p>
+                    <p class="card-text" style="font-size: 14px;">Creato da: @item.User.Nome  @item.User.Cognome</p>
+                </div>
+                <div class="card-footer">
+                    <div class="row">
+                        @{
+                            var currentUser = User.Identity as ClaimsIdentity;
+                            <div class="col-md-4">
+                                <a asp-controller="Ticket" asp-action="Details" asp-route-id="@item.Id_ticket" class="btn btn-info btn-sm">Details</a>
+                            </div>
+                            if (currentUser != null && currentUser.IsAuthenticated)
+                            {
+                                var userRuolo = currentUser.FindFirst("Ruolo");
+                                if (userRuolo != null && userRuolo.Value == "Tecnico" || userRuolo.Value == "Amministratore")
+                                {
+
+                                    <div class="col-md-3">
+                                        <a asp-controller="Ticket" asp-action="Edit" asp-route-id="@item.Id_ticket" class="btn btn-primary btn-sm">Edit</a>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <a asp-controller="Ticket" asp-action="Delete" asp-route-id="@item.Id_ticket" class="btn btn-danger btn-sm">Delete</a>
+                                    </div>
+                                }
+                            }
+                        }
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    }
+</div>
+<div id="modalContainer"></div>
+
+
+
+<div class="col-md-10" id="right-column">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-container">
+                <div id="modalContainer"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* <div id="utenteContainer"></div> *@
+
+<script>
+    function openModal(ticketId) {
+        var rightColumn = document.getElementById("right-column");
+        if (rightColumn.classList.contains("col-md-10")) {
+            rightColumn.classList.remove("col-md-10");
+            rightColumn.classList.add("col-md-6");
+        } else {
+            rightColumn.classList.remove("col-md-6");
+            rightColumn.classList.add("col-md-10");
+        }
+        $.ajax({
+            url: '/Ticket/LavorazioniPerTicket',
+            type: 'GET',
+            data: { ticketId: ticketId },
+            success: function (data) {
+                $('#modalContainer').html(data);
+
+                // Ottieni le coordinate della tabella
+                var table = document.getElementById("_LavorazioniPerTicket");
+                var tableCoordinates = table.getBoundingClientRect();
+
+                // Sposta il browser verso la tabella
+                window.scrollTo({
+                    top: tableCoordinates.top,
+                    behavior: 'smooth'
+                });
+            },
+            error: function () {
+                alert('Errore durante il caricamento dei dati del modal.');
+            }
+        });
+    }
+</script>
+<script>
+    function filterTickets() {
+        var status = document.getElementById("statusFilter").value;
+        window.location.href = "/Ticket/Index?status=" + status;
+    }
+</script>
+<script>
+    function findByDescription() {
+        var description = document.getElementById("descriptionFilter").value;
+        window.location.href = "/Ticket/FindByDescription?description=" + description;
+    }
+</script>
+
+@* <script>
+
+    function openModalTicket(utenteId) {
+    $.ajax({
+    url: '/Tickets/utenteTicket',
+    type: 'GET',
+    data: { utenteId: utenteId },
+    success: function (data) {
+    $('#utenteContainer').html(data);
+    $('#_UtenteTicket');
+    },
+    error: function () {
+    alert('Errore durante il caricamento dei dati del modal.');
+    }
+    });
+    }
+    </script>  *@

@@ -25,7 +25,7 @@ namespace gestione_ticket_final.Controllers
         // GET: LavorazioneTicket
         public async Task<IActionResult> Index()
         {
-            var lavorazioniTicket = await _context.LavorazioneTicket.Where(lt => lt.Deleted == false).ToListAsync();
+            var lavorazioniTicket = await _context.LavorazioneTicket.Include(lt=> lt.User).Where(lt => lt.Deleted == false).ToListAsync();
             return View(lavorazioniTicket);
         }
 

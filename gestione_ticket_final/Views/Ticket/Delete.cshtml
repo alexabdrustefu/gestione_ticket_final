@@ -137,7 +137,7 @@
                     </dl>
                     <div class="d-flex justify-content-end">
                         <form id="deleteForm" asp-action="Delete">
-                            <a class="btn btn-secondary mr-2" asp-action="Index">Back</a>
+                            <a class="btn btn-secondary mr-2" onclick="history.back()">Back</a>
                             <input type="hidden" asp-for="Id_ticket" />
                             @* Includi il tuo file di modal delete *@
                             @await Html.PartialAsync("ModalDelete")
