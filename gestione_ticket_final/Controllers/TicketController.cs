@@ -31,7 +31,7 @@ namespace gestione_ticket_final.Controllers
         // Modifica il metodo Index per ricevere tutti i filtri
         public async Task<IActionResult> Index(string status, string productType, string description, int tipologiaProdottoId)
         {
-            IQueryable<Ticket> tickets = _context.Ticket.Include(t => t.User);
+            IQueryable<Ticket> tickets = _context.Ticket.Include(t => t.User).Include(t => t.Prodotto);
             IQueryable<TipologiaProdotto> tipo = _context.TipologiaProdotto;
 
             // Applica i filtri
@@ -362,6 +362,18 @@ namespace gestione_ticket_final.Controllers
             var suggestions = _context.Users
                 .Where(u => u.Nome.StartsWith(input))
                 .Select(u => new { Id = u.UserId, Nome = u.Nome, Cognome = u.Cognome })
+                .Take(5) // Limita il numero di suggerimenti a 5 per semplicità
+                .ToList();
+
+            return Json(suggestions);
+        }
+        [HttpPost]
+        public IActionResult GetProdotti(string input)
+        {
+            // Esegui la query per ottenere suggerimenti basati sull'input dal database
+            var suggestions = _context.Prodotto
+                .Where(p => p.Descrizione.StartsWith(input))
+                .Select(p => new { Id = p.ProdottoId, Descrizione = p.Descrizione})
                 .Take(5) // Limita il numero di suggerimenti a 5 per semplicità
                 .ToList();
 
