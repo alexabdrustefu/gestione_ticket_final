@@ -30,7 +30,7 @@ namespace gestione_ticket_final.Controllers
         //    return View(tickets);
 
         //}
-        public async Task<IActionResult> Index(string status, string productType, string description, int tipologiaProdottoId)
+        public async Task<IActionResult> Index(string status, string productType, string description, string tipologiaProdottoId)
         {
             IQueryable<Ticket> tickets = _context.Ticket.Include(t => t.User).Include(t => t.Prodotto);
             IQueryable<TipologiaProdotto> tipo = _context.TipologiaProdotto;
@@ -52,10 +52,8 @@ namespace gestione_ticket_final.Controllers
 
             if (!string.IsNullOrEmpty(productType))
             {
-                // applica il filtro sulla tipologia del prodotto
-                {
-                    tipo = tipo.Where(t => t.Id_tipologia_prodotto == tipologiaProdottoId);
-                }
+                // Applica il filtro sulla tipologia del prodotto
+                tickets = tickets.Where(t => t.Prodotto.TipologiaProdotto.Descrizione == tipologiaProdottoId);
             }
 
             if (!string.IsNullOrEmpty(description))
@@ -63,14 +61,11 @@ namespace gestione_ticket_final.Controllers
                 // Applica il filtro sulla descrizione
                 tickets = tickets.Where(t => t.Descrizione.Contains(description));
             }
-
             var currentUser = User.Identity as ClaimsIdentity;
-            string idUserClaim = currentUser.FindFirst("UserId").Value;
-            //parse della stringa contenente l id
-            int idUserClaimInt = Int32.Parse(idUserClaim);
-
-            return View(await tickets.Where(t => t.UserId == idUserClaimInt).Include(t => t.User).Where(t => t.Deleted == false).ToListAsync());
-
+               string idUserClaim = currentUser.FindFirst("UserId").Value;
+               //parse della stringa contenente l id
+                int idUserClaimInt = Int32.Parse(idUserClaim);
+            return View(await tickets.Where(t => t.UserId == idUserClaimInt).Where(t => t.Deleted == false).ToListAsync());
         }
     }
 }
