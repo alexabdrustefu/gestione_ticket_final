@@ -31,7 +31,7 @@ namespace gestione_ticket_final.Controllers
 
         // GET: Ticket
         // Modifica il metodo Index per ricevere tutti i filtri
-        public async Task<IActionResult> Index(string status, string productType, string description, int tipologiaProdottoId)
+        public async Task<IActionResult> Index(string status, string productType, string description, string tipologiaProdottoId)
         {
             IQueryable<Ticket> tickets = _context.Ticket.Include(t => t.User).Include(t => t.Prodotto);
             IQueryable<TipologiaProdotto> tipo = _context.TipologiaProdotto;
@@ -53,10 +53,8 @@ namespace gestione_ticket_final.Controllers
 
             if (!string.IsNullOrEmpty(productType))
             {
-                // applica il filtro sulla tipologia del prodotto
-                {
-                    tipo = tipo.Where(t => t.Id_tipologia_prodotto == tipologiaProdottoId);
-                }
+                // Applica il filtro sulla tipologia del prodotto
+                tickets = tickets.Where(t => t.Prodotto.TipologiaProdotto.Descrizione == tipologiaProdottoId);
             }
 
             if (!string.IsNullOrEmpty(description))
@@ -87,9 +85,10 @@ namespace gestione_ticket_final.Controllers
         public async Task<IActionResult> LavorazioniPerTicket(int ticketId)
         {
             var lavorazioni = await _context.LavorazioneTicket.Where(l => l.TicketId == ticketId).Include(l => l.User).ToListAsync();
-            if (lavorazioni == null) {
+            if (lavorazioni == null)
+            {
                 return NotFound();
-                    }
+            }
             return PartialView("_LavorazioniPerTicket", lavorazioni);
         }
 
@@ -212,7 +211,7 @@ namespace gestione_ticket_final.Controllers
                         lavorazione.UserId = IdUtenteInt;
                         lavorazione.TicketId = ticket.Id_ticket;
                         lavorazione.Data_presa_incarico = DateTime.Now;
-                        lavorazione.Ora_presa_incarico= DateTime.Now.ToString("HH:mm");
+                        lavorazione.Ora_presa_incarico = DateTime.Now.ToString("HH:mm");
                         _context.Add(lavorazione);
                         await _context.SaveChangesAsync();
                         return RedirectToAction(nameof(Index));
@@ -229,7 +228,7 @@ namespace gestione_ticket_final.Controllers
         {
             var currentUser = User.Identity as ClaimsIdentity;
             var userRuolo = currentUser.FindFirst("Ruolo");
-            if (userRuolo.Value != "Tecnico" &&  userRuolo.Value != "Amministratore")
+            if (userRuolo.Value != "Tecnico" && userRuolo.Value != "Amministratore")
             {
                 return RedirectToAction("ErrorPage", "Unauthorized");
             }
@@ -240,7 +239,7 @@ namespace gestione_ticket_final.Controllers
                     return NotFound();
                 }
 
-                var ticket = await _context.Ticket.Include(u =>u.User).FirstOrDefaultAsync(t => t.Id_ticket == id);
+                var ticket = await _context.Ticket.Include(u => u.User).FirstOrDefaultAsync(t => t.Id_ticket == id);
                 if (ticket == null)
                 {
                     return NotFound();
@@ -290,7 +289,7 @@ namespace gestione_ticket_final.Controllers
                                 _context.Add(lavorazione);
                                 await _context.SaveChangesAsync();
                                 return RedirectToAction(nameof(Index));
-                                
+
                             }
                         }
                     }
@@ -404,7 +403,7 @@ namespace gestione_ticket_final.Controllers
             // Esegui la query per ottenere suggerimenti basati sull'input dal database
             var suggestions = _context.Prodotto
                 .Where(p => p.Descrizione.StartsWith(input))
-                .Select(p => new { Id = p.ProdottoId, Descrizione = p.Descrizione})
+                .Select(p => new { Id = p.ProdottoId, Descrizione = p.Descrizione })
                 .Take(5) // Limita il numero di suggerimenti a 5 per semplicità
                 .ToList();
 
@@ -414,11 +413,12 @@ namespace gestione_ticket_final.Controllers
 
         public IActionResult GetTipologiaProdotto(string input)
         {
-            var tipologie = _context.TipologiaProdotto
-                .Where(t => t.Descrizione.StartsWith(input))
-                .Select(t => new { tipologiaId = t.Id_tipologia_prodotto, Descrizione = t.Descrizione })
-                .Take(5)
-                .ToList();
+            var tipologie = _context.Ticket.Include(t => t.Prodotto).Include(t=> t.Prodotto.TipologiaProdotto).Where(td => td.Prodotto.TipologiaProdotto.Descrizione.StartsWith(input))
+         .Select(td => new {tipologiaId= td.Prodotto.TipologiaProdotto.Id_tipologia_prodotto , Descrizione = td.Prodotto.TipologiaProdotto.Descrizione })
+         .GroupBy(td => td.tipologiaId).Select(group => group.First())
+         .Take(5)
+         .ToList();
+
             return Json(tipologie);
         }
 

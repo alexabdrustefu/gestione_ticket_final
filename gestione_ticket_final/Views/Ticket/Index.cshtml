@@ -61,22 +61,26 @@
                     @{
                         var ticket = Model.FirstOrDefault(); // Otteniamo solo il primo ticket
                     }
-                    @if (ticket != null)
-                    {
+                   
                         <div class="col-md-3">
-                            <div class="form-group">
-                                <label asp-for="@ticket.Prodotto.TipologiaProdotto.Descrizione" class="control-label" style="color:white">Tipologia</label>
-                                <div class="autocomplete-container">
-                                    <input value="@((ticket.Prodotto?.TipologiaProdotto.Descrizione ?? ""))" type="text" class="form-control autocomplete-input" data-ticket-id="0" placeholder="Cerca tipologia prodotto" />
-                                    <ul id="suggestionsList-0" class="autocomplete-dropdown"></ul>
-                                </div>
-                                <input asp-for="@ticket.Prodotto.TipologiaProdotto.Id_tipologia_prodotto" type="hidden" id="tipologia-prodotto-id-0" name="TipologiaProdottoId" />
-                                <span id="selectedTipologiaProdottoDescrizione-0"></span>
-                                <span asp-validation-for="@ticket.Prodotto.TipologiaProdotto.Descrizione" class="text-danger"></span>
+                          @*   La tipologia cerca per un prodotto associato al ticket e successivamente risale alla rispettiva tipologia quindi mostrera solo
+                            le tipologie associate ad un ticket
+ *@
+                        <div class="form-group">
+                            <label asp-for="@ticket.Prodotto.TipologiaProdotto.Descrizione" class="control-label" style="color:white">Tipologia</label>
+                            <div class="autocomplete-container">
+                                <input id="tipologiaFilter" value="@((ticket?.Prodotto?.TipologiaProdotto?.Descrizione ?? ""))" type="text" class="form-control autocomplete-input" data-ticket-id="0" placeholder="Cerca tipologia prodotto" />
+                                <ul id="suggestionsList-0" class="autocomplete-dropdown"></ul>
                             </div>
+                            <input asp-for="@ticket.Prodotto.TipologiaProdotto.Id_tipologia_prodotto" type="hidden" id="tipologia-prodotto-id-0" name="TipologiaProdottoId" />
+                            <!-- Rimuovi il seguente span -->
+                            <!-- <span id="selectedTipologiaProdottoDescrizione-0"></span> -->
+                            <span asp-validation-for="@ticket.Prodotto.TipologiaProdotto.Descrizione" class="text-danger"></span>
                         </div>
 
-                    }
+                        </div>
+
+                    
                     <div class="col-md-3">
                         <label class="control-label" style="color:white; ">Seleziona Stato</label>
                         <div class="input-group">
@@ -87,15 +91,19 @@
                                 <option value="CHIUSO">Chiuso</option>
                             </select>
                         </div>
-                    </div>
+                    </div> 
                     <div class="col-md-3">
                         <label class="control-label" style="color:white">Inserisci Descrizione</label>
                         <div class="input-group">
                             <input type="text" class="form-control" id="descriptionFilter" placeholder="Cerca per descrizione" style="border-radius: 9px;">
                         </div>
                     </div>
-                    <div class="col-md-3" style="text-align: end; align-content: end;">
-                        <button class="btn btn-primary" type="button" onclick="filterTickets()">Cerca</button>
+                 @*    <div class="col-md-1" style="text-align: end; align-content: end;">
+                        <button class="btn btn-danger" type="button" onclick="resetFilters()">Reset</button>
+                    </div>  *@
+
+                    <div class="col-md-2" style="text-align: end; align-content: end;">
+                        <button class="btn btn-primary" type="button" onclick="filter()">Cerca</button>
                     </div>
                 </div>
             </div>
@@ -119,18 +127,18 @@
                     @{
                         if (item.Data_apertura != null)
                         {
-                            <p class="card-text" style="font-size: 14px;">Data Apertura: @(item.Data_apertura.HasValue ? item.Data_apertura.Value.ToString("dd/MM/yyyy") : "")</p>
+                                <p class="card-text" style="font-size: 14px;">Data Apertura: @(item.Data_apertura.HasValue ? item.Data_apertura.Value.ToString("dd/MM/yyyy") : "")</p>
                         }
                         else { }
-                        <p class="card-text" style="font-size: 14px;">Data Apertura:Non Disponibile</p>
+                            <p class="card-text" style="font-size: 14px;">Data Apertura:Non Disponibile</p>
 
                         if (item.Data_chiusura != null)
                         {
-                            <p class="card-text" style="font-size: 14px;">Data Chiusura: @(item.Data_apertura.HasValue ? item.Data_apertura.Value.ToString("dd/MM/yyyy") : "")</p>
+                                <p class="card-text" style="font-size: 14px;">Data Chiusura: @(item.Data_apertura.HasValue ? item.Data_apertura.Value.ToString("dd/MM/yyyy") : "")</p>
                         }
                         else
                         {
-                            <p class="card-text" style="font-size: 14px;">Data Chiusura:Non Disponibile</p>
+                                <p class="card-text" style="font-size: 14px;">Data Chiusura:Non Disponibile</p>
                         }
                     }
                     <p class="card-text" style="font-size: 14px;">Descrizione: @item.Descrizione</p>
@@ -143,11 +151,11 @@
                             if (userRuolo != null && userRuolo.Value == "Tecnico" || userRuolo.Value == "Amministratore")
                             {
                                 if(item.User != null){
-                                    <p class="card-text" style="font-size: 14px;">Assegnato a: @item.User.Nome  @item.User.Cognome</p>
+                                        <p class="card-text" style="font-size: 14px;">Assegnato a: @item.User.Nome  @item.User.Cognome</p>
                                 }
                                 else
                                 {
-                                    <p class="card-text" style="font-size: 14px;">Assegnato a:Non disponibile</p>
+                                        <p class="card-text" style="font-size: 14px;">Assegnato a:Non disponibile</p>
                                 }
                             }
                         }
@@ -158,21 +166,21 @@
                     <div class="row">
                         @{
                            
-                            <div class="col-md-4">
-                                <a asp-action="Details" asp-route-id="@item.Id_ticket" class="btn btn-info btn-sm">Details</a>
-                            </div>
+                                <div class="col-md-4">
+                                    <a asp-action="Details" asp-route-id="@item.Id_ticket" class="btn btn-info btn-sm">Details</a>
+                                </div>
                             if (currentUser != null && currentUser.IsAuthenticated)
                             {
                                 var userRuolo = currentUser.FindFirst("Ruolo");
                                 if (userRuolo != null && userRuolo.Value == "Tecnico" || userRuolo.Value == "Amministratore")
                                 {
 
-                                    <div class="col-md-3">
-                                        <a asp-action="Edit" asp-route-id="@item.Id_ticket" class="btn btn-primary btn-sm">Edit</a>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <a asp-action="Delete" asp-route-id="@item.Id_ticket" class="btn btn-danger btn-sm">Delete</a>
-                                    </div>
+                                        <div class="col-md-3">
+                                            <a asp-action="Edit" asp-route-id="@item.Id_ticket" class="btn btn-primary btn-sm">Edit</a>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <a asp-action="Delete" asp-route-id="@item.Id_ticket" class="btn btn-danger btn-sm">Delete</a>
+                                        </div>
                                 }
                             }
                         }
@@ -233,17 +241,48 @@
     }
 </script>
 <script>
+    function filter() {
+        var status = document.getElementById("statusFilter");
+        var productType = document.getElementById("tipologiaFilter");
+        var description = document.getElementById("descriptionFilter");
+
+        if (status || productType || description) {
+            var statusValue = status.value;
+            var productTypeValue = productType.value;
+            var descriptionValue = description.value;
+
+            console.log(descriptionValue);
+            window.location.href = "/Ticket/Index?status=" + statusValue + "&productType=" + productTypeValue + "&description=" + descriptionValue;
+        } else {
+            console.error("One or more elements not found in the DOM.");
+        }
+    }
+    function resetFilters() {
+        var status = document.getElementById("statusFilter");
+        var productType = document.getElementById("tipologiaFilter");
+        var description = document.getElementById("descriptionFilter");
+
+       
+            status.value = ""; 
+        
+            productType.value = ""; 
+        
+            description.value = "";
+        window.location.href = "/Ticket/Index?status=" + statusValue + "&productType=" + productTypeValue + "&description=" + descriptionValue;
+        filter();
+    }
+
+</script>
+
+
+@* <script>
     function filterTickets() {
         var status = document.getElementById("statusFilter").value;
         window.location.href = "/Ticket/Index?status=" + status;
     }
-</script>
-<script>
-    function findByDescription() {
-        var description = document.getElementById("descriptionFilter").value;
-        window.location.href = "/Ticket/FindByDescription?description=" + description;
-    }
-</script>
+</script> *@
+
+
 @section Scripts {
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script>
@@ -280,11 +319,11 @@
                 var selectedTipologia = $(this).text(); // Ottieni la descrizione della tipologia selezionata
                 var selectedTipologiaId = $(this).data('tipologia-id'); // Ottieni l'ID della tipologia selezionata
                 var ticketId = $(this).closest('.autocomplete-container').find('.autocomplete-input').data('ticket-id');
-                $('#autocompleteInput-' + ticketId).val(selectedTipologia); // Imposta la descrizione della tipologia nel campo di input
+                $('#tipologiaFilter').val(selectedTipologia); // Imposta la descrizione della tipologia nell'input
                 $('#tipologia-prodotto-id-' + ticketId).val(selectedTipologiaId); // Imposta l'ID della tipologia nel campo nascosto per l'ID
-                $('#selectedTipologiaProdottoDescrizione-' + ticketId).text(selectedTipologia); // Visualizza la descrizione della tipologia
-                $('#suggestionsList-' + ticketId).hide();
+                $('#suggestionsList-' + ticketId).hide(); // Nascondi la lista delle suggestioni
             });
+
         });
     </script>
 }
