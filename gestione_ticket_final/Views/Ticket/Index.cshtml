@@ -62,8 +62,8 @@
                         @{
                             var ticket = Model.FirstOrDefault(); // Otteniamo solo il primo ticket
                         }
-                        @if (ticket != null)
-                        {
+                    @if (ticket != null)
+                    {
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label asp-for="@ticket.Prodotto.TipologiaProdotto.Descrizione" class="control-label" style="color:white">Tipologia</label>
@@ -215,6 +215,9 @@
             window.location.href = "/Ticket/FindByDescription?description=" + description;
         }
     </script>
+
+}
+
 @section Scripts {
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script>
@@ -255,7 +258,21 @@
                 $('#tipologia-prodotto-id-' + ticketId).val(selectedTipologiaId); // Imposta l'ID della tipologia nel campo nascosto per l'ID
                 $('#selectedTipologiaProdottoDescrizione-' + ticketId).text(selectedTipologia); // Visualizza la descrizione della tipologia
                 $('#suggestionsList-' + ticketId).hide();
+
+                // Inserisci l'opzione selezionata dentro il campo di input
+                $('#autocompleteInput-' + ticketId).val(selectedTipologia);
             });
+          
+
+            // $('.autocomplete-dropdown').on('click', 'li', function () {
+            //     var selectedTipologia = $(this).text(); // Ottieni la descrizione della tipologia selezionata
+            //     var selectedTipologiaId = $(this).data('tipologia-id'); // Ottieni l'ID della tipologia selezionata
+            //     var ticketId = $(this).closest('.autocomplete-container').find('.autocomplete-input').data('ticket-id');
+            //     $('#autocompleteInput-' + ticketId).val(selectedTipologia); // Imposta la descrizione della tipologia nel campo di input
+            //     $('#tipologia-prodotto-id-' + ticketId).val(selectedTipologiaId); // Imposta l'ID della tipologia nel campo nascosto per l'ID
+            //     $('#selectedTipologiaProdottoDescrizione-' + ticketId).text(selectedTipologia); // Visualizza la descrizione della tipologia
+            //     $('#suggestionsList-' + ticketId).hide();
+            // });
         });
     </script>
 }
