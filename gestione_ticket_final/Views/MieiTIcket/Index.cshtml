@@ -1,19 +1,54 @@
-﻿@model IEnumerable<Ticket>
-@using Microsoft.AspNetCore.Authorization
-@using System.Security.Claims
+﻿    @model IEnumerable<Ticket>
+    @using Microsoft.AspNetCore.Authorization
+    @using System.Security.Claims
 @{
     ViewData["Title"] = "Index";
 }
+
+<style>
+    .autocomplete-dropdown {
+        border: groove;
+        border-radius: 3px;
+        width: 95%;
+        display: none;
+        position: absolute;
+        z-index: 1;
+        background-color: #ffffff; /* Cambiato da #fff */
+        border: 1px solid #cccccc; /* Cambiato da #ccc */
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        overflow-y: auto;
+        max-height: 200px; /* Limitiamo l'altezza per evitare che la lista diventi troppo lunga */
+    }
+
+        .autocomplete-dropdown li {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+            .autocomplete-dropdown li:hover {
+                background-color: #f0f0f0;
+            }
+
+        .autocomplete-dropdown li {
+            color: black;
+        }
+</style>
+
+
 @* <div class="card text-white bg-dark mb-3">
 
     <div class="card-body">
         <h5 class="card-title">Gestione dei ticket</h5>
-        <p class="card-text">In questa sezione del programma é possibile visualizzare i tidcket creati da te</p>
+        <p class="card-text">In questa sezione del programma é possibile gerstire i Ticket</p>
     </div>
 </div> *@
 <div class="row mb-3">
     <div class="col-md-12">
-        <a asp-action="Create" class="btn btn-primary">Create New</a>
+        <a asp-controller="Ticket" asp-action="Create" class="btn btn-primary">Create New</a>
     </div>
 </div>
 <div class="card text-white bg-success mb-3" style="border-radius: 20px;">
@@ -23,15 +58,26 @@
         <div class="row mb-3">
             <div class="col-md-12">
                 <div class="row">
-                    <div class="col-md-3">
-                        <div class="input-group">
-                            <label class="control-label" style="color:white">Inserisci Tipologia</label>
-                            <input type="text" class="form-control" placeholder="Inserisci la tipologia del prodotto" name="productType" style="width: 70%; border-radius: 9px;">
+                    @{
+                        var ticket = Model.FirstOrDefault(); // Otteniamo solo il primo ticket
+                    }                    
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="@ticket.Prodotto.TipologiaProdotto.Descrizione" class="control-label" style="color:white">Tipologia</label>
+                                <div class="autocomplete-container">
+                                    <input value="@((ticket.Prodotto?.TipologiaProdotto.Descrizione ?? ""))" type="text" class="form-control autocomplete-input" data-ticket-id="0" placeholder="Cerca tipologia prodotto" />
+                                    <ul id="suggestionsList-0" class="autocomplete-dropdown"></ul>
+                                </div>
+                                <input asp-for="@ticket.Prodotto.TipologiaProdotto.Id_tipologia_prodotto" type="hidden" id="tipologia-prodotto-id-0" name="TipologiaProdottoId" />
+                                <span id="selectedTipologiaProdottoDescrizione-0"></span>
+                                <span asp-validation-for="@ticket.Prodotto.TipologiaProdotto.Descrizione" class="text-danger"></span>
+                            </div>
                         </div>
-                    </div>
+
+                    
                     <div class="col-md-3">
                         <label class="control-label" style="color:white; ">Seleziona Stato</label>
-                        <div class="input-group" >
+                        <div class="input-group">
                             <select class="form-control" id="statusFilter" style="border-radius: 9px;">
                                 <option value="">Tutti gli stati</option>
                                 <option value="APERTO">Aperto</option>
@@ -58,8 +104,6 @@
 
 
 
-
-
 <div class="row" style="display: flex;">
     @foreach (var item in Model)
     {
@@ -70,18 +114,49 @@
             <div class="card" style="border-bottom-left-right-radius: 6px;">
                 <div class="card-body Scrolbar" style="max-height: 200px; overflow-y: auto;">
                     <p class="card-text" style="font-size: 14px;">Ticket ID: @item.Id_ticket</p>
-                    <p class="card-text" style="font-size: 14px;">Data Apertura: @(item.Data_apertura.HasValue ? item.Data_apertura.Value.ToString("dd/MM/yyyy") : "")</p>
-                    <p class="card-text" style="font-size: 14px;">Ora Apertura: @item.Ora_apertura</p>
-                    <p class="card-text" style="font-size: 14px;">Data Chiusura: @(item.Data_chiusura.HasValue ? item.Data_chiusura.Value.ToString("dd/MM/yyyy") : "")</p>
-                    <p class="card-text" style="font-size: 14px;">Ora Chiusura: @item.Ora_chiusura</p>
+                    @{
+                        if (item.Data_apertura != null)
+                        {
+                            <p class="card-text" style="font-size: 14px;">Data Apertura: @(item.Data_apertura.HasValue ? item.Data_apertura.Value.ToString("dd/MM/yyyy") : "")</p>
+                        }
+                        else { }
+                        <p class="card-text" style="font-size: 14px;">Data Apertura:Non Disponibile</p>
+
+                        if (item.Data_chiusura != null)
+                        {
+                            <p class="card-text" style="font-size: 14px;">Data Chiusura: @(item.Data_apertura.HasValue ? item.Data_apertura.Value.ToString("dd/MM/yyyy") : "")</p>
+                        }
+                        else
+                        {
+                            <p class="card-text" style="font-size: 14px;">Data Chiusura:Non Disponibile</p>
+                        }
+                    }
                     <p class="card-text" style="font-size: 14px;">Descrizione: @item.Descrizione</p>
                     <p class="card-text" style="font-size: 14px;">Soluzione: @item.Soluzione</p>
-                    <p class="card-text" style="font-size: 14px;">Creato da: @item.User.Nome  @item.User.Cognome</p>
+                    @{
+                        var currentUser = User.Identity as ClaimsIdentity;
+                        if (currentUser != null && currentUser.IsAuthenticated)
+                        {
+                            var userRuolo = currentUser.FindFirst("Ruolo");
+                            if (userRuolo != null && userRuolo.Value == "Tecnico" || userRuolo.Value == "Amministratore")
+                            {
+                                if (item.User != null)
+                                {
+                                    <p class="card-text" style="font-size: 14px;">Assegnato a: @item.User.Nome  @item.User.Cognome</p>
+                                }
+                                else
+                                {
+                                    <p class="card-text" style="font-size: 14px;">Assegnato a:Non disponibile</p>
+                                }
+                            }
+                        }
+                    }
+
                 </div>
                 <div class="card-footer">
                     <div class="row">
                         @{
-                            var currentUser = User.Identity as ClaimsIdentity;
+
                             <div class="col-md-4">
                                 <a asp-controller="Ticket" asp-action="Details" asp-route-id="@item.Id_ticket" class="btn btn-info btn-sm">Details</a>
                             </div>
@@ -168,21 +243,66 @@
         window.location.href = "/Ticket/FindByDescription?description=" + description;
     }
 </script>
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.autocomplete-input').on('input', function () {
+                var input = $(this);
+                var ticketId = input.data('ticket-id');
+                var suggestionsList = $('#suggestionsList-' + ticketId);
+                suggestionsList.empty();
+                $.ajax({
+                    url: '@Url.Action("GetTipologiaProdotto", "Ticket")',
+                    type: 'POST',
+                    data: { input: input.val() },
+                    success: function (data) {
+                        if (data.length > 0) {
+                            suggestionsList.show();
+                            data.forEach(function (tipologia) {
+                                $('#suggestionsList-' + ticketId).append('<li data-tipologia-id="' + tipologia.id + '">' + tipologia.descrizione + '</li>');
+                            });
+                        } else {
+                            suggestionsList.hide();
+                        }
+                    }
+                });
+            });
+
+            $(document).click(function (event) {
+                if (!$(event.target).closest('.autocomplete-container').length) {
+                    $('.autocomplete-dropdown').hide();
+                }
+            });
+
+            $('.autocomplete-dropdown').on('click', 'li', function () {
+                var selectedTipologia = $(this).text(); // Ottieni la descrizione della tipologia selezionata
+                var selectedTipologiaId = $(this).data('tipologia-id'); // Ottieni l'ID della tipologia selezionata
+                var ticketId = $(this).closest('.autocomplete-container').find('.autocomplete-input').data('ticket-id');
+                $('#autocompleteInput-' + ticketId).val(selectedTipologia); // Imposta la descrizione della tipologia nel campo di input
+                $('#tipologia-prodotto-id-' + ticketId).val(selectedTipologiaId); // Imposta l'ID della tipologia nel campo nascosto per l'ID
+                $('#selectedTipologiaProdottoDescrizione-' + ticketId).text(selectedTipologia); // Visualizza la descrizione della tipologia
+                $('#suggestionsList-' + ticketId).hide();
+            });
+        });
+    </script>
+}
+
 
 @* <script>
 
-    function openModalTicket(utenteId) {
-    $.ajax({
-    url: '/Tickets/utenteTicket',
-    type: 'GET',
-    data: { utenteId: utenteId },
-    success: function (data) {
-    $('#utenteContainer').html(data);
-    $('#_UtenteTicket');
-    },
-    error: function () {
-    alert('Errore durante il caricamento dei dati del modal.');
-    }
-    });
-    }
-    </script>  *@
+        function openModalTicket(utenteId) {
+        $.ajax({
+        url: '/Tickets/utenteTicket',
+        type: 'GET',
+        data: { utenteId: utenteId },
+        success: function (data) {
+        $('#utenteContainer').html(data);
+        $('#_UtenteTicket');
+        },
+        error: function () {
+        alert('Errore durante il caricamento dei dati del modal.');
+        }
+        });
+        }
+        </script>  *@
