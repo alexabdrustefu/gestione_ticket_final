@@ -53,7 +53,7 @@ namespace gestione_ticket_final.Controllers
             if (!string.IsNullOrEmpty(productType))
             {
                 // Applica il filtro sulla tipologia del prodotto
-                tickets = tickets.Where(t => t.Prodotto.TipologiaProdotto.Descrizione == tipologiaProdottoId);
+                tickets = tickets.Where(t => t.Prodotto.TipologiaProdotto.Descrizione == productType);
             }
 
             if (!string.IsNullOrEmpty(description))
