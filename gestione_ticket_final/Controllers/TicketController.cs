@@ -31,7 +31,7 @@ namespace gestione_ticket_final.Controllers
 
         // GET: Ticket
         // Modifica il metodo Index per ricevere tutti i filtri
-        public async Task<IActionResult> Index(string status, string productType, string description, string tipologiaProdottoId)
+        public async Task<IActionResult> Index(string status, string productType, string description, int tipologiaProdottoId)
         {
             IQueryable<Ticket> tickets = _context.Ticket.Include(t => t.User).Include(t => t.Prodotto);
             IQueryable<TipologiaProdotto> tipo = _context.TipologiaProdotto;
@@ -54,7 +54,7 @@ namespace gestione_ticket_final.Controllers
             if (!string.IsNullOrEmpty(productType))
             {
                 // Applica il filtro sulla tipologia del prodotto
-                tickets = tickets.Where(t => t.Prodotto.TipologiaProdotto.Descrizione == tipologiaProdottoId);
+                tickets = tickets.Where(t => t.Prodotto.TipologiaProdotto.Descrizione == productType);
             }
 
             if (!string.IsNullOrEmpty(description))
@@ -200,7 +200,7 @@ namespace gestione_ticket_final.Controllers
                 {
                     if (currentUser != null && currentUser.IsAuthenticated)
                     {
-                        ticket.AssegnaAllUtenteLoggato = false;
+                        //ticket.AssegnaAllUtenteLoggato = false;
                         _context.Update(ticket);
                         await _context.SaveChangesAsync();
                         var userIdClaim = currentUser.FindFirst("UserId")?.Value;
@@ -274,7 +274,7 @@ namespace gestione_ticket_final.Controllers
                         {
                             if (currentUser != null && currentUser.IsAuthenticated)
                             {
-                                ticket.AssegnaAllUtenteLoggato = false;
+                                //ticket.AssegnaAllUtenteLoggato = false;
                                 _context.Update(ticket);
                                 await _context.SaveChangesAsync();
                                 var userIdClaim = currentUser.FindFirst("UserId")?.Value;
