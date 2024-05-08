@@ -20,15 +20,52 @@ namespace gestione_ticket_final.Controllers
             _userManager = userManager;
             _context = context;
         }
-        public async Task<IActionResult >Index() {
-            //utente del contesto di sicurezza
-            var currentUser = User.Identity as ClaimsIdentity;
-            string idUserClaim = currentUser.FindFirst("UserId").Value;
-            //parse della stringa contenente l id
-            int idUserClaimInt = Int32.Parse(idUserClaim);
-            var tickets = await _context.Ticket.Where(t => t.UserId == idUserClaimInt).Include(t=> t.User).ToListAsync();
-            return View(tickets);
+        //public async Task<IActionResult >Index() {
+        //    //utente del contesto di sicurezza
+        //    var currentUser = User.Identity as ClaimsIdentity;
+        //    string idUserClaim = currentUser.FindFirst("UserId").Value;
+        //    //parse della stringa contenente l id
+        //    int idUserClaimInt = Int32.Parse(idUserClaim);
+        //    var tickets = await _context.Ticket.Where(t => t.UserId == idUserClaimInt).Include(t=> t.User).ToListAsync();
+        //    return View(tickets);
 
+        //}
+        public async Task<IActionResult> Index(string status, string productType, string description, string tipologiaProdottoId)
+        {
+            IQueryable<Ticket> tickets = _context.Ticket.Include(t => t.User).Include(t => t.Prodotto);
+            IQueryable<TipologiaProdotto> tipo = _context.TipologiaProdotto;
+
+            // Applica i filtri
+            if (!string.IsNullOrEmpty(status))
+            {
+                Status statusEnum;
+                if (Enum.TryParse(status, out statusEnum))
+                {
+                    tickets = tickets.Where(t => t.Stato == statusEnum);
+                }
+                else
+                {
+                    // Gestisci lo stato non valido qui, ad esempio reindirizza a una pagina di errore
+                    return RedirectToAction("Error", "Home");
+                }
+            }
+
+            if (!string.IsNullOrEmpty(productType))
+            {
+                // Applica il filtro sulla tipologia del prodotto
+                tickets = tickets.Where(t => t.Prodotto.TipologiaProdotto.Descrizione == tipologiaProdottoId);
+            }
+
+            if (!string.IsNullOrEmpty(description))
+            {
+                // Applica il filtro sulla descrizione
+                tickets = tickets.Where(t => t.Descrizione.Contains(description));
+            }
+            var currentUser = User.Identity as ClaimsIdentity;
+               string idUserClaim = currentUser.FindFirst("UserId").Value;
+               //parse della stringa contenente l id
+                int idUserClaimInt = Int32.Parse(idUserClaim);
+            return View(await tickets.Where(t => t.UserId == idUserClaimInt).Where(t => t.Deleted == false).ToListAsync());
         }
     }
 }
