@@ -185,14 +185,14 @@ namespace gestione_ticket_final.Controllers
                 ticket.Stato = Status.APERTO;
                 //Assegno user loggato al ticket
                 var currentUser = User.Identity as ClaimsIdentity;
-                if (currentUser != null && currentUser.IsAuthenticated)
-                {
-                    var userIdClaim = currentUser.FindFirst("UserId");
+                //if (currentUser != null && currentUser.IsAuthenticated)
+                //{
+                //    var userIdClaim = currentUser.FindFirst("UserId");
 
-                    string userId = userIdClaim.Value;
-                    int IdUtenteInt = Int32.Parse(userId);
-                    ticket.UserId = IdUtenteInt;
-                }
+                //    string userId = userIdClaim.Value;
+                //    int IdUtenteInt = Int32.Parse(userId);
+                //    ticket.UserId = IdUtenteInt;
+                //}
                 ticket.Deleted = false;
 
                 _context.Add(ticket);
@@ -201,6 +201,9 @@ namespace gestione_ticket_final.Controllers
                 {
                     if (currentUser != null && currentUser.IsAuthenticated)
                     {
+                        ticket.AssegnaAllUtenteLoggato = false;
+                        _context.Update(ticket);
+                        await _context.SaveChangesAsync();
                         var userIdClaim = currentUser.FindFirst("UserId")?.Value;
 
                         int IdUtenteInt = Int32.Parse(userIdClaim);
@@ -251,7 +254,7 @@ namespace gestione_ticket_final.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, [Bind("Id_ticket,Data_apertura,Ora_apertura,Data_chiusura,Ora_chiusura,Descrizione,Stato,UserId,ProdottoId,Soluzione")] Ticket ticket)
+        public async Task<IActionResult> Edit(int? id, [Bind("Id_ticket,Data_apertura,Ora_apertura,Data_chiusura,Ora_chiusura,Descrizione,Stato,UserId,ProdottoId,AssegnaAllUtenteLoggato,Soluzione")] Ticket ticket, [Bind("UserId,TicketId")] LavorazioneTicket lavorazione)
         {
             if (id != ticket.Id_ticket)
             {
@@ -264,10 +267,32 @@ namespace gestione_ticket_final.Controllers
                 {
                     var currentUser = User.Identity as ClaimsIdentity;
                     var userRuolo = currentUser.FindFirst("Ruolo");
-                    if (userRuolo.Value != "Tecnico" && userRuolo.Value != "Amministratore")
+                    if (userRuolo.Value != "Tecnico" || userRuolo.Value != "Amministratore")
                     {
                         _context.Update(ticket);
                         await _context.SaveChangesAsync();
+                        if (ticket.AssegnaAllUtenteLoggato)
+                        {
+                            if (currentUser != null && currentUser.IsAuthenticated)
+                            {
+                                ticket.AssegnaAllUtenteLoggato = false;
+                                _context.Update(ticket);
+                                await _context.SaveChangesAsync();
+                                var userIdClaim = currentUser.FindFirst("UserId")?.Value;
+
+                                int IdUtenteInt = Int32.Parse(userIdClaim);
+                                ticket.UserId = IdUtenteInt;
+                                ticket.Stato = Status.LAVORAZIONE;
+                                lavorazione.UserId = IdUtenteInt;
+                                lavorazione.TicketId = ticket.Id_ticket;
+                                lavorazione.Data_presa_incarico = DateTime.Now;
+                                lavorazione.Ora_presa_incarico = DateTime.Now.ToString("HH:mm");
+                                _context.Add(lavorazione);
+                                await _context.SaveChangesAsync();
+                                return RedirectToAction(nameof(Index));
+                                
+                            }
+                        }
                     }
                     else
                     {

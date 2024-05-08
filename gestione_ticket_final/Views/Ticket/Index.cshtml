@@ -41,29 +41,28 @@
 
     @* <div class="card text-white bg-dark mb-3">
 
-        <div class="card-body">
-            <h5 class="card-title">Gestione dei ticket</h5>
-            <p class="card-text">In questa sezione del programma é possibile gerstire i Ticket</p>
-        </div>
-    </div> *@
-
-    <div class="row mb-3">
-        <div class="col-md-12">
-            <a asp-action="Create" class="btn btn-primary">Create New</a>
-        </div>
+    <div class="card-body">
+        <h5 class="card-title">Gestione dei ticket</h5>
+        <p class="card-text">In questa sezione del programma é possibile gerstire i Ticket</p>
     </div>
-    <div class="card text-white bg-success mb-3" style="border-radius: 20px;">
-        <div class="card-body">
-            <h5 class="card-title">Gestione dei propri ticket</h5>
-            <p class="card-text">In questa sezione del programma é possibile visualizzare i propri Ticket</p>
-            <div class="row mb-3">
-                <div class="col-md-12">
-                    <div class="row">
-                        @{
-                            var ticket = Model.FirstOrDefault(); // Otteniamo solo il primo ticket
-                        }
-                        @if (ticket != null)
-                        {
+</div> *@
+<div class="row mb-3">
+    <div class="col-md-12">
+        <a asp-action="Create" class="btn btn-primary">Create New</a>
+    </div>
+</div>
+<div class="card text-white bg-success mb-3" style="border-radius: 20px;">
+    <div class="card-body">
+        <h5 class="card-title">Gestione dei propri ticket</h5>
+        <p class="card-text">In questa sezione del programma é possibile visualizzare i propri Ticket</p>
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <div class="row">
+                    @{
+                        var ticket = Model.FirstOrDefault(); // Otteniamo solo il primo ticket
+                    }
+                    @if (ticket != null)
+                    {
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label asp-for="@ticket.Prodotto.TipologiaProdotto.Descrizione" class="control-label" style="color:white">Tipologia</label>
@@ -77,144 +76,174 @@
                             </div>
                         </div>
 
-                        }
-                        <div class="col-md-3">
-                            <label class="control-label" style="color:white; ">Seleziona Stato</label>
-                            <div class="input-group">
-                                <select class="form-control" id="statusFilter" style="border-radius: 9px;">
-                                    <option value="">Tutti gli stati</option>
-                                    <option value="APERTO">Aperto</option>
-                                    <option value="LAVORAZIONE">In lavorazione</option>
-                                    <option value="CHIUSO">Chiuso</option>
-                                </select>
-                            </div>
+                    }
+                    <div class="col-md-3">
+                        <label class="control-label" style="color:white; ">Seleziona Stato</label>
+                        <div class="input-group">
+                            <select class="form-control" id="statusFilter" style="border-radius: 9px;">
+                                <option value="">Tutti gli stati</option>
+                                <option value="APERTO">Aperto</option>
+                                <option value="LAVORAZIONE">In lavorazione</option>
+                                <option value="CHIUSO">Chiuso</option>
+                            </select>
                         </div>
-                        <div class="col-md-3">
-                            <label class="control-label" style="color:white">Inserisci Descrizione</label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="descriptionFilter" placeholder="Cerca per descrizione" style="border-radius: 9px;">
-                            </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="control-label" style="color:white">Inserisci Descrizione</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="descriptionFilter" placeholder="Cerca per descrizione" style="border-radius: 9px;">
                         </div>
-                        <div class="col-md-3" style="text-align: end; align-content: end;">
-                            <button class="btn btn-primary" type="button" onclick="filterTickets()">Cerca</button>
-                        </div>
+                    </div>
+                    <div class="col-md-3" style="text-align: end; align-content: end;">
+                        <button class="btn btn-primary" type="button" onclick="filterTickets()">Cerca</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <br />
+</div>
+<br />
 
 
 
-    <div class="row" style="display: flex;">
-        @foreach (var item in Model)
-        {
-            <div class="col-md-2 mb-2">
-                <button type="button" class="btn btn-success" onclick="openModal('@item.Id_ticket')" style="padding: 0px; width: 100%;border-top-left-radius: 80px 80px;">
-                    Lavorazione Ticket
-                </button>
-                <div class="card" style="border-bottom-left-right-radius: 6px;">
-                    <div class="card-body Scrolbar" style="max-height: 200px; overflow-y: auto;">
-                        <p class="card-text" style="font-size: 14px;">Ticket ID: @item.Id_ticket</p>
-                        <p class="card-text" style="font-size: 14px;">Data Apertura: @(item.Data_apertura.HasValue ? item.Data_apertura.Value.ToString("dd/MM/yyyy") : "")</p>
-                        <p class="card-text" style="font-size: 14px;">Ora Apertura: @item.Ora_apertura</p>
-                        <p class="card-text" style="font-size: 14px;">Data Chiusura: @(item.Data_chiusura.HasValue ? item.Data_chiusura.Value.ToString("dd/MM/yyyy") : "")</p>
-                        <p class="card-text" style="font-size: 14px;">Ora Chiusura: @item.Ora_chiusura</p>
-                        <p class="card-text" style="font-size: 14px;">Descrizione: @item.Descrizione</p>
-                        <p class="card-text" style="font-size: 14px;">Soluzione: @item.Soluzione</p>
-                        <p class="card-text" style="font-size: 14px;">Creato da: @item.User.Nome  @item.User.Cognome</p>
-                    </div>
-                    <div class="card-footer">
-                        <div class="row">
-                            @{
-                                var currentUser = User.Identity as ClaimsIdentity;
-                                <div class="col-md-4">
-                                    <a asp-action="Details" asp-route-id="@item.Id_ticket" class="btn btn-info btn-sm">Details</a>
-                                </div>
-                                if (currentUser != null && currentUser.IsAuthenticated)
+<div class="row" style="display: flex;">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-2 mb-2">
+            <button type="button" class="btn btn-success" onclick="openModal('@item.Id_ticket')" style="padding: 0px; width: 100%;border-top-left-radius: 80px 80px;">
+                Lavorazione Ticket
+            </button>
+            <div class="card" style="border-bottom-left-right-radius: 6px;">
+                <div class="card-body Scrolbar" style="max-height: 200px; overflow-y: auto;">
+                    <p class="card-text" style="font-size: 14px;">Ticket ID: @item.Id_ticket</p>
+                    @{
+                        if (item.Data_apertura != null)
+                        {
+                            <p class="card-text" style="font-size: 14px;">Data Apertura: @(item.Data_apertura.HasValue ? item.Data_apertura.Value.ToString("dd/MM/yyyy") : "")</p>
+                        }
+                        else { }
+                        <p class="card-text" style="font-size: 14px;">Data Apertura:Non Disponibile</p>
+
+                        if (item.Data_chiusura != null)
+                        {
+                            <p class="card-text" style="font-size: 14px;">Data Chiusura: @(item.Data_apertura.HasValue ? item.Data_apertura.Value.ToString("dd/MM/yyyy") : "")</p>
+                        }
+                        else
+                        {
+                            <p class="card-text" style="font-size: 14px;">Data Chiusura:Non Disponibile</p>
+                        }
+                    }
+                    <p class="card-text" style="font-size: 14px;">Descrizione: @item.Descrizione</p>
+                    <p class="card-text" style="font-size: 14px;">Soluzione: @item.Soluzione</p>
+                    @{
+                        var currentUser = User.Identity as ClaimsIdentity;
+                        if (currentUser != null && currentUser.IsAuthenticated)
+                        {
+                            var userRuolo = currentUser.FindFirst("Ruolo");
+                            if (userRuolo != null && userRuolo.Value == "Tecnico" || userRuolo.Value == "Amministratore")
+                            {
+                                if(item.User != null){
+                                    <p class="card-text" style="font-size: 14px;">Assegnato a: @item.User.Nome  @item.User.Cognome</p>
+                                }
+                                else
                                 {
-                                    var userRuolo = currentUser.FindFirst("Ruolo");
-                                    if (userRuolo != null && userRuolo.Value == "Tecnico" || userRuolo.Value == "Amministratore")
-                                    {
-
-                                        <div class="col-md-3">
-                                            <a asp-action="Edit" asp-route-id="@item.Id_ticket" class="btn btn-primary btn-sm">Edit</a>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <a asp-action="Delete" asp-route-id="@item.Id_ticket" class="btn btn-danger btn-sm">Delete</a>
-                                        </div>
-                                    }
+                                    <p class="card-text" style="font-size: 14px;">Assegnato a:Non disponibile</p>
                                 }
                             }
-                        </div>
+                        }
+                    }
+                    
+                </div>
+                <div class="card-footer">
+                    <div class="row">
+                        @{
+                           
+                            <div class="col-md-4">
+                                <a asp-action="Details" asp-route-id="@item.Id_ticket" class="btn btn-info btn-sm">Details</a>
+                            </div>
+                            if (currentUser != null && currentUser.IsAuthenticated)
+                            {
+                                var userRuolo = currentUser.FindFirst("Ruolo");
+                                if (userRuolo != null && userRuolo.Value == "Tecnico" || userRuolo.Value == "Amministratore")
+                                {
+
+                                    <div class="col-md-3">
+                                        <a asp-action="Edit" asp-route-id="@item.Id_ticket" class="btn btn-primary btn-sm">Edit</a>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <a asp-action="Delete" asp-route-id="@item.Id_ticket" class="btn btn-danger btn-sm">Delete</a>
+                                    </div>
+                                }
+                            }
+                        }
                     </div>
-
                 </div>
+
             </div>
-        }
-    </div>
-    <div id="modalContainer"></div>
+        </div>
+    }
+</div>
+<div id="modalContainer"></div>
 
 
 
-    <div class="col-md-10" id="right-column">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="table-container">
-                    <div id="modalContainer"></div>
-                </div>
+<div class="col-md-10" id="right-column">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-container">
+                <div id="modalContainer"></div>
             </div>
         </div>
     </div>
+</div>
 
-    @* <div id="utenteContainer"></div> *@
+@* <div id="utenteContainer"></div> *@
 
-    <script>
-        function openModal(ticketId) {
-            var rightColumn = document.getElementById("right-column");
-            if (rightColumn.classList.contains("col-md-10")) {
-                rightColumn.classList.remove("col-md-10");
-                rightColumn.classList.add("col-md-6");
-            } else {
-                rightColumn.classList.remove("col-md-6");
-                rightColumn.classList.add("col-md-10");
+<script>
+    function openModal(ticketId) {
+        var rightColumn = document.getElementById("right-column");
+        if (rightColumn.classList.contains("col-md-10")) {
+            rightColumn.classList.remove("col-md-10");
+            rightColumn.classList.add("col-md-6");
+        } else {
+            rightColumn.classList.remove("col-md-6");
+            rightColumn.classList.add("col-md-10");
+        }
+        $.ajax({
+            url: '/Ticket/LavorazioniPerTicket',
+            type: 'GET',
+            data: { ticketId: ticketId },
+            success: function (data) {
+                $('#modalContainer').html(data);
+
+                // Ottieni le coordinate della tabella
+                var table = document.getElementById("_LavorazioniPerTicket");
+                var tableCoordinates = table.getBoundingClientRect();
+
+                // Sposta il browser verso la tabella
+                window.scrollTo({
+                    top: tableCoordinates.top,
+                    behavior: 'smooth'
+                });
+            },
+            error: function () {
+                alert('Errore durante il caricamento dei dati del modal.');
             }
-            $.ajax({
-                url: '/Ticket/LavorazioniPerTicket',
-                type: 'GET',
-                data: { ticketId: ticketId },
-                success: function (data) {
-                    $('#modalContainer').html(data);
-
-                    // Ottieni le coordinate della tabella
-                    var table = document.getElementById("_LavorazioniPerTicket");
-                    var tableCoordinates = table.getBoundingClientRect();
-
-                    // Sposta il browser verso la tabella
-                    window.scrollTo({
-                        top: tableCoordinates.top,
-                        behavior: 'smooth'
-                    });
-                },
-                error: function () {
-                    alert('Errore durante il caricamento dei dati del modal.');
-                }
-            });
-        }
-    </script>
-    <script>
-        function filterTickets() {
-            var status = document.getElementById("statusFilter").value;
-            window.location.href = "/Ticket/Index?status=" + status;
-        }
-    </script>
-    <script>
-        function findByDescription() {
-            var description = document.getElementById("descriptionFilter").value;
-            window.location.href = "/Ticket/FindByDescription?description=" + description;
-        }
-    </script>
+        });
+    }
+</script>
+<script>
+    function filterTickets() {
+        var status = document.getElementById("statusFilter").value;
+        window.location.href = "/Ticket/Index?status=" + status;
+    }
+</script>
+<script>
+    function findByDescription() {
+        var description = document.getElementById("descriptionFilter").value;
+        window.location.href = "/Ticket/FindByDescription?description=" + description;
+    }
+</script>
 @section Scripts {
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script>
@@ -261,7 +290,7 @@
 }
 
 
-    @* <script>
+@* <script>
 
         function openModalTicket(utenteId) {
         $.ajax({
