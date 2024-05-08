@@ -173,7 +173,7 @@
                         @{
 
                             <div class="col-md-4">
-                                <a asp-action="Details" asp-route-id="@item.Id_ticket" class="btn btn-info btn-sm">Details</a>
+                                <a  asp-controller="Ticket" asp-action="Details" asp-route-id="@item.Id_ticket" class="btn btn-info btn-sm">Details</a>
                             </div>
                             if (currentUser != null && currentUser.IsAuthenticated)
                             {
@@ -182,10 +182,10 @@
                                 {
 
                                     <div class="col-md-3">
-                                        <a asp-action="Edit" asp-route-id="@item.Id_ticket" class="btn btn-primary btn-sm">Edit</a>
+                                        <a asp-controller="Ticket" asp-action="Edit" asp-route-id="@item.Id_ticket" class="btn btn-primary btn-sm">Edit</a>
                                     </div>
                                     <div class="col-md-3">
-                                        <a asp-action="Delete" asp-route-id="@item.Id_ticket" class="btn btn-danger btn-sm">Delete</a>
+                                        <a asp-controller="Ticket" asp-action="Delete" asp-route-id="@item.Id_ticket" class="btn btn-danger btn-sm">Delete</a>
                                     </div>
                                 }
                             }
@@ -299,7 +299,7 @@
                 var suggestionsList = $('#suggestionsList-' + ticketId);
                 suggestionsList.empty();
                 $.ajax({
-                    url: '@Url.Action("GetTipologiaProdotto", "Ticket")',
+                    url: '@Url.Action("GetTipologiaProdotto", "MieiTIcket")',
                     type: 'POST',
                     data: { input: input.val() },
                     success: function (data) {

@@ -67,5 +67,21 @@ namespace gestione_ticket_final.Controllers
                 int idUserClaimInt = Int32.Parse(idUserClaim);
             return View(await tickets.Where(t => t.UserId == idUserClaimInt).Where(t => t.Deleted == false).ToListAsync());
         }
+
+        public IActionResult GetTipologiaProdotto(string input)
+        {
+            var currentUser = User.Identity as ClaimsIdentity;
+            string idUserClaim = currentUser.FindFirst("UserId").Value;
+            //parse della stringa contenente l id
+            int idUserClaimInt = Int32.Parse(idUserClaim);
+            var tipologie = _context.Ticket.Include(t => t.Prodotto).Include(t => t.Prodotto.TipologiaProdotto).Where(td => td.Prodotto.TipologiaProdotto.Descrizione.StartsWith(input)).Where(t => t.UserId == idUserClaimInt)
+         .Select(td => new { tipologiaId = td.Prodotto.TipologiaProdotto.Id_tipologia_prodotto, Descrizione = td.Prodotto.TipologiaProdotto.Descrizione })
+         .GroupBy(td => td.tipologiaId).Select(group => group.First())
+         .Take(5)
+         .ToList();
+
+            return Json(tipologie);
+        }
+
     }
 }
