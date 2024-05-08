@@ -1,239 +1,280 @@
-﻿@model IEnumerable<Ticket>
+﻿    @model IEnumerable<Ticket>
+    @using Microsoft.AspNetCore.Authorization
+    @using System.Security.Claims
+    @{
+        ViewData["Title"] = "Index";
+    }
 
-@using Microsoft.AspNetCore.Authorization
-@using System.Security.Claims
-@{
-    ViewData["Title"] = "Index";
-}
-<div class="card text-white bg-dark mb-3">
+    <style>
+        .autocomplete-dropdown {
+            border: groove;
+            border-radius: 3px;
+            width: 95%;
+            display: none;
+            position: absolute;
+            z-index: 1;
+            background-color: #ffffff; /* Cambiato da #fff */
+            border: 1px solid #cccccc; /* Cambiato da #ccc */
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 0;
+            margin: 0;
+            list-style-type: none;
+            overflow-y: auto;
+            max-height: 200px; /* Limitiamo l'altezza per evitare che la lista diventi troppo lunga */
+        }
 
-    <div class="card-body">
-        <h5 class="card-title">Gestione dei ticket</h5>
-        <p class="card-text">In questa sezione del programma é possibile gerstire i Ticket</p>
-    </div>
-</div>
-<div class="row mb-3">
-    <div class="col-md-12">
-        <a asp-action="Create" class="btn btn-primary">Create New</a>
-    </div>
-</div>
-<div class="row mb-3">
-    <div class="col-md-18">
-        <div class="row">
-            @{
-                var index = 0;
-                foreach (var ticket in Model)
-                {
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label asp-for="@ticket.Prodotto.TipologiaProdotto.Descrizione" class="control-label" style="color:black">Tipologia</label>
-                            <div class="autocomplete-container">
-                                <input value="@($"{ticket.Prodotto?.TipologiaProdotto.Descrizione}")" type="text" id="autocompleteInput-@index" class="form-control autocomplete-input" data-ticket-id="@index" placeholder="Cerca tipologia prodotto" />
-                                <ul id="suggestionsList-@index" class="autocomplete-dropdown"></ul>
-                            </div>
-
-                            <input asp-for="@ticket.Prodotto.TipologiaProdotto.Id_tipologia_prodotto" type="hidden" id="tipologia-prodotto-id-@index" name="TipologiaProdottoId" />
-                            <span id="selectedTipologiaProdottoDescrizione-@index"></span>
-                            <span asp-validation-for="@ticket.Prodotto.TipologiaProdotto.Descrizione" class="text-danger"></span>
-                        </div>
-                    </div>
-                    index++;
-                }
+            .autocomplete-dropdown li {
+                padding: 8px 12px;
+                cursor: pointer;
             }
+
+                .autocomplete-dropdown li:hover {
+                    background-color: #f0f0f0;
+                }
+
+            .autocomplete-dropdown li {
+                color: black;
+            }
+    </style>
+
+
+    @* <div class="card text-white bg-dark mb-3">
+
+        <div class="card-body">
+            <h5 class="card-title">Gestione dei ticket</h5>
+            <p class="card-text">In questa sezione del programma é possibile gerstire i Ticket</p>
         </div>
+    </div> *@
 
-
-            <div class="col-md-3">
-                <div class="input-group">
-                    <select class="form-control" id="statusFilter">
-                        <option value="">Tutti gli stati</option>
-                        <option value="APERTO">Aperto</option>
-                        <option value="LAVORAZIONE">In lavorazione</option>
-                        <option value="CHIUSO">Chiuso</option>
-                    </select>
-                    <div class="input-group-append">
-                        <!-- Rimuovi il pulsante "Cerca" da qui -->
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="input-group">
-                    <input type="text" class="form-control" id="descriptionFilter" placeholder="Cerca per descrizione">
-                    <div class="input-group-append">
-                        <!-- Rimuovi il pulsante "Cerca" da qui -->
-                    </div>
-                </div>
-            </div>
-            <br />
-            <div class="col-md-3">
-                <div class="input-group">
-                    
-                    <button class="btn btn-primary" type="button" onclick="filterTickets()">Cerca</button>
-<div class="card text-white bg-success mb-3" style="border-radius: 20px;">
-    <div class="card-body">
-        <h5 class="card-title">Gestione dei propri ticket</h5>
-        <p class="card-text">In questa sezione del programma é possibile visualizzare i propri Ticket</p>
-        <div class="row mb-3">
-            <div class="col-md-12">
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="input-group">
-                            <label class="control-label" style="color:white">Inserisci Tipologia</label>
-                            <input type="text" class="form-control" placeholder="Inserisci la tipologia del prodotto" name="productType" style="width: 70%; border-radius: 9px;">
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="control-label" style="color:white; ">Seleziona Stato</label>
-                        <div class="input-group">
-                            <select class="form-control" id="statusFilter" style="border-radius: 9px;">
-                                <option value="">Tutti gli stati</option>
-                                <option value="APERTO">Aperto</option>
-                                <option value="LAVORAZIONE">In lavorazione</option>
-                                <option value="CHIUSO">Chiuso</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="control-label" style="color:white">Inserisci Descrizione</label>
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="descriptionFilter" placeholder="Cerca per descrizione" style="border-radius: 9px;">
-                        </div>
-                    </div>
-                    <div class="col-md-3" style="text-align: end; align-content: end;">
-                        <button class="btn btn-primary" type="button" onclick="filterTickets()">Cerca</button>
-                    </div>
-                </div>
-            </div>
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <a asp-action="Create" class="btn btn-primary">Create New</a>
         </div>
     </div>
-</div>
-<br />
-
-
-
-<div class="row" style="display: flex;">
-    @foreach (var item in Model)
-    {
-        <div class="col-md-2 mb-2">
-            <button type="button" class="btn btn-success" onclick="openModal('@item.Id_ticket')" style="padding: 0px; width: 100%;border-top-left-radius: 80px 80px;">
-                Lavorazione Ticket
-            </button>
-            <div class="card" style="border-bottom-left-right-radius: 6px;">
-                <div class="card-body Scrolbar" style="max-height: 200px; overflow-y: auto;">
-                    <p class="card-text" style="font-size: 14px;">Ticket ID: @item.Id_ticket</p>
-                    <p class="card-text" style="font-size: 14px;">Data Apertura: @(item.Data_apertura.HasValue ? item.Data_apertura.Value.ToString("dd/MM/yyyy") : "")</p>
-                    <p class="card-text" style="font-size: 14px;">Ora Apertura: @item.Ora_apertura</p>
-                    <p class="card-text" style="font-size: 14px;">Data Chiusura: @(item.Data_chiusura.HasValue ? item.Data_chiusura.Value.ToString("dd/MM/yyyy") : "")</p>
-                    <p class="card-text" style="font-size: 14px;">Ora Chiusura: @item.Ora_chiusura</p>
-                    <p class="card-text" style="font-size: 14px;">Descrizione: @item.Descrizione</p>
-                    <p class="card-text" style="font-size: 14px;">Soluzione: @item.Soluzione</p>
-                    <p class="card-text" style="font-size: 14px;">Creato da: @item.User.Nome  @item.User.Cognome</p>
-                </div>
-                <div class="card-footer">
+    <div class="card text-white bg-success mb-3" style="border-radius: 20px;">
+        <div class="card-body">
+            <h5 class="card-title">Gestione dei propri ticket</h5>
+            <p class="card-text">In questa sezione del programma é possibile visualizzare i propri Ticket</p>
+            <div class="row mb-3">
+                <div class="col-md-12">
                     <div class="row">
                         @{
-                            var currentUser = User.Identity as ClaimsIdentity;
-                            <div class="col-md-4">
-                                <a asp-action="Details" asp-route-id="@item.Id_ticket" class="btn btn-info btn-sm">Details</a>
-                            </div>
-                            if (currentUser != null && currentUser.IsAuthenticated)
-                            {
-                                var userRuolo = currentUser.FindFirst("Ruolo");
-                                if (userRuolo != null && userRuolo.Value == "Tecnico" || userRuolo.Value == "Amministratore")
-                                {
-
-                                    <div class="col-md-3">
-                                        <a asp-action="Edit" asp-route-id="@item.Id_ticket" class="btn btn-primary btn-sm">Edit</a>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <a asp-action="Delete" asp-route-id="@item.Id_ticket" class="btn btn-danger btn-sm">Delete</a>
-                                    </div>
-                                }
-                            }
+                            var ticket = Model.FirstOrDefault(); // Otteniamo solo il primo ticket
                         }
+                        @if (ticket != null)
+                        {
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="@ticket.Prodotto.TipologiaProdotto.Descrizione" class="control-label" style="color:white">Tipologia</label>
+                                <div class="autocomplete-container">
+                                    <input value="@((ticket.Prodotto?.TipologiaProdotto.Descrizione ?? ""))" type="text" class="form-control autocomplete-input" data-ticket-id="0" placeholder="Cerca tipologia prodotto" />
+                                    <ul id="suggestionsList-0" class="autocomplete-dropdown"></ul>
+                                </div>
+                                <input asp-for="@ticket.Prodotto.TipologiaProdotto.Id_tipologia_prodotto" type="hidden" id="tipologia-prodotto-id-0" name="TipologiaProdottoId" />
+                                <span id="selectedTipologiaProdottoDescrizione-0"></span>
+                                <span asp-validation-for="@ticket.Prodotto.TipologiaProdotto.Descrizione" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        }
+                        <div class="col-md-3">
+                            <label class="control-label" style="color:white; ">Seleziona Stato</label>
+                            <div class="input-group">
+                                <select class="form-control" id="statusFilter" style="border-radius: 9px;">
+                                    <option value="">Tutti gli stati</option>
+                                    <option value="APERTO">Aperto</option>
+                                    <option value="LAVORAZIONE">In lavorazione</option>
+                                    <option value="CHIUSO">Chiuso</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="control-label" style="color:white">Inserisci Descrizione</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="descriptionFilter" placeholder="Cerca per descrizione" style="border-radius: 9px;">
+                            </div>
+                        </div>
+                        <div class="col-md-3" style="text-align: end; align-content: end;">
+                            <button class="btn btn-primary" type="button" onclick="filterTickets()">Cerca</button>
+                        </div>
                     </div>
                 </div>
-
-            </div>
-        </div>
-    }
-</div>
-<div id="modalContainer"></div>
-
-
-
-<div class="col-md-10" id="right-column">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="table-container">
-                <div id="modalContainer"></div>
             </div>
         </div>
     </div>
-</div>
+    <br />
 
-@* <div id="utenteContainer"></div> *@
 
-<script>
-    function openModal(ticketId) {
-        var rightColumn = document.getElementById("right-column");
-        if (rightColumn.classList.contains("col-md-10")) {
-            rightColumn.classList.remove("col-md-10");
-            rightColumn.classList.add("col-md-6");
-        } else {
-            rightColumn.classList.remove("col-md-6");
-            rightColumn.classList.add("col-md-10");
+
+    <div class="row" style="display: flex;">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-2 mb-2">
+                <button type="button" class="btn btn-success" onclick="openModal('@item.Id_ticket')" style="padding: 0px; width: 100%;border-top-left-radius: 80px 80px;">
+                    Lavorazione Ticket
+                </button>
+                <div class="card" style="border-bottom-left-right-radius: 6px;">
+                    <div class="card-body Scrolbar" style="max-height: 200px; overflow-y: auto;">
+                        <p class="card-text" style="font-size: 14px;">Ticket ID: @item.Id_ticket</p>
+                        <p class="card-text" style="font-size: 14px;">Data Apertura: @(item.Data_apertura.HasValue ? item.Data_apertura.Value.ToString("dd/MM/yyyy") : "")</p>
+                        <p class="card-text" style="font-size: 14px;">Ora Apertura: @item.Ora_apertura</p>
+                        <p class="card-text" style="font-size: 14px;">Data Chiusura: @(item.Data_chiusura.HasValue ? item.Data_chiusura.Value.ToString("dd/MM/yyyy") : "")</p>
+                        <p class="card-text" style="font-size: 14px;">Ora Chiusura: @item.Ora_chiusura</p>
+                        <p class="card-text" style="font-size: 14px;">Descrizione: @item.Descrizione</p>
+                        <p class="card-text" style="font-size: 14px;">Soluzione: @item.Soluzione</p>
+                        <p class="card-text" style="font-size: 14px;">Creato da: @item.User.Nome  @item.User.Cognome</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="row">
+                            @{
+                                var currentUser = User.Identity as ClaimsIdentity;
+                                <div class="col-md-4">
+                                    <a asp-action="Details" asp-route-id="@item.Id_ticket" class="btn btn-info btn-sm">Details</a>
+                                </div>
+                                if (currentUser != null && currentUser.IsAuthenticated)
+                                {
+                                    var userRuolo = currentUser.FindFirst("Ruolo");
+                                    if (userRuolo != null && userRuolo.Value == "Tecnico" || userRuolo.Value == "Amministratore")
+                                    {
+
+                                        <div class="col-md-3">
+                                            <a asp-action="Edit" asp-route-id="@item.Id_ticket" class="btn btn-primary btn-sm">Edit</a>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <a asp-action="Delete" asp-route-id="@item.Id_ticket" class="btn btn-danger btn-sm">Delete</a>
+                                        </div>
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+
+                </div>
+            </div>
         }
-        $.ajax({
-            url: '/Ticket/LavorazioniPerTicket',
-            type: 'GET',
-            data: { ticketId: ticketId },
-            success: function (data) {
-                $('#modalContainer').html(data);
+    </div>
+    <div id="modalContainer"></div>
 
-                // Ottieni le coordinate della tabella
-                var table = document.getElementById("_LavorazioniPerTicket");
-                var tableCoordinates = table.getBoundingClientRect();
 
-                // Sposta il browser verso la tabella
-                window.scrollTo({
-                    top: tableCoordinates.top,
-                    behavior: 'smooth'
-                });
-            },
-            error: function () {
-                alert('Errore durante il caricamento dei dati del modal.');
+
+    <div class="col-md-10" id="right-column">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-container">
+                    <div id="modalContainer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* <div id="utenteContainer"></div> *@
+
+    <script>
+        function openModal(ticketId) {
+            var rightColumn = document.getElementById("right-column");
+            if (rightColumn.classList.contains("col-md-10")) {
+                rightColumn.classList.remove("col-md-10");
+                rightColumn.classList.add("col-md-6");
+            } else {
+                rightColumn.classList.remove("col-md-6");
+                rightColumn.classList.add("col-md-10");
             }
+            $.ajax({
+                url: '/Ticket/LavorazioniPerTicket',
+                type: 'GET',
+                data: { ticketId: ticketId },
+                success: function (data) {
+                    $('#modalContainer').html(data);
+
+                    // Ottieni le coordinate della tabella
+                    var table = document.getElementById("_LavorazioniPerTicket");
+                    var tableCoordinates = table.getBoundingClientRect();
+
+                    // Sposta il browser verso la tabella
+                    window.scrollTo({
+                        top: tableCoordinates.top,
+                        behavior: 'smooth'
+                    });
+                },
+                error: function () {
+                    alert('Errore durante il caricamento dei dati del modal.');
+                }
+            });
+        }
+    </script>
+    <script>
+        function filterTickets() {
+            var status = document.getElementById("statusFilter").value;
+            window.location.href = "/Ticket/Index?status=" + status;
+        }
+    </script>
+    <script>
+        function findByDescription() {
+            var description = document.getElementById("descriptionFilter").value;
+            window.location.href = "/Ticket/FindByDescription?description=" + description;
+        }
+    </script>
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.autocomplete-input').on('input', function () {
+                var input = $(this);
+                var ticketId = input.data('ticket-id');
+                var suggestionsList = $('#suggestionsList-' + ticketId);
+                suggestionsList.empty();
+                $.ajax({
+                    url: '@Url.Action("GetTipologiaProdotto", "Ticket")',
+                    type: 'POST',
+                    data: { input: input.val() },
+                    success: function (data) {
+                        if (data.length > 0) {
+                            suggestionsList.show();
+                            data.forEach(function (tipologia) {
+                                $('#suggestionsList-' + ticketId).append('<li data-tipologia-id="' + tipologia.id + '">' + tipologia.descrizione + '</li>');
+                            });
+                        } else {
+                            suggestionsList.hide();
+                        }
+                    }
+                });
+            });
+
+            $(document).click(function (event) {
+                if (!$(event.target).closest('.autocomplete-container').length) {
+                    $('.autocomplete-dropdown').hide();
+                }
+            });
+
+            $('.autocomplete-dropdown').on('click', 'li', function () {
+                var selectedTipologia = $(this).text(); // Ottieni la descrizione della tipologia selezionata
+                var selectedTipologiaId = $(this).data('tipologia-id'); // Ottieni l'ID della tipologia selezionata
+                var ticketId = $(this).closest('.autocomplete-container').find('.autocomplete-input').data('ticket-id');
+                $('#autocompleteInput-' + ticketId).val(selectedTipologia); // Imposta la descrizione della tipologia nel campo di input
+                $('#tipologia-prodotto-id-' + ticketId).val(selectedTipologiaId); // Imposta l'ID della tipologia nel campo nascosto per l'ID
+                $('#selectedTipologiaProdottoDescrizione-' + ticketId).text(selectedTipologia); // Visualizza la descrizione della tipologia
+                $('#suggestionsList-' + ticketId).hide();
+            });
         });
-    }
-</script>
-<script>
-    function filterTickets() {
-        var status = document.getElementById("statusFilter").value;
-        window.location.href = "/Ticket/Index?status=" + status;
-    }
-</script>
-<script>
-    function findByDescription() {
-        var description = document.getElementById("descriptionFilter").value;
-        window.location.href = "/Ticket/FindByDescription?description=" + description;
-    }
-</script>
+    </script>
+}
 
-@* <script>
 
-    function openModalTicket(utenteId) {
-    $.ajax({
-    url: '/Tickets/utenteTicket',
-    type: 'GET',
-    data: { utenteId: utenteId },
-    success: function (data) {
-    $('#utenteContainer').html(data);
-    $('#_UtenteTicket');
-    },
-    error: function () {
-    alert('Errore durante il caricamento dei dati del modal.');
-    }
-    });
-    }
-    </script>  *@
+    @* <script>
+
+        function openModalTicket(utenteId) {
+        $.ajax({
+        url: '/Tickets/utenteTicket',
+        type: 'GET',
+        data: { utenteId: utenteId },
+        success: function (data) {
+        $('#utenteContainer').html(data);
+        $('#_UtenteTicket');
+        },
+        error: function () {
+        alert('Errore durante il caricamento dei dati del modal.');
+        }
+        });
+        }
+        </script>  *@

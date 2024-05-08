@@ -391,7 +391,7 @@ namespace gestione_ticket_final.Controllers
         {
             var tipologie = _context.TipologiaProdotto
                 .Where(t => t.Descrizione.StartsWith(input))
-                .Select(t => new {  Descrizione = t.Descrizione })
+                .Select(t => new { tipologiaId = t.Id_tipologia_prodotto, Descrizione = t.Descrizione })
                 .Take(5)
                 .ToList();
             return Json(tipologie);
