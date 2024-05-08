@@ -123,26 +123,30 @@
             </button>
             <div class="card" style="border-bottom-left-right-radius: 6px;">
                 <div class="card-body Scrolbar" style="max-height: 200px; overflow-y: auto;">
-                    <p class="card-text" style="font-size: 14px;">Ticket ID: @item.Id_ticket</p>
+                    <p class="card-text" style="font-size: 14px;">Numero ticket: @item.Id_ticket</p>
+                    <p class="card-text" style="font-size: 14px;">Stato: @item.Stato.ToString().ToLower()</p>
+                    
                     @{
                         if (item.Data_apertura != null)
                         {
                                 <p class="card-text" style="font-size: 14px;">Data Apertura: @(item.Data_apertura.HasValue ? item.Data_apertura.Value.ToString("dd/MM/yyyy") : "")</p>
                         }
-                        else { }
+                        else { 
                             <p class="card-text" style="font-size: 14px;">Data Apertura:Non Disponibile</p>
-
-                        if (item.Data_chiusura != null)
-                        {
-                                <p class="card-text" style="font-size: 14px;">Data Chiusura: @(item.Data_apertura.HasValue ? item.Data_apertura.Value.ToString("dd/MM/yyyy") : "")</p>
                         }
-                        else
-                        {
-                                <p class="card-text" style="font-size: 14px;">Data Chiusura:Non Disponibile</p>
-                        }
+                        // if (item.Data_chiusura != null)
+                        // {
+                        //         <p class="card-text" style="font-size: 14px;">Data Chiusura: @(item.Data_apertura.HasValue ? item.Data_apertura.Value.ToString("dd/MM/yyyy") : "")</p>
+                        // }
+                        // else
+                        // {
+                        //         <p class="card-text" style="font-size: 14px;">Data Chiusura:Non Disponibile</p>
+                        // }
                     }
-                    <p class="card-text" style="font-size: 14px;">Descrizione: @item.Descrizione</p>
-                    <p class="card-text" style="font-size: 14px;">Soluzione: @item.Soluzione</p>
+                  @*   <p class="card-text" style="font-size: 14px;">Descrizione: @item.Descrizione</p>
+                    <p class="card-text" style="font-size: 14px;">Soluzione: @item.Soluzione</p> *@
+                    
+
                     @{
                         var currentUser = User.Identity as ClaimsIdentity;
                         if (currentUser != null && currentUser.IsAuthenticated)

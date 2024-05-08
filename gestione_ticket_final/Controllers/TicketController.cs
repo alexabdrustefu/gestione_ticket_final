@@ -63,7 +63,7 @@ namespace gestione_ticket_final.Controllers
                 tickets = tickets.Where(t => t.Descrizione.Contains(description));
             }
 
-            return View(await tickets.ToListAsync());
+            return View(await tickets.Where(t => t.Deleted == false).ToListAsync());
         }
 
         public async Task<IActionResult> FindByDescription(string description)
@@ -174,7 +174,7 @@ namespace gestione_ticket_final.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id_ticket,Data_apertura,Ora_apertura,Data_chiusura,Ora_chiusura,Descrizione,Stato,UtenteId,ProdottoId,Soluzione, assegna_utente_loggato")] Ticket ticket, [Bind("id_utente")] LavorazioneTicket lavorazione)
+        public async Task<IActionResult> Create([Bind("Id_ticket,Data_apertura,Ora_apertura,Data_chiusura,Ora_chiusura,Descrizione,Stato,UtenteId,ProdottoId,Soluzione, AssegnaAllUtenteLoggato")] Ticket ticket, [Bind("id_utente")] LavorazioneTicket lavorazione)
         {
             if (ModelState.IsValid)
             {
