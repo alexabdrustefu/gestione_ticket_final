@@ -433,5 +433,35 @@ namespace gestione_ticket_final.Controllers
         //    return View(tickets);
         //}
 
+
+        // POST: Ticket/Close/5
+        [HttpGet]
+        public async Task<IActionResult> Close(int ?id)
+        {
+            var ticket = await _context.Ticket.FindAsync(id);
+
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+
+            var currentUser = User.Identity as ClaimsIdentity;
+            var userRuolo = currentUser.FindFirst("Ruolo");
+
+            if (userRuolo.Value != "Tecnico" && userRuolo.Value != "Amministratore")
+            {
+                return RedirectToAction("ErrorPage", "Unauthorized");
+            }
+
+            ticket.Stato = Status.CHIUSO;
+            ticket.Data_chiusura = DateTime.Today;
+            ticket.Ora_chiusura = DateTime.Now.ToString("HH:mm");
+
+            _context.Update(ticket);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
+
     }
 }

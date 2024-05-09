@@ -146,6 +146,12 @@
 
                             <input type="submit" value="Create" class="btn btn-primary" />
                         </div>
+                            @if (Model.Stato != Status.CHIUSO)
+                            {
+                                <div  style="margin-left:15px">
+                                <a asp-controller="Ticket" asp-action="Close" asp-route-id="@Model.Id_ticket" class="btn btn-warning mt-3 ml-10">Chiudi Ticket</a>
+                                </div>
+                            }
                 </form>
             </div>
         </div>
