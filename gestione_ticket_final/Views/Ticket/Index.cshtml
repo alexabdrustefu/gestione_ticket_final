@@ -69,7 +69,7 @@
                         <div class="form-group">
                             <label asp-for="@ticket.Prodotto.TipologiaProdotto.Descrizione" class="control-label" style="color:white">Tipologia</label>
                             <div class="autocomplete-container">
-                                <input id="tipologiaFilter" value="@((ticket?.Prodotto?.TipologiaProdotto?.Descrizione ?? ""))" type="text" class="form-control autocomplete-input" data-ticket-id="0" placeholder="Cerca tipologia prodotto" />
+                                <input style="border-radius: 9px;" id="tipologiaFilter" value="@((ticket?.Prodotto?.TipologiaProdotto?.Descrizione ?? ""))" type="text" class="form-control autocomplete-input" data-ticket-id="0" placeholder="Cerca tipologia prodotto" />
                                 <ul id="suggestionsList-0" class="autocomplete-dropdown"></ul>
                             </div>
                             <input asp-for="@ticket.Prodotto.TipologiaProdotto.Id_tipologia_prodotto" type="hidden" id="tipologia-prodotto-id-0" name="TipologiaProdottoId" />

@@ -249,8 +249,6 @@ namespace gestione_ticket_final.Controllers
         }
 
         // POST: Ticket/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int? id, [Bind("Id_ticket,Data_apertura,Ora_apertura,Data_chiusura,Ora_chiusura,Descrizione,Stato,UserId,ProdottoId,AssegnaAllUtenteLoggato,Soluzione")] Ticket ticket, [Bind("UserId,TicketId")] LavorazioneTicket lavorazione)
@@ -280,6 +278,7 @@ namespace gestione_ticket_final.Controllers
                                 var userIdClaim = currentUser.FindFirst("UserId")?.Value;
 
                                 int IdUtenteInt = Int32.Parse(userIdClaim);
+
                                 ticket.UserId = IdUtenteInt;
                                 ticket.Stato = Status.LAVORAZIONE;
                                 lavorazione.UserId = IdUtenteInt;
@@ -292,9 +291,21 @@ namespace gestione_ticket_final.Controllers
 
                             }
                         }
+                        else {
+                            //assegnazione ad un altro utente
+                            lavorazione.UserId = ticket.UserId;
+                            lavorazione.TicketId = ticket.Id_ticket;
+                            lavorazione.Data_presa_incarico = DateTime.Now;
+                            lavorazione.Ora_presa_incarico = DateTime.Now.ToString("HH:mm");
+                            _context.Add(lavorazione);
+                            await _context.SaveChangesAsync();
+                            return RedirectToAction(nameof(Index));
+                        }
+
                     }
                     else
                     {
+
                         return RedirectToAction("ErrorPage", "Unauthorized");
                     }
                 }

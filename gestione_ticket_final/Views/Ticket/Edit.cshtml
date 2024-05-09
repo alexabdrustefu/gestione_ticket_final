@@ -39,7 +39,7 @@
         .autocomplete-dropdown li {
             color: black;
         }
-</style>
+</style> 
 <div class="row">
     <div class="col-md-6 offset-md-3">
         <div class="card text-white border-secondary" style="border-radius: 20px;">
@@ -73,25 +73,26 @@
                         }
 
                         <br />
-                    <div class="form-group" hidden>
-                        <label asp-for="Data_apertura" class="control-label"></label>
-                        <input asp-for="Data_apertura" class="form-control" />
-                        <span asp-validation-for="Data_apertura" class="text-danger"></span>
+                        <div class="form-group">
+
+                            @* <label asp-for="Data_apertura" class="control-label" type="hidden"></label> *@
+                            <input asp-for="Data_apertura" class="form-control" type="hidden" />
+                            <span asp-validation-for="Data_apertura" class="text-danger" type="hidden"></span>
+                    </div>
+                    <div class="form-group">
+                            @* <label asp-for="Ora_apertura" class="control-label" type="hidden"></label> *@
+                            <input asp-for="Ora_apertura" value="@Model.Ora_apertura" class="form-control" type="hidden" />
+                            <span asp-validation-for="Ora_apertura" class="text-danger" type="hidden"></span>
                     </div>
                     <div class="form-group" hidden>
-                        <label asp-for="Ora_apertura" class="control-label"></label>
-                        <input asp-for="Ora_apertura" class="form-control" />
-                        <span asp-validation-for="Ora_apertura" class="text-danger"></span>
+                        @* <label asp-for="Data_chiusura" class="control-label"></label> *@
+                            <input asp-for="Data_chiusura" value="@Model.Data_chiusura" class="form-control" type="hidden" />
+                            <span asp-validation-for="Data_chiusura" class="text-danger" type="hidden"></span>
                     </div>
                     <div class="form-group" hidden>
-                        <label asp-for="Data_chiusura" class="control-label"></label>
-                        <input asp-for="Data_chiusura" class="form-control" />
-                        <span asp-validation-for="Data_chiusura" class="text-danger"></span>
-                    </div>
-                    <div class="form-group" hidden>
-                        <label asp-for="Ora_chiusura" class="control-label"></label>
-                        <input asp-for="Ora_chiusura" class="form-control" />
-                        <span asp-validation-for="Ora_chiusura" class="text-danger"></span>
+                        @* <label asp-for="Ora_chiusura" class="control-label"></label> *@
+                            <input asp-for="Ora_chiusura" value="@Model.Ora_chiusura" value="@Model.Data_apertura" class="form-control" type="hidden" />
+                            <span asp-validation-for="Ora_chiusura" class="text-danger" type="hidden"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="Descrizione" class="control-label" style="color:black">Descrizione</label>
@@ -108,24 +109,33 @@
                         <input asp-for="Stato" class="form-control" />
                         <span asp-validation-for="Stato" class="text-danger"></span>
                     </div>
-                    <div class="form-group">
-                        <label asp-for="UserId" class="control-label" style="color:black">Utente Creazione</label>
-                        <div class="autocomplete-container">
-                            @* <input value="@($"{Model.User?.Nome} {Model.User?.Cognome}")" type="text" id="autocompleteInput" class="form-control" placeholder="Cerca utente" /> *@
-                            <input value="@($"{Model.User?.Nome} {Model.User?.Cognome}")" type="text" class="form-control" readonly/>
-                            @* <ul id="suggestionsList" class="autocomplete-dropdown"></ul> *@
+                        <div class="form-group">
+                            <label asp-for="UserId" class="control-label" style="color:black">Assegna a</label>
+                            <div class="autocomplete-container-user">
+                                @* <input value="@($"{Model?.User?.Nome} {Model?.User?.Cognome}")" type="text" id="autocompleteInputUser" class="form-control" placeholder="Assegna a" /> *@
+                                <input value="" type="text" id="autocompleteInputUser" class="form-control" placeholder="cerca Utente" />
+
+                                <ul id="suggestionsListUser" class="autocomplete-dropdown"></ul>
+                            </div>
+
+                            <input asp-for="UserId" type="hidden" id="user-id" name="UserId" />
+
+
+                            <span id="selectedUserName"></span>
+                            <span asp-validation-for="User.Nome" class="text-danger"></span>
                         </div>
 
-                        <input asp-for="UserId" type="hidden" id="user-id" name="UserId" />
+                        <div class="form-group">
+                            <label asp-for="Stato" class="control-label" style="color:black">Stato</label>
+                            <input asp-for="Stato" class="form-control" />
+                            <span asp-validation-for="Stato" class="text-danger"></span>
+                        </div>
 
-
-                        @* <span id="selectedUserName"></span>
-                        <span asp-validation-for="User.Nome" class="text-danger"></span> *@
-                    </div>
                     <div class="form-group">
                         <label asp-for="ProdottoId" class="control-label" style="color:black">Prodotto</label>
                         <div class="autocomplete-container">
-                            <input value="@($"{Model?.Prodotto?.Descrizione}")" type="text" id="autocompleteInput" class="form-control" placeholder="Cerca Prodotto" />
+                            @* <input value="@($"{Model?.Prodotto?.Descrizione}")" type="text" id="autocompleteInput" class="form-control" placeholder="Cerca Prodotto" /> *@
+                            <input value="" type="text" id="autocompleteInput" class="form-control" placeholder="Cerca Prodotto" />
 
                             <ul id="suggestionsList" class="autocomplete-dropdown"></ul>
                         </div>
@@ -164,12 +174,50 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    @* <script>
+    <script>
         $(document).ready(function () {
-            $('#autocompleteInput').on('input', function () {
+            $('#autocompleteInputUser').on('input', function () {
                 var inputText = $(this).val();
                 $.ajax({
                     url: '@Url.Action("GetSuggestions", "Ticket")',
+                    type: 'POST',
+                    data: { input: inputText },
+                    success: function (data) {
+                        var suggestionsListUser = $('#suggestionsListUser');
+                        suggestionsListUser.empty();
+                        if (data.length > 0) {
+                            suggestionsListUser.show();
+                            data.forEach(function (suggestion) {
+                                var fullName = suggestion.nome + ' ' + suggestion.cognome;
+                                $('#suggestionsListUser').append('<li data-userid="' + suggestion.id + '">' + fullName + '</li>');
+                            });
+                        } else {
+                            suggestionsListUser.hide();
+                        }
+                    }
+                });
+            });
+
+            $(document).click(function (event) {
+                if (!$(event.target).closest('.autocomplete-container-user').length) {
+                    $('#suggestionsListUser').hide();
+                }
+            });
+
+            $('#suggestionsListUser').on('click', 'li', function () {
+                var selectedUser = $(this).text(); // Ottieni il nome dell'utente selezionato
+                var selectedUserId = $(this).data('userid'); // Ottieni l'ID dell'utente selezionato
+                $('#autocompleteInputUser').val(selectedUser); // Imposto il nome dell'utente nel campo di input
+                $('#user-id').val(selectedUserId); // Imposto l'ID dell'utente nel campo nascosto per l'ID
+                $('#selectedUserName').text(selectedUser); // Visualizzo il nome dell'utente
+                $('#suggestionsListUser').hide();
+            });
+
+            // Autocomplete per il prodotto
+            $('#autocompleteInput').on('input', function () {
+                var inputText = $(this).val();
+                $.ajax({
+                    url: '@Url.Action("GetProdotti", "Ticket")',
                     type: 'POST',
                     data: { input: inputText },
                     success: function (data) {
@@ -178,8 +226,8 @@
                         if (data.length > 0) {
                             suggestionsList.show();
                             data.forEach(function (suggestion) {
-                                var fullName = suggestion.nome + ' ' + suggestion.cognome;
-                                $('#suggestionsList').append('<li data-userid="' + suggestion.id + '">' + fullName + '</li>');
+                                var description = suggestion.descrizione;
+                                $('#suggestionsList').append('<li data-prodottoid="' + suggestion.id + '">' + description + '</li>');
                             });
                         } else {
                             suggestionsList.hide();
@@ -195,54 +243,13 @@
             });
 
             $('#suggestionsList').on('click', 'li', function () {
-                var selectedUser = $(this).text(); // Ottieni il nome dell'utente selezionato
-                var selectedUserId = $(this).data('userid'); // Ottieni l'ID dell'utente selezionato
-                $('#autocompleteInput').val(selectedUser); // Imposto il nome dell'utente nel campo di input
-                $('#user-id').val(selectedUserId); // Imposto l'ID dell'utente nel campo nascosto per l'ID
-                $('#selectedUserName').text(selectedUser); // Visualizzo il nome dell'utente
+                var prodottoSelezionato = $(this).text();
+                var prodottoSelezionatoId = $(this).data('prodottoid');
+                $('#autocompleteInput').val(prodottoSelezionato);
+                $('#prodottoid').val(prodottoSelezionatoId);
                 $('#suggestionsList').hide();
             });
-        }); *@
-        @* autocomplete prodotto *@
-        <script>
-            $(document).ready(function () {
-                $('#autocompleteInput').on('input', function () {
-                    var inputText = $(this).val();
-                    $.ajax({
-                        url: '@Url.Action("GetProdotti", "Ticket")',
-                        type: 'POST',
-                        data: { input: inputText },
-                        success: function (data) {
-                            var suggestionsList = $('#suggestionsList');
-                            suggestionsList.empty();
-                            if (data.length > 0) {
-                                suggestionsList.show();
-                                data.forEach(function (suggestion) {
-                                    var description = suggestion.descrizione;
-                                    $('#suggestionsList').append('<li data-prodottoid="' + suggestion.id + '">' + description + '</li>');
-                                });
-                            } else {
-                                suggestionsList.hide();
-                            }
-                        }
-                    });
-                });
-
-                $(document).click(function (event) {
-                    if (!$(event.target).closest('.autocomplete-container').length) {
-                        $('#suggestionsList').hide();
-                    }
-                });
-
-                $('#suggestionsList').on('click', 'li', function () {
-                    var prodottoSelezionato = $(this).text();
-                    var prodottoSelezionatoId = $(this).data('prodottoid');
-                    $('#autocompleteInput').val(prodottoSelezionato);
-                    $('#prodottoid').val(prodottoSelezionatoId);
-                    $('#suggestionsList').hide();
-                });
-            });
-
-    </script>
+        });
     </script>
 }
+
