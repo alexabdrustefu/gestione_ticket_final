@@ -62,7 +62,7 @@ namespace gestione_ticket_final.Controllers
             {
                 return NotFound();
             }
-            return PartialView("_LavorazioniPerTicket", lavorazioni);
+            return View("_LavorazioniPerTicket", lavorazioni);
         }
         //MODAL restituisce un modal
         public async Task<IActionResult> ModalTicket(int ticketId)

@@ -19,9 +19,9 @@ namespace gestione_ticket_final.Models
         [EmailAddress(ErrorMessage = "Inserisci un'email valida.")]
         public string Email { get; set; }
 
-        //[Required(ErrorMessage = "Il campo Password è obbligatorio.")]
-        //[StringLength(100, ErrorMessage = "La {0} deve essere lunga almeno {2} e massimo {1} caratteri.", MinimumLength = 6)]
-        //[DataType(DataType.Password)]
+        [Required(ErrorMessage = "Il campo Password è obbligatorio.")]
+        [StringLength(100, ErrorMessage = "La {0} deve essere lunga almeno {2} e massimo {1} caratteri.", MinimumLength = 6)]
+        [DataType(DataType.Password)]
         public string PasswordBase64 { get; set; }
         public Ruolo? Ruolo { get; set; }
         public bool IsLoggedIn { get; set; }
