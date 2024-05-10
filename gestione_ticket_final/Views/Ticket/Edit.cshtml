@@ -53,6 +53,7 @@
                         <label class="form-check-label" style="color: darkslategrey;" for="AssegnaAllUtenteLoggato">Assegna a me</label>
                         </div> *@
                         @{
+                            if(!Model.Stato.ToString().Equals("CHIUSO")){
                             var currentUser = User.Identity as ClaimsIdentity;
                             @if (currentUser != null && currentUser.IsAuthenticated)
                             {
@@ -69,7 +70,7 @@
                                         </div>
                                     }
                                 }
-                            }
+                            }}
                         }
 
                         <br />
@@ -106,36 +107,37 @@
                     </div>
                     <div class="form-group">
                         <label asp-for="Stato" class="control-label" style="color:black">Stato</label>
-                        <input asp-for="Stato" class="form-control" />
+                        <input asp-for="Stato" class="form-control" readonly />
                         <span asp-validation-for="Stato" class="text-danger"></span>
                     </div>
-                        <div class="form-group">
-                            <label asp-for="UserId" class="control-label" style="color:black">Assegna a</label>
-                            <div class="autocomplete-container-user">
-                                @* <input value="@($"{Model?.User?.Nome} {Model?.User?.Cognome}")" type="text" id="autocompleteInputUser" class="form-control" placeholder="Assegna a" /> *@
-                                <input value="" type="text" id="autocompleteInputUser" class="form-control" placeholder="cerca Utente" />
+                        @{
+                            if (!@Model.Stato.ToString().Equals("CHIUSO"))
+                            {
+                                <div class="form-group">
+                                    <label asp-for="UserId" class="control-label" style="color:black">Assegna a</label>
+                                    <div class="autocomplete-container-user">
+                                        @* <input value="@($"{Model?.User?.Nome} {Model?.User?.Cognome}")" type="text" id="autocompleteInputUser" class="form-control" placeholder="Assegna a" /> *@
+                                        <input value="" type="text" id="autocompleteInputUser" class="form-control" placeholder="cerca Utente" autocomplete="off" />
 
-                                <ul id="suggestionsListUser" class="autocomplete-dropdown"></ul>
-                            </div>
+                                        <ul id="suggestionsListUser" class="autocomplete-dropdown"></ul>
+                                    </div>
 
-                            <input asp-for="UserId" type="hidden" id="user-id" name="UserId" />
+                                    <input asp-for="UserId" type="hidden" id="user-id" name="UserId" />
 
 
-                            <span id="selectedUserName"></span>
-                            <span asp-validation-for="User.Nome" class="text-danger"></span>
-                        </div>
+                                    <span id="selectedUserName"></span>
+                                    <span asp-validation-for="User.Nome" class="text-danger"></span>
+                                </div>
+                            }
+                        }
+                       
 
-                        <div class="form-group">
-                            <label asp-for="Stato" class="control-label" style="color:black">Stato</label>
-                            <input asp-for="Stato" class="form-control" />
-                            <span asp-validation-for="Stato" class="text-danger"></span>
-                        </div>
 
                     <div class="form-group">
                         <label asp-for="ProdottoId" class="control-label" style="color:black">Prodotto</label>
                         <div class="autocomplete-container">
                             @* <input value="@($"{Model?.Prodotto?.Descrizione}")" type="text" id="autocompleteInput" class="form-control" placeholder="Cerca Prodotto" /> *@
-                            <input value="" type="text" id="autocompleteInput" class="form-control" placeholder="Cerca Prodotto" />
+                                <input value="" type="text" id="autocompleteInput" class="form-control" placeholder="Cerca Prodotto" autocomplete="off" />
 
                             <ul id="suggestionsList" class="autocomplete-dropdown"></ul>
                         </div>

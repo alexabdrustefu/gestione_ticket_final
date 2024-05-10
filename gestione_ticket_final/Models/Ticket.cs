@@ -64,6 +64,21 @@ namespace gestione_ticket_final.Models
         [Display(Name = "Assegna a utente loggato")]
         public bool AssegnaAllUtenteLoggato { get; set; }
 
+        
+        public static string GetColor(Status? statoTicket)
+        {
+            switch (statoTicket)
+            {
+                case Status.APERTO:
+                    return "green";
+                case Status.LAVORAZIONE:
+                    return "yellow";
+                case Status.CHIUSO:
+                    return "red";
+                default:
+                    return "white";
+            }
+        }
     }
 
 }

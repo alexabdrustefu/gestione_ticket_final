@@ -51,7 +51,7 @@
         <a asp-action="Create" class="btn btn-primary">Create New</a>
     </div>
 </div>
-<div class="card text-white bg-success mb-3" style="border-radius: 20px;">
+<div class="card text-white bg-success mb-3" style="border-radius: 20px; width:101%;">
     <div class="card-body">
         <h5 class="card-title">Gestione dei propri ticket</h5>
         <p class="card-text">In questa sezione del programma é possibile visualizzare i propri Ticket</p>
@@ -69,8 +69,8 @@
                         <div class="form-group">
                             <label asp-for="@ticket.Prodotto.TipologiaProdotto.Descrizione" class="control-label" style="color:white">Tipologia</label>
                             <div class="autocomplete-container">
-                                <input style="border-radius: 9px;" id="tipologiaFilter" value="@((ticket?.Prodotto?.TipologiaProdotto?.Descrizione ?? ""))" type="text" class="form-control autocomplete-input" data-ticket-id="0" placeholder="Cerca tipologia prodotto" />
-                                <ul id="suggestionsList-0" class="autocomplete-dropdown"></ul>
+                                <input style="border-radius: 9px;" id="tipologiaFilter" value="@((ticket?.Prodotto?.TipologiaProdotto?.Descrizione ?? ""))" type="text" class="form-control autocomplete-input" data-ticket-id="0" placeholder="Cerca tipologia prodotto" autocomplete="off" />
+                                <ul style="border-radius: 10px; width: 23%;" id="suggestionsList-0" class="autocomplete-dropdown"></ul>
                             </div>
                             <input asp-for="@ticket.Prodotto.TipologiaProdotto.Id_tipologia_prodotto" type="hidden" id="tipologia-prodotto-id-0" name="TipologiaProdottoId" />
                             <!-- Rimuovi il seguente span -->
@@ -113,88 +113,40 @@
 <br />
 
 
-
 <div class="row" style="display: flex;">
     @foreach (var item in Model)
     {
-        <div class="col-md-2 mb-2">
-            <button type="button" class="btn btn-success" onclick="openModal('@item.Id_ticket')" style="padding: 0px; width: 100%;border-top-left-radius: 80px 80px;">
-                Lavorazione Ticket
-            </button>
-            <div class="card" style="border-bottom-left-right-radius: 6px;">
-                <div class="card-body Scrolbar" style="max-height: 200px; overflow-y: auto;">
-                    <p class="card-text" style="font-size: 14px;">Numero ticket: @item.Id_ticket</p>
+         <div class="col-md-3" style="padding-right: 0rem !important; padding: 1rem; margin-bottom: 20px;">
+            <div class="card" style="border-radius: 10px; border: 2px solid #e0e0e0; width: 100%;">
+                <div class="card-header" style="background-color: @GetStatusColor(item.Stato)">
+                    <h5 class="card-title text-white">Ticket @item.Id_ticket</h5>
+                </div>
+                <div class="card-body">
                     <p class="card-text" style="font-size: 14px;">Stato: @item.Stato.ToString().ToLower()</p>
-
-                    @{
-                        if (item.Data_apertura != null)
-                        {
-                                <p class="card-text" style="font-size: 14px;">Data Apertura: @(item.Data_apertura.HasValue ? item.Data_apertura.Value.ToString("dd/MM/yyyy") : "")</p>
-                        }
-                        else {
-                            <p class="card-text" style="font-size: 14px;">Data Apertura:Non Disponibile</p>
-                        }
-                        // if (item.Data_chiusura != null)
-                        // {
-                        //         <p class="card-text" style="font-size: 14px;">Data Chiusura: @(item.Data_apertura.HasValue ? item.Data_apertura.Value.ToString("dd/MM/yyyy") : "")</p>
-                        // }
-                        // else
-                        // {
-                        //         <p class="card-text" style="font-size: 14px;">Data Chiusura:Non Disponibile</p>
-                        // }
+                    <p class="card-text" style="font-size: 14px;">Data Apertura: @(item.Data_apertura.HasValue ? item.Data_apertura.Value.ToString("dd/MM/yyyy") : "Non Disponibile")</p>
+                    @if (item.User != null)
+                    {
+                        <p class="card-text" style="font-size: 14px;">Assegnato a: @item.User.Nome @item.User.Cognome</p>
                     }
-                  @*   <p class="card-text" style="font-size: 14px;">Descrizione: @item.Descrizione</p>
-                    <p class="card-text" style="font-size: 14px;">Soluzione: @item.Soluzione</p> *@
-
-
-                    @{
-                        var currentUser = User.Identity as ClaimsIdentity;
-                        if (currentUser != null && currentUser.IsAuthenticated)
-                        {
-                            var userRuolo = currentUser.FindFirst("Ruolo");
-                            if (userRuolo != null && userRuolo.Value == "Tecnico" || userRuolo.Value == "Amministratore")
-                            {
-                                if(item.User != null){
-                                        <p class="card-text" style="font-size: 14px;">Assegnato a: @item.User.Nome  @item.User.Cognome</p>
-                                }
-                                else
-                                {
-                                        <p class="card-text" style="font-size: 14px;">Assegnato a:Non disponibile</p>
-                                }
-                            }
-                        }
+                    else
+                    {
+                        <p class="card-text" style="font-size: 14px;">Assegnato a: Non disponibile</p>
                     }
-
                 </div>
                 <div class="card-footer">
-                    <div class="row">
-                        @{
-
-                                <div class="col-md-4">
-                                    <a asp-action="Details" asp-route-id="@item.Id_ticket" class="btn btn-info btn-sm">Details</a>
-                                </div>
-                            if (currentUser != null && currentUser.IsAuthenticated)
-                            {
-                                var userRuolo = currentUser.FindFirst("Ruolo");
-                                if (userRuolo != null && userRuolo.Value == "Tecnico" || userRuolo.Value == "Amministratore")
-                                {
-
-                                        <div class="col-md-3">
-                                            <a asp-action="Edit" asp-route-id="@item.Id_ticket" class="btn btn-primary btn-sm">Edit</a>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <a asp-action="Delete" asp-route-id="@item.Id_ticket" class="btn btn-danger btn-sm">Delete</a>
-                                        </div>
-                                }
-                            }
-                        }
-                    </div>
+                    <a asp-action="Details" asp-route-id="@item.Id_ticket" class="btn btn-info btn-sm">Details</a>
+                    @if (User.Identity.IsAuthenticated && (User.IsInRole("Tecnico") || User.IsInRole("Amministratore")))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.Id_ticket" class="btn btn-primary btn-sm">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id_ticket" class="btn btn-danger btn-sm">Delete</a>
+                    }
                 </div>
-
             </div>
         </div>
     }
 </div>
+
+
 <div id="modalContainer"></div>
 
 
@@ -304,7 +256,7 @@
                         if (data.length > 0) {
                             suggestionsList.show();
                             data.forEach(function (tipologia) {
-                                $('#suggestionsList-' + ticketId).append('<li data-tipologia-id="' + tipologia.id + '">' + tipologia.descrizione + '</li>');
+                                $('#suggestionsList-' + ticketId).append('<li style="font-size: 13px; data-tipologia-id="' + tipologia.id + '">' + tipologia.descrizione + '</li>');
                             });
                         } else {
                             suggestionsList.hide();
@@ -331,7 +283,20 @@
         });
     </script>
 }
-
+@functions {
+    public string GetStatusColor(Status ? status)
+    {
+        switch (status)
+        {
+            case Status.APERTO:
+                return "#28a745"; 
+            case Status.CHIUSO:
+                return "#dc3545"; 
+            default:
+                return "#f9e154";
+        }
+    }
+}
 
 @* <script>
 

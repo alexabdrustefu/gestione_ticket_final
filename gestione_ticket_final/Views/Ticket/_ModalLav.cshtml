@@ -1,0 +1,39 @@
+﻿@model List<LavorazioneTicket>;
+<div class="modal fade" id="lavorazioniPerTicketModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Lavorazioni per Ticket</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive rounded border p-3" style="border-radius: 9px;">
+                    <table class="table table-striped">
+                        <thead class="bg-success text-white">
+                            <tr>
+                                <th scope="col">Data Presa Incarico</th>
+                                <th scope="col">Ora Presa Incarico</th>
+                                <th scope="col">Utente</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var lavorazione in Model)
+                            {
+                                <tr>
+                                    <td>@lavorazione.Data_presa_incarico.ToString("dd/MM/yyyy")</td>
+                                    <td>@lavorazione.Ora_presa_incarico</td>
+                                    <td>@lavorazione?.User?.Nome @lavorazione?.User?.Cognome</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
+            </div>
+        </div>
+    </div>
+</div>

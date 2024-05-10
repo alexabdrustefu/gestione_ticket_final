@@ -19,11 +19,14 @@ namespace gestione_ticket_final.Controllers
     {
         //classe fornita per gestire access e access denied
         private readonly SignInManager<User> _signInManager;
+        //contesto del db
         public readonly gestione_ticket_finalContext _context;
+        //servizio creato nella cartella service
         private readonly IEmailService _emailService;
+        //libreria usata per generare la password casuale 
         private readonly Random _random;
 
-        //Injection
+        //Injection dei vari servizi
         public AuthController(SignInManager<User> signInManager, gestione_ticket_finalContext context, IEmailService emailService)
         {
             _signInManager = signInManager;
@@ -31,13 +34,13 @@ namespace gestione_ticket_final.Controllers
             _emailService = emailService;
             _random = new Random();
         }
-
+        //GET REGISTER
         [HttpGet]
         public IActionResult Register()
         {
             return View();
         }
-
+        //POST REGISTERR
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(User user)
@@ -76,16 +79,16 @@ namespace gestione_ticket_final.Controllers
 
             return View(user);
         }
-
+        //get login
         [HttpGet]
         public IActionResult Login()
         {
             return View();
         }
-
+        //post login
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [AllowAnonymous] //permetto a tutti gli utenti di accedere a questa password
+        [AllowAnonymous] //permetto a tutti gli utenti di accedere a questo controller
         public async Task<IActionResult> Login([Bind("Email,PasswordBase64,IsLoggedIn")] User user)
         {
             if (ModelState.IsValid)
@@ -99,15 +102,13 @@ namespace gestione_ticket_final.Controllers
                     ModelState.AddModelError("PasswordBase64", "Credenziali non valide.");
                     return View();
                 }
+                //se l'email non corrisponde mostra errore
                 if (existingUser.Email != user.Email || existingUser.Email == null)
                 {
                     ModelState.AddModelError("Email", "Email non corretta.");
                     return View();
                 }
-                //se l'email non corrisponde mostra errore
-
-
-                // Crea l'identità dell'utente
+                // Crea l'identità dell'utente che sara salvata nel cookie
                 var claims = new[]
                 {
                     new Claim(ClaimTypes.Email, user.Email),
@@ -115,10 +116,11 @@ namespace gestione_ticket_final.Controllers
                     new Claim(ClaimTypes.Name, existingUser.Nome),
                     new Claim(ClaimTypes.Surname, existingUser.Cognome),
                     new Claim("UserId", existingUser.UserId.ToString()),
-                    new Claim("Ruolo", existingUser.Ruolo.ToString())
+                    new Claim("Ruolo", existingUser.Ruolo.ToString()),
+                    
 
                 };
-
+                //creo l identity
                 var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
                 // Crea le informazioni di autenticazione e autentica l'utente
@@ -132,6 +134,7 @@ namespace gestione_ticket_final.Controllers
                                               authProperties);
                 if (!existingUser.HasChangedPassword)
                 {
+                    //controller per ripristinare la password
                     return RedirectToAction("ChangePassword");
                 }
                 return RedirectToAction("Index", "Home");
@@ -147,18 +150,21 @@ namespace gestione_ticket_final.Controllers
             // Esegui il logout dell'utente
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-            // Elimina il cookie manualmente
+            // Elimina il cookie 
             Response.Cookies.Delete("Cookie");
 
             // Reindirizza l'utente alla pagina di login
             return RedirectToAction("Login", "Auth");
         }
+
+        //GET PASSWORD DIMENTICATA  
         [HttpGet]
         public IActionResult ForgotPassword()
         {
             return View();
         }
-
+        //POST PASSWORD DIMENTICATA
+        //prende la mail della password da ripristinare e manda una password temporanea
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(string email)
@@ -194,7 +200,7 @@ namespace gestione_ticket_final.Controllers
 
             return RedirectToAction("Login", "Auth");
         }
-        //genero uina password casuale
+        //metodo che genera una password casuale
         private string GenerateRandomPassword()
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -203,7 +209,7 @@ namespace gestione_ticket_final.Controllers
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        //Cambio della password
+        //Cambio della password dopo aver utilizzato quella temporanea
         [HttpGet]
         [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
         public IActionResult ChangePassword()

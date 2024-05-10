@@ -1,23 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using gestione_ticket.Data;
 using gestione_ticket_final.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
-using NuGet.Versioning;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-using Microsoft.AspNetCore.Routing.Constraints;
 
 namespace gestione_ticket_final.Controllers
 {
     [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme)]
-
     public class TicketController : Controller
     {
         private readonly UserManager<User> _userManager;
@@ -30,13 +21,13 @@ namespace gestione_ticket_final.Controllers
         }
 
         // GET: Ticket
-        // Modifica il metodo Index per ricevere tutti i filtri
+        //Aggiungo i9 filtri nella index
         public async Task<IActionResult> Index(string status, string productType, string description, int tipologiaProdottoId)
         {
             IQueryable<Ticket> tickets = _context.Ticket.Include(t => t.User).Include(t => t.Prodotto);
             IQueryable<TipologiaProdotto> tipo = _context.TipologiaProdotto;
 
-            // Applica i filtri
+            // Applico i filtri
             if (!string.IsNullOrEmpty(status))
             {
                 Status statusEnum;
@@ -46,42 +37,24 @@ namespace gestione_ticket_final.Controllers
                 }
                 else
                 {
-                    // Gestisci lo stato non valido qui, ad esempio reindirizza a una pagina di errore
                     return RedirectToAction("Error", "Home");
                 }
             }
-
+            //applico i filtri sulla tipologia
             if (!string.IsNullOrEmpty(productType))
             {
-                // Applica il filtro sulla tipologia del prodotto
                 tickets = tickets.Where(t => t.Prodotto.TipologiaProdotto.Descrizione == productType);
             }
-
+            //applico i filtri sulla descrizione
             if (!string.IsNullOrEmpty(description))
             {
-                // Applica il filtro sulla descrizione
                 tickets = tickets.Where(t => t.Descrizione.Contains(description));
             }
 
             return View(await tickets.Where(t => t.Deleted == false).ToListAsync());
         }
 
-        public async Task<IActionResult> FindByDescription(string description)
-        {
-            if (string.IsNullOrEmpty(description))
-            {
-                // Se la descrizione è vuota, reindirizza alla vista Index senza eseguire la ricerca
-                return RedirectToAction("Index");
-            }
-
-            var tickets = await _context.Ticket
-                .Include(t => t.User)
-                .Where(t => t.Descrizione.Contains(description))
-                .ToListAsync();
-
-            return View("Index", tickets);
-        }
-        //GET LAVORAZIONE PER TICKET
+        //GET LAVORAZIONE PER TICKET restituisce una partial view
         public async Task<IActionResult> LavorazioniPerTicket(int ticketId)
         {
             var lavorazioni = await _context.LavorazioneTicket.Where(l => l.TicketId == ticketId).Include(l => l.User).ToListAsync();
@@ -90,6 +63,16 @@ namespace gestione_ticket_final.Controllers
                 return NotFound();
             }
             return PartialView("_LavorazioniPerTicket", lavorazioni);
+        }
+        //MODAL restituisce un modal
+        public async Task<IActionResult> ModalTicket(int ticketId)
+        {
+            var lavorazioni = await _context.LavorazioneTicket.Where(l => l.TicketId == ticketId).Include(l => l.User).ToListAsync();
+            if (lavorazioni == null)
+            {
+                return NotFound();
+            }
+            return PartialView("_ModalLav", lavorazioni);
         }
 
         // GET: Ticket/Details/5
@@ -114,64 +97,11 @@ namespace gestione_ticket_final.Controllers
         // GET: Ticket/Create
         public IActionResult Create()
         {
-            //ViewBag.Prodotto = new SelectList(_context.Prodotto.ToList(), "Id_prodotto", "Descrizione");
             return View();
         }
 
-        //// POST: Ticket/Create
-        //// To protect from overposting attacks, enable the specific properties you want to bind to.
-        //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create([Bind("Id_ticket,Data_apertura,Ora_apertura,Data_chiusura,Ora_chiusura,Descrizione,Stato,UtenteId,ProdottoId,Soluzione, assegna_utente_loggato")] Ticket ticket, [Bind("id_utente")] LavorazioneTicket lavorazione)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        //Il ticket viene creato aperto
-        //        ticket.Data_apertura = DateTime.Now;
-        //        ticket.Ora_apertura = DateTime.Now.ToString("HH:mm");
-        //        ticket.Stato = Status.APERTO;
-        //        //Assegno user loggato al ticket
-
-        //        var currentUser = User.Identity as ClaimsIdentity;
-        //        if (currentUser != null && currentUser.IsAuthenticated)
-        //        {
-        //            var userIdClaim = currentUser.FindFirst("UserId");
-
-        //            string userId = userIdClaim.Value;
-        //            int IdUtenteInt = Int32.Parse(userId);
-        //            ticket.UserId = IdUtenteInt;
-        //        }
-        //        if (ticket.AssegnaAllUtenteLoggato)
-        //        {
-        //            if (currentUser != null && currentUser.IsAuthenticated)
-        //            {
-        //                var userIdClaim = currentUser.FindFirst("UserId");
-
-        //                string userId = userIdClaim.Value;
-        //                int IdUtenteInt = Int32.Parse(userId);
-        //                ticket.UserId = IdUtenteInt;
-        //                lavorazione.UserId = IdUtenteInt;
-        //            }
-        //        }
-
-        //        //imposto deleted a false
-        //        ticket.Deleted = false;
-
-
-        //        _context.Add(ticket);
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    return View(ticket);
-        //}
-
-
-
-
         // POST: Ticket/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //utilizzo anche la lavorazione per settarla
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id_ticket,Data_apertura,Ora_apertura,Data_chiusura,Ora_chiusura,Descrizione,Stato,UtenteId,ProdottoId,Soluzione, AssegnaAllUtenteLoggato")] Ticket ticket, [Bind("id_utente")] LavorazioneTicket lavorazione)
@@ -182,41 +112,44 @@ namespace gestione_ticket_final.Controllers
                 ticket.Data_apertura = DateTime.Now;
                 ticket.Ora_apertura = DateTime.Now.ToString("HH:mm");
                 ticket.Stato = Status.APERTO;
-                //Assegno user loggato al ticket
+                //Assegno user loggato alla variabile current user
+                //nel casso della creazione se assegna a me e a true imposta l'utente con quello loggato
                 var currentUser = User.Identity as ClaimsIdentity;
-                //if (currentUser != null && currentUser.IsAuthenticated)
-                //{
-                //    var userIdClaim = currentUser.FindFirst("UserId");
-
-                //    string userId = userIdClaim.Value;
-                //    int IdUtenteInt = Int32.Parse(userId);
-                //    ticket.UserId = IdUtenteInt;
-                //}
                 ticket.Deleted = false;
 
                 _context.Add(ticket);
                 await _context.SaveChangesAsync();
-                if (ticket.AssegnaAllUtenteLoggato)
-                {
-                    if (currentUser != null && currentUser.IsAuthenticated)
+                //estrazione del ruolo dalla claim del cookie
+                var userRuolo = currentUser.FindFirst("Ruolo");
+                //if (userRuolo.Value != "Tecnico" || userRuolo.Value != "Amministratore")
+                //{
+                //    return RedirectToAction("ErrorPage", "Unauthorized");
+                //}
+                //else
+                //{
+                    if (ticket.AssegnaAllUtenteLoggato)
                     {
-                        //ticket.AssegnaAllUtenteLoggato = false;
-                        _context.Update(ticket);
-                        await _context.SaveChangesAsync();
-                        var userIdClaim = currentUser.FindFirst("UserId")?.Value;
+                        if (currentUser != null && currentUser.IsAuthenticated)
+                        {
+                            //recupero l id del utente e lo assegno alla lavorazione ed al ticket
+                            //stato: lavorazione in quanto e assegnato al utente loggato
+                            _context.Update(ticket);
+                            await _context.SaveChangesAsync();
+                            var userIdClaim = currentUser.FindFirst("UserId")?.Value;
 
-                        int IdUtenteInt = Int32.Parse(userIdClaim);
-                        ticket.UserId = IdUtenteInt;
-                        ticket.Stato = Status.LAVORAZIONE;
-                        lavorazione.UserId = IdUtenteInt;
-                        lavorazione.TicketId = ticket.Id_ticket;
-                        lavorazione.Data_presa_incarico = DateTime.Now;
-                        lavorazione.Ora_presa_incarico = DateTime.Now.ToString("HH:mm");
-                        _context.Add(lavorazione);
-                        await _context.SaveChangesAsync();
-                        return RedirectToAction(nameof(Index));
+                            int IdUtenteInt = Int32.Parse(userIdClaim);
+                            ticket.UserId = IdUtenteInt;
+                            ticket.Stato = Status.LAVORAZIONE;
+                            lavorazione.UserId = IdUtenteInt;
+                            lavorazione.TicketId = ticket.Id_ticket;
+                            lavorazione.Data_presa_incarico = DateTime.Now;
+                            lavorazione.Ora_presa_incarico = DateTime.Now.ToString("HH:mm");
+                            _context.Add(lavorazione);
+                            await _context.SaveChangesAsync();
+                            return RedirectToAction(nameof(Index));
+                        }
                     }
-                }
+                //}
 
                 return RedirectToAction(nameof(Index));
             }
@@ -272,7 +205,6 @@ namespace gestione_ticket_final.Controllers
                         {
                             if (currentUser != null && currentUser.IsAuthenticated)
                             {
-                                //ticket.AssegnaAllUtenteLoggato = false;
                                 _context.Update(ticket);
                                 await _context.SaveChangesAsync();
                                 var userIdClaim = currentUser.FindFirst("UserId")?.Value;
@@ -291,8 +223,9 @@ namespace gestione_ticket_final.Controllers
 
                             }
                         }
-                        else {
-                            //assegnazione ad un altro utente
+                        else
+                        {
+                            //assegnazione ad un altro utente selezionato dal tecnico
                             lavorazione.UserId = ticket.UserId;
                             lavorazione.TicketId = ticket.Id_ticket;
                             lavorazione.Data_presa_incarico = DateTime.Now;
@@ -325,7 +258,7 @@ namespace gestione_ticket_final.Controllers
             return View(ticket);
         }
 
-        // GET: Ticket/Delete/5
+        // GET: Ticket/Delete/5 eliminazione logica
 
         public async Task<IActionResult> Delete(int? id)
         {
@@ -356,7 +289,7 @@ namespace gestione_ticket_final.Controllers
             }
         }
 
-        // POST: Ticket/Delete/5
+        // POST: Ticket/Delete/5 eliminazione logica
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int? id)
@@ -384,70 +317,60 @@ namespace gestione_ticket_final.Controllers
                     }
                     else
                     {
-                        return RedirectToAction("ErrorPage", "Unauthorized"); // Esempio di reindirizzamento ad una pagina di errore
+                        return RedirectToAction("ErrorPage", "Unauthorized");
                     }
                 }
             }
 
-            return RedirectToAction("ErrorPage", "Unauthorized"); // Esempio di reindirizzamento ad una pagina di errore
+            return RedirectToAction("ErrorPage", "Unauthorized");
         }
-
+        // metodo che controlla se il ticket esiste
         private bool TicketExists(int? id)
         {
             return _context.Ticket.Any(e => e.Id_ticket == id);
         }
+        //autocomplete che restituisce i primi  5 valori di utente
         [HttpPost]
         public IActionResult GetSuggestions(string input)
         {
-            // Esegui la query per ottenere suggerimenti basati sull'input dal database
             var suggestions = _context.Users
                 .Where(u => u.Nome.StartsWith(input))
                 .Select(u => new { Id = u.UserId, Nome = u.Nome, Cognome = u.Cognome })
-                .Take(5) // Limita il numero di suggerimenti a 5 per semplicità
+                .Take(5)
                 .ToList();
-
+            //restituisce un json contenente id nome e cognome
             return Json(suggestions);
         }
+        //autocomplete per i prodotti
         [HttpPost]
         public IActionResult GetProdotti(string input)
         {
-            // Esegui la query per ottenere suggerimenti basati sull'input dal database
             var suggestions = _context.Prodotto
                 .Where(p => p.Descrizione.StartsWith(input))
                 .Select(p => new { Id = p.ProdottoId, Descrizione = p.Descrizione })
-                .Take(5) // Limita il numero di suggerimenti a 5 per semplicità
+                .Take(5)
                 .ToList();
-
+            //restituisce un json contenente id descrizione
             return Json(suggestions);
         }
 
-
+        //autocomplete per tipologia prodotto estrae la tipologia dei prodotti collegati al ticket 
         public IActionResult GetTipologiaProdotto(string input)
         {
-            var tipologie = _context.Ticket.Include(t => t.Prodotto).Include(t=> t.Prodotto.TipologiaProdotto).Where(td => td.Prodotto.TipologiaProdotto.Descrizione.StartsWith(input))
-         .Select(td => new {tipologiaId= td.Prodotto.TipologiaProdotto.Id_tipologia_prodotto , Descrizione = td.Prodotto.TipologiaProdotto.Descrizione })
+            var tipologie = _context.Ticket.Include(t => t.Prodotto).Include(t => t.Prodotto.TipologiaProdotto).Where(td => td.Prodotto.TipologiaProdotto.Descrizione.StartsWith(input))
+         .Select(td => new { tipologiaId = td.Prodotto.TipologiaProdotto.Id_tipologia_prodotto, Descrizione = td.Prodotto.TipologiaProdotto.Descrizione })
          .GroupBy(td => td.tipologiaId).Select(group => group.First())
          .Take(5)
          .ToList();
-
+            //restituisce un json contenente id e descrizione
             return Json(tipologie);
         }
 
 
-        //public IActionResult CercaPerTipologiaProdotto(int tipologiaProdottoId)
-        //{
-        //    var tickets = (from ticket in _context.Ticket
-        //                   join prodotto in _context.Prodotto on ticket.ProdottoId equals prodotto.ProdottoId
-        //                   where prodotto.TipologiaProdottoId == tipologiaProdottoId
-        //                   select ticket).ToList();
-
-        //    return View(tickets);
-        //}
-
-
-        // POST: Ticket/Close/5
+        // GET: Ticket/Close 
+        //si occupa con la chiusura di un ticket
         [HttpGet]
-        public async Task<IActionResult> Close(int ?id)
+        public async Task<IActionResult> Close(int? id)
         {
             var ticket = await _context.Ticket.FindAsync(id);
 
@@ -455,7 +378,6 @@ namespace gestione_ticket_final.Controllers
             {
                 return NotFound();
             }
-
             var currentUser = User.Identity as ClaimsIdentity;
             var userRuolo = currentUser.FindFirst("Ruolo");
 
@@ -463,16 +385,12 @@ namespace gestione_ticket_final.Controllers
             {
                 return RedirectToAction("ErrorPage", "Unauthorized");
             }
-
             ticket.Stato = Status.CHIUSO;
             ticket.Data_chiusura = DateTime.Today;
             ticket.Ora_chiusura = DateTime.Now.ToString("HH:mm");
-
             _context.Update(ticket);
             await _context.SaveChangesAsync();
-
             return RedirectToAction("Index");
         }
-
     }
 }
