@@ -40,7 +40,21 @@
                             <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Ticket <i class="bi bi-ticket-perforated"></i></a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" asp-area="" asp-controller="Ticket" asp-action="Index">Gestione Ticket</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="MieiTicket" asp-action="Index">Miei Ticket</a>
+                                @{
+                                    var currentUser = User.Identity as ClaimsIdentity;
+                                    if (currentUser != null && currentUser.IsAuthenticated)
+                                    {
+                                        var userRuolo = currentUser.FindFirst("Ruolo");
+                                        if (userRuolo != null)
+                                        {
+                                            if (userRuolo.Value == "Tecnico")
+                                            {
+                                                <a class="dropdown-item" asp-area="" asp-controller="MieiTicket" asp-action="Index">Miei Ticket</a>
+
+                                            }
+                                        }
+                                    }
+                                }
                             </div>
                         </li>
 
@@ -51,11 +65,11 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="TipologiaProdotto" asp-action="Index">Tipologia Prodotto <i class="bi bi-tags"></i></a>
                         </li>
                         @{
-                            var currentUser = User.Identity as ClaimsIdentity;
-                            if (currentUser != null && currentUser.IsAuthenticated)
+                            var currentUserRols = User.Identity as ClaimsIdentity;
+                            if (currentUserRols != null && currentUser.IsAuthenticated)
                             {
-                                var userRuolo = currentUser.FindFirst("Ruolo");
-                                if (userRuolo != null && userRuolo.Value == "Amministratore")
+                                var userRuols = currentUserRols.FindFirst("Ruolo");
+                                if (userRuols != null && userRuols.Value == "Amministratore")
                                 {
                                     <li class="nav-item">
                                         <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Index">Users <i class="bi bi-people"></i></a>
@@ -66,9 +80,13 @@
                     </ul>
                     <ul class="navbar-nav">
                         </li>
+                        @{
+                            var userIdClaim = currentUser.FindFirst("UserId")?.Value;
 
+                            int Id = Int32.Parse(userIdClaim);
+                        }
                         <li class="nav-item">
-                            <a class="nav-link text-dark" style="font-weight: 100;">Bentornato @User.Identity.Name <i class="bi bi-person"></i></a>
+                            <a class="btn text-dark" style="font-weight: 100;" asp-controller="AreaPersonale" asp-action="Details" asp-route-id="@Id">Bentornato @User.Identity.Name <i class="bi bi-person"></i></a>
                         </li>
                         <li class="nav-item">
                             <form asp-area="" asp-controller="Auth" asp-action="Logout" method="post">

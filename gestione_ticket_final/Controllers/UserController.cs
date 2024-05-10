@@ -8,7 +8,7 @@ using System.Security.Claims;
 
 namespace gestione_ticket_final.Controllers
 {
-    [Authorize(Roles = "Amministratore", AuthenticationSchemes = Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme)]
+    [Authorize(Roles = "Tecnico", AuthenticationSchemes = Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme)]
 
     public class UserController : Controller
     {

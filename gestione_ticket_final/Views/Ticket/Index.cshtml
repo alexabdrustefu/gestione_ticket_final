@@ -102,8 +102,8 @@
                         <button class="btn btn-danger" type="button" onclick="resetFilters()">Reset</button>
                     </div>  *@
 
-                    <div class="col-md-2" style="text-align: end; align-content: end;">
-                        <button class="btn btn-primary" type="button" onclick="filter()">Cerca</button>
+                    <div style="text-align: end; align-content: end;">
+                        <button class="btn btn-light" type="button" onclick="filter()">Search</button>
                     </div>
                 </div>
             </div>
@@ -124,13 +124,15 @@
                 <div class="card-body">
                     <p class="card-text" style="font-size: 14px;">Stato: @item.Stato.ToString().ToLower()</p>
                     <p class="card-text" style="font-size: 14px;">Data Apertura: @(item.Data_apertura.HasValue ? item.Data_apertura.Value.ToString("dd/MM/yyyy") : "Non Disponibile")</p>
+                    <p class="card-text" style="font-size: 14px;">Data Chiusura: @(item.Data_chiusura.HasValue ? item.Data_chiusura.Value.ToString("dd/MM/yyyy") : "Non Disponibile")</p>
+
                     @if (item.User != null)
                     {
                         <p class="card-text" style="font-size: 14px;">Assegnato a: @item.User.Nome @item.User.Cognome</p>
                     }
                     else
                     {
-                        <p class="card-text" style="font-size: 14px;">Assegnato a: Non disponibile</p>
+                        <p class="card-text" style="font-size: 14px;">Assegnato a: Non Assegnato</p>
                     }
                 </div>
                 <div class="card-footer">
