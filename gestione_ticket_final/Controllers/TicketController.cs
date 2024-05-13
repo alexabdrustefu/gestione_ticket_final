@@ -1,4 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using gestione_ticket.Data;
 using gestione_ticket_final.Models;
@@ -112,44 +117,41 @@ namespace gestione_ticket_final.Controllers
                 ticket.Data_apertura = DateTime.Now;
                 ticket.Ora_apertura = DateTime.Now.ToString("HH:mm");
                 ticket.Stato = Status.APERTO;
-                //Assegno user loggato alla variabile current user
-                //nel casso della creazione se assegna a me e a true imposta l'utente con quello loggato
+                //Assegno user loggato al ticket
                 var currentUser = User.Identity as ClaimsIdentity;
+                //if (currentUser != null && currentUser.IsAuthenticated)
+                //{
+                //    var userIdClaim = currentUser.FindFirst("UserId");
+
+                //    string userId = userIdClaim.Value;
+                //    int IdUtenteInt = Int32.Parse(userId);
+                //    ticket.UserId = IdUtenteInt;
+                //}
                 ticket.Deleted = false;
 
                 _context.Add(ticket);
                 await _context.SaveChangesAsync();
-                //estrazione del ruolo dalla claim del cookie
-                var userRuolo = currentUser.FindFirst("Ruolo");
-                //if (userRuolo.Value != "Tecnico" || userRuolo.Value != "Amministratore")
-                //{
-                //    return RedirectToAction("ErrorPage", "Unauthorized");
-                //}
-                //else
-                //{
-                    if (ticket.AssegnaAllUtenteLoggato)
+                if (ticket.AssegnaAllUtenteLoggato)
+                {
+                    if (currentUser != null && currentUser.IsAuthenticated)
                     {
-                        if (currentUser != null && currentUser.IsAuthenticated)
-                        {
-                            //recupero l id del utente e lo assegno alla lavorazione ed al ticket
-                            //stato: lavorazione in quanto e assegnato al utente loggato
-                            _context.Update(ticket);
-                            await _context.SaveChangesAsync();
-                            var userIdClaim = currentUser.FindFirst("UserId")?.Value;
+                        //ticket.AssegnaAllUtenteLoggato = false;
+                        _context.Update(ticket);
+                        await _context.SaveChangesAsync();
+                        var userIdClaim = currentUser.FindFirst("UserId")?.Value;
 
-                            int IdUtenteInt = Int32.Parse(userIdClaim);
-                            ticket.UserId = IdUtenteInt;
-                            ticket.Stato = Status.LAVORAZIONE;
-                            lavorazione.UserId = IdUtenteInt;
-                            lavorazione.TicketId = ticket.Id_ticket;
-                            lavorazione.Data_presa_incarico = DateTime.Now;
-                            lavorazione.Ora_presa_incarico = DateTime.Now.ToString("HH:mm");
-                            _context.Add(lavorazione);
-                            await _context.SaveChangesAsync();
-                            return RedirectToAction(nameof(Index));
-                        }
+                        int IdUtenteInt = Int32.Parse(userIdClaim);
+                        ticket.UserId = IdUtenteInt;
+                        ticket.Stato = Status.LAVORAZIONE;
+                        lavorazione.UserId = IdUtenteInt;
+                        lavorazione.TicketId = ticket.Id_ticket;
+                        lavorazione.Data_presa_incarico = DateTime.Now;
+                        lavorazione.Ora_presa_incarico = DateTime.Now.ToString("HH:mm");
+                        _context.Add(lavorazione);
+                        await _context.SaveChangesAsync();
+                        return RedirectToAction(nameof(Index));
                     }
-                //}
+                }
 
                 return RedirectToAction(nameof(Index));
             }
@@ -345,6 +347,7 @@ namespace gestione_ticket_final.Controllers
         [HttpPost]
         public IActionResult GetProdotti(string input)
         {
+            // Esegui la query per ottenere suggerimenti basati sull'input dal database
             var suggestions = _context.Prodotto
                 .Where(p => p.Descrizione.StartsWith(input))
                 .Select(p => new { Id = p.ProdottoId, Descrizione = p.Descrizione })
@@ -354,7 +357,7 @@ namespace gestione_ticket_final.Controllers
             return Json(suggestions);
         }
 
-        //autocomplete per tipologia prodotto estrae la tipologia dei prodotti collegati al ticket 
+        //autocomplete per tipologia prodotto estrae la tipologia dei prodotti collegati al ticket
         public IActionResult GetTipologiaProdotto(string input)
         {
             var tipologie = _context.Ticket.Include(t => t.Prodotto).Include(t => t.Prodotto.TipologiaProdotto).Where(td => td.Prodotto.TipologiaProdotto.Descrizione.StartsWith(input))
@@ -367,7 +370,7 @@ namespace gestione_ticket_final.Controllers
         }
 
 
-        // GET: Ticket/Close 
+        // GET: Ticket/Close
         //si occupa con la chiusura di un ticket
         [HttpGet]
         public async Task<IActionResult> Close(int? id)

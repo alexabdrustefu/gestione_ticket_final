@@ -72,11 +72,25 @@
                         <input asp-for="Descrizione" class="form-control" placeholder="Inserisci una descrizione" />
                         <span asp-validation-for="Descrizione" class="text-danger"></span>
                     </div>
-                    <div class="form-group">
-                        <label asp-for="Soluzione" class="control-label" style="color:black">Soluzione</label>
-                        <input asp-for="Soluzione" class="form-control" placeholder="Inserisci una soluzione" />
-                        <span asp-validation-for="Soluzione" class="text-danger"></span>
-                    </div>
+                    @{
+                        var currentUser = User.Identity as ClaimsIdentity;
+                        @if (currentUser != null && currentUser.IsAuthenticated)
+                        {
+                            var userRuolo = currentUser.FindFirst("Ruolo");
+                            if (userRuolo != null)
+                            {
+                                if (userRuolo.Value == "Tecnico")
+                                {
+                                    <div class="form-group">
+                                        <label asp-for="Soluzione" class="control-label" style="color:black">Soluzione</label>
+                                        <input asp-for="Soluzione" class="form-control" placeholder="Inserisci una soluzione" />
+                                        <span asp-validation-for="Soluzione" class="text-danger"></span>
+                                    </div>
+                                }
+                            }
+                        }
+                    }
+                   
                     <div class="form-group">
                         <label asp-for="ProdottoId" class="control-label" style="color:black">Prodotto</label>
                         <div class="autocomplete-container">
@@ -98,10 +112,10 @@
                             <label class="form-check-label" style="color: darkslategrey;" for="AssegnaAllUtenteLoggato">Assegna a me</label>
                         </div> *@
                     @{
-                        var currentUser = User.Identity as ClaimsIdentity;
-                        @if (currentUser != null && currentUser.IsAuthenticated)
+                        var utenteCorrente = User.Identity as ClaimsIdentity;
+                            @if (utenteCorrente != null && utenteCorrente.IsAuthenticated)
                         {
-                            var userRuolo = currentUser.FindFirst("Ruolo");
+                                var userRuolo = utenteCorrente.FindFirst("Ruolo");
                             if (userRuolo != null)
                             {
                                 if (userRuolo.Value == "Tecnico")
