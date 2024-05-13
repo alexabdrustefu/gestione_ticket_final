@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<gestione_ticket_final.Models.TipologiaProdotto>
+@using System.Security.Claims
 
 @{
     ViewData["Title"] = "Index";
@@ -6,9 +7,22 @@
 
 <h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+@{
+    var currentUser = User.Identity as ClaimsIdentity;
+    @if (currentUser != null && currentUser.IsAuthenticated)
+    {
+        var userRuolo = currentUser.FindFirst("Ruolo");
+        if (userRuolo != null)
+        {
+            if (userRuolo.Value == "Tecnico")
+            {
+                <p>
+                    <a asp-action="Create">Create New</a>
+                </p>
+            }
+        }
+    }
+}
 <table class="table">
     <thead>
         <tr>
