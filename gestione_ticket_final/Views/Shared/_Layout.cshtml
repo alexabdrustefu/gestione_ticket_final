@@ -83,7 +83,7 @@
                         @{
                             var userIdClaim = currentUser.FindFirst("UserId")?.Value;
 
-                            int Id = Int32.Parse(userIdClaim);
+                            int ? Id = Int32.Parse(userIdClaim);
                         }
                         <li class="nav-item">
                             <a class="btn text-dark" style="font-weight: 100;" asp-controller="AreaPersonale" asp-action="Details" asp-route-id="@Id">Bentornato @User.Identity.Name <i class="bi bi-person"></i></a>
